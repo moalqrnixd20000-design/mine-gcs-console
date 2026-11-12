@@ -3,7 +3,9 @@
 Ground-control console (Security Center) for the "Smart System for Naval Mine Detection" USV, hull B01.
 Arabic, right-to-left. One static HTML file. **All data is simulated.**
 
-## Run
+**Live site:** https://moalqrnixd20000-design.github.io/mine-gcs-console/ (GitHub Pages, served from `main`).
+
+## Run locally
 
 ```bash
 python -m http.server 8745 --directory mine-gcs-console
