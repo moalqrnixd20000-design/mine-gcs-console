@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<!--artifact:start-->
+<title>B01 Mine Detection Console</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=B612+Mono:wght@400;700&family=Readex+Pro:wght@300..700&display=swap">
+<style>
+/* Layout: one RTL night console cut like B01's faceted hull. Start column = alert queue, centre = fused surface picture,
+   end column = the four sensing dimensions, health + cyber strip beneath. Investigate mode swaps picture + sensing for the
+   Handover Package while the queue, clock and health strip stay live. */
+:root{
+  color-scheme:dark;
+  /* ground: B01 hull facets, darkened for a dim operations room */
+  --abyss:#08111d;
+  --hull:#0e1a2b;
+  --facet:#152539;
+  --chine:#22364e;
+  --chine-2:#2f4a67;
+  --veil:rgba(8,17,29,.86);
+  --shadow:rgba(0,0,0,.45);
+  /* text */
+  --fg:#dce6ef;
+  --fg-2:#a6b8ca;
+  --fg-3:#7a91ab;
+  /* meaning: only what needs attention gets colour */
+  --sea:#3e9aa3;          /* acoustic imagery, live sensors */
+  --sea-hi:#8fd6cf;
+  --target:#ff6b45;       /* suspected object and the evidence that supports it */
+  --target-soft:rgba(255,107,69,.14);
+  --on-target:#1a0905;
+  --trust:#a99cff;        /* signatures, encryption, chain of custody */
+  --trust-soft:rgba(169,156,255,.14);
+  --caution:#f2b84b;
+  --caution-soft:rgba(242,184,75,.10);
+  --against:#8aa6c4;      /* counter-evidence */
+  /* night chart */
+  --map-deep:#0a1626; --map-mid:#0d1e33; --map-shoal:#11283f; --map-land:#1a1e22;
+  --map-coast:#4a5763; --map-iso:#21405f; --map-sound:#4b6a86;
+  /* type: human language vs instrument readouts */
+  --f-text:"Readex Pro","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --f-num:"B612 Mono","Cascadia Mono",Consolas,monospace;
+  --ch:12px; /* chamfer: the hull's chine cut */
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--abyss);color:var(--fg);font-family:var(--f-text);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+h1,h2,h3,h4,p,ol,ul,dl,dd,figure{margin:0}
+ol,ul{padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+canvas{display:block;width:100%;height:100%}
+.n{font-family:var(--f-num);font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+:focus-visible{outline:2px solid var(--sea-hi);outline-offset:2px}
+
+.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.plate{clip-path:polygon(var(--ch) 0,100% 0,100% calc(100% - var(--ch)),calc(100% - var(--ch)) 100%,0 100%,0 var(--ch))}
+
+/* ---------- top bar: the one-second glance ---------- */
+.top{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+.id{display:flex;align-items:center;gap:12px;min-width:0}
+.mark{width:62px;height:22px;flex:none;color:var(--fg-2)}
+.id h1{font-size:16px;font-weight:600;line-height:1.25;display:flex;align-items:baseline;gap:8px}
+.id h1 .n{font-size:15px;font-weight:700}
+.id p{font-size:12px;color:var(--fg-2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sim{padding:0 7px;line-height:18px;font-size:11px;color:var(--fg-2);box-shadow:inset 0 0 0 1px var(--chine-2)}
+.modes{display:flex;gap:2px;padding:3px;background:var(--hull);--ch:8px}
+.modes button{padding:6px 16px;font-size:13px;color:var(--fg-2)}
+.modes button:hover{color:var(--fg)}
+.modes button[aria-selected="true"]{background:var(--facet);color:var(--fg);box-shadow:inset 0 -2px 0 var(--sea)}
+.clock{display:flex;align-items:baseline;gap:8px;margin-inline-start:auto}
+.clock .t{font-size:20px;font-weight:700;letter-spacing:-.06em}
+.clock .u{font-size:11px;color:var(--fg-3)}
+.pps{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--fg-2);margin-inline-start:6px}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--sea-hi);flex:none}
+.pips{display:flex;gap:2px;flex-wrap:wrap}
+.pip{display:inline-flex;align-items:center;gap:6px;padding:5px 7px;font-size:12px;color:var(--fg-2)}
+.pip:hover{background:var(--hull);color:var(--fg)}
+.pip i{width:7px;height:7px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--fg-3)}
+.pip.caution{color:var(--caution);background:var(--caution-soft)}
+.pip.caution i{background:var(--caution);box-shadow:none}
+.threat{display:flex;align-items:center;gap:8px;padding:5px 12px;color:var(--target);background:var(--target-soft);font-size:13px}
+.threat .n{font-size:16px;font-weight:700}
+
+/* ---------- panels ---------- */
+.main{display:grid;grid-template-columns:minmax(280px,330px) minmax(0,1fr) minmax(340px,400px);gap:8px;min-height:0}
+.app[data-mode="inv"] .main{grid-template-columns:minmax(280px,330px) minmax(0,1fr)}
+.panel{position:relative;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--hull)}
+.ph{display:flex;align-items:baseline;gap:6px 10px;flex-wrap:wrap;padding:12px 16px 8px}
+.ph h2{font-size:15px;font-weight:600;line-height:1.3}
+.meta{font-size:12px;color:var(--fg-3)}
+.tools{margin-inline-start:auto;display:flex;gap:3px;flex-wrap:wrap}
+.chip{padding:3px 9px;font-size:12px;color:var(--fg-2);background:var(--abyss)}
+.chip:hover{color:var(--fg)}
+.chip[aria-pressed="true"]{color:var(--fg);background:var(--facet);box-shadow:inset 0 0 0 1px var(--chine-2)}
+
+/* queue */
+.qcap{padding:0 16px 8px;font-size:12px;color:var(--fg-3)}
+.filters{display:flex;gap:3px;padding:0 12px 8px;flex-wrap:wrap}
+.qlist{flex:1;min-height:0;overflow:auto;padding:0 8px 8px;display:flex;flex-direction:column;gap:2px}
+.qempty{padding:16px 10px;font-size:13px;color:var(--fg-2)}
+.qi{width:100%;display:grid;grid-template-columns:54px minmax(0,1fr);column-gap:10px;padding:10px 10px 10px 8px}
+.qi:hover{background:var(--facet)}
+.qi[aria-current="true"]{background:var(--facet);box-shadow:inset 0 0 0 1px var(--chine-2)}
+.qi.rej{opacity:.55}
+.qconf{display:flex;align-items:baseline;justify-content:center;gap:1px;padding-top:2px;direction:ltr}
+.qconf .n{font-size:22px;font-weight:700;line-height:1.1}
+.qconf small{font-size:11px;color:var(--fg-3)}
+.p1 .n{color:var(--target)} .p2 .n{color:var(--fg)} .p3 .n{color:var(--fg-3)}
+.qb{display:flex;flex-direction:column;gap:3px;min-width:0}
+.qtop{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--fg-3)}
+.qtop .n{color:var(--fg-2)}
+.qage{margin-inline-start:auto;white-space:nowrap}
+.qcls{font-size:14px;font-weight:500;line-height:1.35}
+.qmeta{display:flex;align-items:center;gap:4px 12px;flex-wrap:wrap;font-size:12px;color:var(--fg-3)}
+.st{padding:0 6px;font-size:11px;line-height:18px;white-space:nowrap}
+.st-new{color:var(--fg);background:var(--chine)}
+.st-review{color:var(--fg-2);box-shadow:inset 0 0 0 1px var(--chine-2)}
+.st-pending{color:var(--fg-2);outline:1px dashed var(--chine-2);outline-offset:-1px}
+.st-handed{color:var(--trust);background:var(--trust-soft)}
+.st-rejected{color:var(--fg-3);text-decoration:line-through}
+.sig{display:inline-flex;gap:3px;align-items:center}
+.sig svg{width:13px;height:13px;overflow:visible;stroke-width:1.3}
+.g2{fill:var(--target);stroke:var(--target)} .g1{fill:none;stroke:var(--target)} .g0{fill:none;stroke:var(--fg-3);opacity:.55}
+.qlegend{display:flex;flex-wrap:wrap;gap:4px 12px;padding:10px 16px 12px;font-size:11px;color:var(--fg-3);border-top:1px solid var(--chine)}
+.qlegend span{display:inline-flex;align-items:center;gap:5px}
+
+/* fused surface picture */
+.mapwrap{position:relative;flex:1;min-height:320px;margin:0 8px 8px;background:var(--map-deep);overflow:hidden}
+.mapwrap>canvas{position:absolute;inset:0;cursor:crosshair}
+.thermal{position:absolute;top:10px;inset-inline-end:10px;width:min(250px,40%);padding:6px;background:var(--veil);display:flex;flex-direction:column;gap:5px}
+.thermal .cv{aspect-ratio:16/9;max-width:100%}
+.thermal figcaption{font-size:11px;line-height:1.45;color:var(--fg-2)}
+.thermal figcaption b{color:var(--caution);font-weight:500}
+.mapinfo{position:absolute;top:10px;inset-inline-start:10px;display:grid;grid-template-columns:auto auto;gap:1px 14px;padding:8px 10px;background:var(--veil);font-size:12px;color:var(--fg-3)}
+.mapinfo dd{color:var(--fg)}
+.mapinfo .cap2{grid-column:1/-1;font-size:11px;color:var(--fg-3);margin-top:3px}
+.legend{position:absolute;bottom:10px;inset-inline-end:10px;display:flex;flex-wrap:wrap;gap:4px 12px;max-width:calc(100% - 190px);padding:6px 10px;background:var(--veil);font-size:11px;color:var(--fg-2)}
+.legend li{display:inline-flex;align-items:center;gap:6px}
+.legend svg{width:16px;height:12px;overflow:visible}
+.cursor{font-size:11px;color:var(--fg-3)}
+.maptip{position:absolute;z-index:2;max-width:270px;padding:8px 10px;background:var(--abyss);box-shadow:0 0 0 1px var(--chine-2),0 6px 18px var(--shadow);font-size:12px;line-height:1.55;pointer-events:none}
+.maptip b{font-weight:600}
+.maptip .cta{color:var(--sea-hi)}
+
+/* four sensing dimensions */
+.sbody{flex:1;min-height:0;overflow:auto;padding:0 10px 10px;display:flex;flex-direction:column;gap:8px}
+.dim{background:var(--abyss);padding:10px 12px 12px;min-width:0}
+.dim h3{display:flex;align-items:baseline;gap:8px;font-size:14px;font-weight:600;margin-bottom:8px}
+.dim h3 small{font-size:12px;font-weight:400;color:var(--fg-3)}
+.cv{position:relative;min-width:0}
+.wcd{height:172px}
+.swath{height:54px;margin-top:2px}
+.cap{font-size:11px;color:var(--fg-3);margin-top:3px;display:flex;justify-content:space-between;gap:8px}
+.svp{display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;align-items:center;margin-top:10px}
+.svpc{height:108px}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;font-size:12px;align-items:baseline}
+.kv dt{color:var(--fg-3)}
+.kv dd{text-align:end;color:var(--fg)}
+.kv.two{grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr)}
+.lat{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:12px}
+.lat li{display:grid;grid-template-columns:104px minmax(0,1fr) 64px;gap:10px;align-items:center}
+.lat .lk{color:var(--fg-3)}
+.lbar{height:4px;background:var(--chine);position:relative}
+.lbar i{position:absolute;inset-block:0;inset-inline-start:0;background:var(--sea)}
+.mrow{display:grid;grid-template-columns:84px minmax(0,1fr) 66px;gap:10px;align-items:center;font-size:12px}
+.mrow + .mrow{margin-top:4px}
+.mrow>span:first-child{color:var(--fg-3)}
+.spark{height:26px}
+.note{font-size:11.5px;color:var(--fg-3);line-height:1.55;margin-top:8px}
+
+/* health + cyber strip */
+.health{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.hp{padding:11px 14px 12px;gap:6px;outline:none}
+.hp h2{font-size:13px;font-weight:600;color:var(--fg-2);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.hp .state{font-size:13px;line-height:1.45}
+.hp.caution{background:linear-gradient(var(--caution-soft),var(--caution-soft)),var(--hull)}
+.hp.caution .state{color:var(--caution)}
+.hp.flash{animation:flash 1.1s ease-out}
+@keyframes flash{0%{box-shadow:inset 0 0 0 2px var(--sea-hi)}100%{box-shadow:inset 0 0 0 2px transparent}}
+.bar{height:5px;background:var(--chine);position:relative}
+.bar i{position:absolute;inset-block:0;inset-inline-start:0;background:var(--fg-2)}
+.links{display:flex;flex-direction:column;gap:4px;font-size:12px}
+.links li{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:8px;align-items:center;color:var(--fg-2)}
+.links li.on{color:var(--fg)}
+.links li.off{color:var(--fg-3)}
+.bars{display:inline-flex;gap:2px;align-items:flex-end;height:11px}
+.bars i{width:3px;background:var(--chine-2)}
+.bars i:nth-child(1){height:4px}.bars i:nth-child(2){height:6px}.bars i:nth-child(3){height:8px}.bars i:nth-child(4){height:11px}
+.bars[data-l="1"] i:nth-child(-n+1),.bars[data-l="2"] i:nth-child(-n+2),.bars[data-l="3"] i:nth-child(-n+3),.bars[data-l="4"] i:nth-child(-n+4){background:var(--fg-2)}
+.links li.on .bars i{background:var(--sea-hi)}
+.links li.on .bars i:nth-child(n){background:var(--sea-hi)}
+.spec{height:44px}
+.small{font-size:11.5px;color:var(--fg-3);line-height:1.5}
+.vessel{width:100%;height:auto;max-height:62px;display:block}
+.v-above{fill:var(--facet);stroke:var(--fg-3);stroke-width:1;stroke-linejoin:round}
+.v-below{fill:var(--abyss);stroke:var(--chine-2);stroke-width:1;stroke-linejoin:round}
+.v-line{stroke:var(--chine-2);stroke-width:.8;fill:none}
+.v-water{stroke:var(--sea);stroke-width:1;stroke-dasharray:3 3}
+.v-mast{stroke:var(--fg-3);stroke-width:1.4}
+.v-kit{fill:var(--chine);stroke:var(--fg-3);stroke-width:1}
+.spot{fill:var(--hull);stroke:var(--fg-2);stroke-width:1.2}
+.spot.on{fill:var(--sea-hi);stroke:var(--sea-hi)}
+.seals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 12px;font-size:11.5px}
+.seals li{display:flex;justify-content:space-between;gap:6px;color:var(--fg-3)}
+.seals li span:last-child{color:var(--fg-2)}
+
+/* ---------- handover package ---------- */
+.dossier{overflow:auto}
+.dh{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px 28px;align-items:start;padding:16px 20px 14px;border-bottom:1px solid var(--chine)}
+.dtags{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--fg-2)}
+.dtags>.n{font-size:13px;color:var(--fg)}
+.tag{padding:0 7px;line-height:20px;font-size:11.5px;box-shadow:inset 0 0 0 1px var(--chine-2);color:var(--fg-2)}
+.tag.pri1{color:var(--target);box-shadow:inset 0 0 0 1px var(--target)}
+.dh h2{font-size:24px;font-weight:600;line-height:1.3;margin-top:6px;text-wrap:balance}
+.dsum{max-width:72ch;margin-top:8px;font-size:14px;line-height:1.8;color:var(--fg-2)}
+.dconf{text-align:center;min-width:120px}
+.dconf .big{font-size:48px;font-weight:700;line-height:1;color:var(--target)}
+.dconf .pct{font-size:18px;color:var(--target)}
+.dconf .lbl{font-size:12px;color:var(--fg-3);margin-top:6px}
+.btn{padding:9px 16px;font-size:13.5px;font-weight:500;background:var(--facet);color:var(--fg);box-shadow:inset 0 0 0 1px var(--chine-2)}
+.btn:hover{background:var(--chine)}
+.btn.primary{background:var(--target);color:var(--on-target);box-shadow:none}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--fg-2)}
+.btn[disabled]{opacity:.4;cursor:not-allowed;filter:none}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;padding:16px 20px}
+.evi h3,.cbox h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.hint{font-size:12px;color:var(--fg-3);margin-bottom:10px}
+.streams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.streams figure{background:var(--abyss);padding:8px;min-width:0}
+.streams figcaption{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:500;margin-bottom:6px;flex-wrap:wrap}
+.streams figcaption span{font-weight:400;color:var(--fg-3);font-size:11.5px}
+.ev{height:210px}
+.ledger{margin-top:14px;display:flex;flex-direction:column;gap:12px}
+.lg h4{font-size:12px;font-weight:500;color:var(--fg-3);margin-bottom:4px}
+.lg ul{display:flex;flex-direction:column;gap:2px}
+.lf{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:8px 10px;background:var(--abyss)}
+.lf:hover,.lf.hl{background:var(--facet)}
+.lf[aria-pressed="true"]{background:var(--facet);box-shadow:inset 0 0 0 1px var(--target)}
+.lf.neg[aria-pressed="true"]{box-shadow:inset 0 0 0 1px var(--against)}
+.lf .nm{font-size:13.5px;font-weight:500}
+.lf .pt{font-size:14px;font-weight:700;color:var(--target)}
+.lf.neg .pt{color:var(--against)}
+.lf.zero .pt,.lf.zero .nm{color:var(--fg-3)}
+.lf .ev2{grid-column:1/-1;font-size:12.5px;line-height:1.65;color:var(--fg-2)}
+.lf .lb{grid-column:1/-1;height:3px;background:var(--chine);position:relative;margin-top:4px}
+.lf .lb i{position:absolute;inset-block:0;inset-inline-start:0;background:var(--target)}
+.lf.neg .lb i{background:var(--against)}
+.ltotal{margin-top:12px;font-size:13px;color:var(--fg-2);line-height:1.7}
+.ltotal strong{color:var(--target);font-size:15px}
+.ctx{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cbox{background:var(--abyss);padding:10px 12px 12px;min-width:0}
+.cbox.hl{box-shadow:inset 0 0 0 1px var(--target)}
+.loc{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:start;margin-top:6px}
+.mini{height:150px}
+.cpair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sq{height:138px;margin-top:4px}
+.cnote{font-size:12px;color:var(--fg-2);margin-top:6px;line-height:1.55}
+.alts{display:flex;flex-direction:column;gap:7px;font-size:12.5px;margin-top:6px}
+.alts li{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:3px 10px;align-items:center}
+.alts .ab{grid-column:1/-1;height:4px;background:var(--chine);position:relative}
+.alts .ab i{position:absolute;inset-block:0;inset-inline-start:0;background:var(--fg-3)}
+.alts li:first-child .ab i{background:var(--target)}
+.alts .n{text-align:left}
+.sigline{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:12.5px;color:var(--fg-2);margin-top:6px}
+.ok{color:var(--trust);font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.ok svg{width:14px;height:14px}
+.hash{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:var(--fg-2);flex-wrap:wrap}
+.mini-btn{font-size:11.5px;padding:2px 8px;color:var(--trust);box-shadow:inset 0 0 0 1px var(--trust-soft)}
+.mini-btn:hover{background:var(--trust-soft)}
+.custody{margin-top:10px;display:flex;flex-direction:column}
+.custody li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:start;padding:5px 0;font-size:12.5px;position:relative}
+.custody .k{width:20px;height:20px;display:grid;place-items:center;font-size:11px;background:var(--trust-soft);color:var(--trust)}
+.custody li.now .k{background:transparent;box-shadow:inset 0 0 0 1px var(--trust)}
+.custody li.todo{color:var(--fg-3)}
+.custody li.todo .k{background:transparent;color:var(--fg-3);box-shadow:inset 0 0 0 1px var(--chine-2)}
+.custody .ts{font-size:11.5px;color:var(--fg-3)}
+.custody li:not(:last-child)::after{content:"";position:absolute;inset-inline-start:10px;top:26px;bottom:-4px;width:1px;background:var(--chine-2)}
+.dact{position:sticky;bottom:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 20px;background:var(--hull);border-top:1px solid var(--chine);z-index:1}
+.reasons{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px;color:var(--fg-2);margin-inline-start:8px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:5;max-width:min(560px,calc(100% - 32px));padding:10px 16px;background:var(--facet);box-shadow:0 0 0 1px var(--chine-2),0 8px 24px var(--shadow);font-size:13px;line-height:1.6}
+
+/* ---------- mid-height consoles: the health strip keeps only its one-line states ---------- */
+@media (min-width:1360px) and (min-height:800px) and (max-height:979px){
+  .hp{padding:9px 12px 10px;gap:5px}
+  .hp .kv,.hp .small,.hp .seals{display:none}
+  .vessel{max-height:40px}
+}
+/* ---------- smaller screens: the console becomes a scrolling page ---------- */
+@media (max-width:1359px),(max-height:799px){
+  .app{height:auto;min-height:100%}
+  .main,.app[data-mode="inv"] .main{grid-template-columns:minmax(260px,320px) minmax(0,1fr)}
+  .sensing{grid-column:1/-1}
+  .sbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}
+  .map-panel{min-height:600px}
+  .queue{max-height:720px}
+  .health{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:899px){
+  .main,.app[data-mode="inv"] .main{grid-template-columns:minmax(0,1fr)}
+  .sbody{grid-template-columns:minmax(0,1fr)}
+  .queue{max-height:470px}
+  .map-panel{min-height:520px}
+  .dh{grid-template-columns:minmax(0,1fr) auto}
+  .dh .back{grid-column:1/-1;justify-self:start}
+  .dgrid{grid-template-columns:minmax(0,1fr)}
+  .health{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .clock{margin-inline-start:0}
+}
+@media (max-width:560px){
+  .streams,.cpair,.loc{grid-template-columns:minmax(0,1fr)}
+  .health{grid-template-columns:minmax(0,1fr)}
+  .thermal{width:min(170px,48%)}
+  .legend{display:none}
+  .map-panel{min-height:460px}
+  .dh h2{font-size:20px}
+  .dconf .big{font-size:40px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="app" id="app" dir="rtl" lang="ar" data-mode="watch">
+
+<header class="top">
+  <div class="id">
+    <svg class="mark" viewBox="0 0 64 22" aria-hidden="true"><path d="M2 13 L10 9 L24 7.5 L44 7.5 L57 10.5 L62 13 L57 15.5 L44 18 L20 18 L6 15.5 Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M24 7.5 L27 4 L38 4 L41 7.5 M10 9 L18 13 M44 7.5 L36 13 M57 10.5 L50 13 M31 4 V1" fill="none" stroke="currentColor" stroke-width="1"/><path d="M0 13 H64" stroke="#3e9aa3" stroke-width="1" stroke-dasharray="2 2"/></svg>
+    <div>
+      <h1>المركز الأمني <span class="n">B01</span></h1>
+      <p>مدخل الميناء، القطاع <span class="n">B3</span><span class="sim">بيانات محاكاة</span></p>
+    </div>
+  </div>
+  <div class="modes plate" role="tablist" aria-label="وضع العرض">
+    <button role="tab" id="tab-watch" aria-selected="true">المراقبة</button>
+    <button role="tab" id="tab-inv" aria-selected="false">التحقيق</button>
+  </div>
+  <div class="clock">
+    <span class="n t" id="utc">--:--:--.-</span><span class="u">UTC</span>
+    <span class="pps"><span class="dot" id="pps-dot"></span>PPS مقفل</span>
+  </div>
+  <div class="pips" role="group" aria-label="ملخص حالة النظام">
+    <button class="pip" data-go="hp-comms"><i></i>الاتصال</button>
+    <button class="pip caution" data-go="hp-spec"><i></i>GNSS</button>
+    <button class="pip" data-go="hp-power"><i></i>الطاقة <span class="n" id="pip-batt">72%</span></button>
+    <button class="pip" data-go="hp-seal"><i></i>الإحكام</button>
+    <button class="pip" data-go="hp-edge"><i></i>الحاسوب الطرفي</button>
+  </div>
+  <p class="threat"><span class="n" id="threat-n">2</span><span>أولوية أولى مفتوحة</span></p>
+</header>
+
+<main class="main">
+  <!-- alert queue -->
+  <section class="panel plate queue" aria-labelledby="q-title">
+    <div class="ph"><h2 id="q-title">التنبيهات</h2><span class="meta">مرتبة حسب ثقة النموذج</span></div>
+    <p class="qcap">الرقم هو ثقة النموذج بأن الجسم شبيه بلغم. الرموز الأربعة تبيّن الأدلة التي وجدها.</p>
+    <div class="filters" role="group" aria-label="تصفية التنبيهات">
+      <button class="chip" data-f="all" aria-pressed="true">الكل</button>
+      <button class="chip" data-f="p1" aria-pressed="false">أولوية أولى</button>
+      <button class="chip" data-f="pending" aria-pressed="false">بانتظار تمريرة</button>
+    </div>
+    <ol class="qlist" id="qlist"></ol>
+    <div class="qlegend" aria-hidden="true">
+      <span><svg class="g2" viewBox="0 0 13 13" width="13" height="13"><circle cx="6.5" cy="6.5" r="4.6"/></svg>الشكل</span>
+      <span><svg class="g2" viewBox="0 0 13 13" width="13" height="13"><circle cx="4.2" cy="6.5" r="2.7"/><ellipse cx="9.9" cy="6.5" rx="2.8" ry="1.5"/></svg>الظل</span>
+      <span><svg class="g2" viewBox="0 0 13 13" width="13" height="13"><path d="M6.5 1 L9.6 8.4" fill="none"/><circle cx="9.9" cy="9.4" r="2.3"/><path d="M2.6 10.6 Q6.5 13.2 11.6 10.2" fill="none"/></svg>التأرجح</span>
+      <span><svg class="g2" viewBox="0 0 13 13" width="13" height="13"><path d="M6.5 1.4 L11.6 6.5 L6.5 11.6 L1.4 6.5 Z"/></svg>الشذوذ</span>
+      <span>ممتلئ: قوي، مفرّغ: جزئي</span>
+    </div>
+  </section>
+
+  <!-- fused surface picture -->
+  <section class="panel plate map-panel" id="map-panel" aria-labelledby="m-title">
+    <div class="ph">
+      <h2 id="m-title">الصورة السطحية الموحدة</h2><span class="meta">رادار، كاميرا حرارية، AIS، وخطوط المسح</span>
+      <div class="tools" role="group" aria-label="طبقات الخريطة">
+        <button class="chip" data-layer="radar" aria-pressed="true">الرادار</button>
+        <button class="chip" data-layer="ais" aria-pressed="true">AIS</button>
+        <button class="chip" data-layer="thermal" aria-pressed="true">الحراري</button>
+        <button class="chip" data-layer="fence" aria-pressed="true">السياج</button>
+        <button class="chip" data-layer="survey" aria-pressed="true">المسح</button>
+        <button class="chip" data-layer="targets" aria-pressed="true">الأهداف</button>
+      </div>
+    </div>
+    <div class="mapwrap">
+      <canvas id="map" role="img" aria-label="خريطة تجمع مسار B01 وخطوط المسح والأهداف تحت الماء والسفن السطحية"></canvas>
+      <dl class="mapinfo" aria-label="تقدم المسح">
+        <dt>الخط</dt><dd><span class="n" id="line-n">10/15</span></dd>
+        <dt>التغطية</dt><dd><span class="n" id="cov">61%</span></dd>
+        <dt>المتبقي</dt><dd><span class="n" id="eta">1:10</span> ساعة</dd>
+        <dd class="cap2">المحاكاة تُعرض بسرعة <span class="n">×3</span></dd>
+      </dl>
+      <figure class="thermal" id="thermal-fig">
+        <div class="cv"><canvas id="thermal" role="img" aria-label="صورة الكاميرا الحرارية للهدف S-07"></canvas></div>
+        <figcaption>الكاميرا الحرارية على <span class="n">S-07</span> باتجاه <span class="n" id="th-brg">284°</span><br><b>زورق صغير بلا AIS</b>، ثقة <span class="n">0.86</span></figcaption>
+      </figure>
+      <ul class="legend" aria-label="مفتاح الخريطة">
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M8 0 L11 6 L10.5 12 L5.5 12 L5 6 Z" fill="#dce6ef"/></svg>B01</li>
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M8 1 L12.5 11 L3.5 11 Z" fill="none" stroke="#a6b8ca" stroke-width="1.3"/></svg>سفينة تبث AIS</li>
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><rect x="4.5" y="2.5" width="7" height="7" transform="rotate(45 8 6)" fill="rgba(242,184,75,.25)" stroke="#f2b84b" stroke-width="1.3"/></svg>هدف رادار بلا AIS</li>
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><circle cx="8" cy="6" r="4" fill="#ff6b45"/></svg>هدف تحت الماء</li>
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M0 6 H16" stroke="#ff6b45" stroke-width="1.4" stroke-dasharray="4 3"/></svg>تمريرة متقاطعة</li>
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M0 6 H16" stroke="#a6b8ca" stroke-width="1.2" stroke-dasharray="5 3"/></svg>حد منطقة العمل</li>
+      </ul>
+      <div class="maptip" id="maptip" hidden></div>
+    </div>
+  </section>
+
+  <!-- the four dimensions -->
+  <section class="panel plate sensing" id="sensing" aria-labelledby="s-title">
+    <div class="ph"><h2 id="s-title">الاستشعار تحت الماء</h2><span class="meta">الأبعاد الأربعة التي يحتاجها النموذج</span></div>
+    <div class="sbody">
+      <section class="dim" aria-labelledby="dim-img">
+        <h3 id="dim-img">الصورة <small>ملتي بيم وعمود الماء</small></h3>
+        <div class="cv wcd"><canvas id="wcd" role="img" aria-label="عرض حي لعمود الماء من سونار الملتي بيم"></canvas></div>
+        <p class="cap"><span>ميمنة</span><span>عمود الماء، رشقة <span class="n" id="ping-n">4182</span> من <span class="n">256</span> حزمة</span><span>ميسرة</span></p>
+        <div class="cv swath"><canvas id="swath" role="img" aria-label="شريحة الانتشار الخلفي لقاع البحر"></canvas></div>
+        <p class="cap"><span>ميمنة</span><span>شريحة القاع، الأحدث في الأعلى</span><span>ميسرة</span></p>
+        <div class="svp">
+          <div class="cv svpc"><canvas id="svp" role="img" aria-label="مقطع سرعة الصوت مع العمق"></canvas></div>
+          <dl class="kv">
+            <dt>سرعة الصوت السطحية</dt><dd><span class="n">1527.8 m/s</span></dd>
+            <dt>مقارنة بالمقطع</dt><dd>مطابق، الفرق <span class="n">0.3</span></dd>
+            <dt>آخر قياس SVP</dt><dd><span class="n">08:10</span> UTC</dd>
+            <dt>تصحيح الانكسار</dt><dd>مفعّل</dd>
+          </dl>
+        </div>
+      </section>
+      <section class="dim" aria-labelledby="dim-loc">
+        <h3 id="dim-loc">الموقع <small>GNSS وIMU</small></h3>
+        <dl class="kv two">
+          <dt>خط العرض</dt><dd><span class="n" id="lat">--</span></dd>
+          <dt>خط الطول</dt><dd><span class="n" id="lon">--</span></dd>
+          <dt>الحل</dt><dd>RTK ثابت</dd>
+          <dt>الأقمار</dt><dd><span class="n">21</span></dd>
+          <dt>الاتجاه</dt><dd><span class="n" id="hdg">270°</span></dd>
+          <dt>السرعة</dt><dd><span class="n" id="sog">4.1 kn</span></dd>
+          <dt>HDOP</dt><dd><span class="n">0.7</span></dd>
+          <dt>فرق INS وGNSS</dt><dd><span class="n" id="res">0.3 m</span></dd>
+        </dl>
+      </section>
+      <section class="dim" aria-labelledby="dim-time">
+        <h3 id="dim-time">الزمن <small>وحدة تزامن PPS</small></h3>
+        <dl class="kv two">
+          <dt>الحالة</dt><dd>مقفل على GNSS</dd>
+          <dt>الإزاحة</dt><dd><span class="n" id="pps-off">+18 ns</span></dd>
+        </dl>
+        <ul class="lat" id="lat-list" aria-label="تأخر ختم الزمن لكل مستشعر"></ul>
+        <p class="note">كل رشقة سونار تُختم بزمن هذه الوحدة، فيمكن مقارنة النقطة نفسها بين التمريرات.</p>
+      </section>
+      <section class="dim" aria-labelledby="dim-mot">
+        <h3 id="dim-mot">الحركة <small>حركة المنصة</small></h3>
+        <div class="mrow"><span>الرفع الرأسي</span><div class="cv spark"><canvas id="m-heave" aria-hidden="true"></canvas></div><span class="n" id="v-heave">0.00 m</span></div>
+        <div class="mrow"><span>التمايل</span><div class="cv spark"><canvas id="m-roll" aria-hidden="true"></canvas></div><span class="n" id="v-roll">0.0°</span></div>
+        <div class="mrow"><span>الترنّح</span><div class="cv spark"><canvas id="m-pitch" aria-hidden="true"></canvas></div><span class="n" id="v-pitch">0.0°</span></div>
+        <p class="note">مؤشر الثبات <span class="n" id="stab">0.96</span>. البدن المنخفض يبقي الحركة داخل حد تعويض الملتي بيم، وهو الخط المتقطع.</p>
+      </section>
+    </div>
+  </section>
+
+  <!-- investigate mode: the handover package -->
+  <section class="panel plate dossier" id="dossier" hidden aria-labelledby="d-title">
+    <header class="dh">
+      <div>
+        <p class="dtags"><span class="n" id="d-id">TGT-0417</span><span class="tag" id="d-pri">أولوية أولى</span><span class="tag" id="d-state">جديد</span><span>حزمة التسليم</span></p>
+        <h2 id="d-title">لغم مربوط محتمل</h2>
+        <p class="dsum" id="d-sum"></p>
+      </div>
+      <div class="dconf">
+        <p class="n"><span class="big" id="d-conf">94</span><span class="pct">%</span></p>
+        <p class="lbl">ثقة الاشتباه <span class="n" id="d-ci">±3</span></p>
+      </div>
+      <button class="btn back" id="back">العودة للمراقبة</button>
+    </header>
+    <div class="dgrid">
+      <section class="evi" aria-labelledby="why">
+        <h3 id="why">لماذا هذا التصنيف؟</h3>
+        <p class="hint">مرّر المؤشر على أي دليل لترى أين وجده النموذج في صورة السونار، وانقر عليه لتثبيته.</p>
+        <div class="streams">
+          <figure><figcaption>مسار القاع <span>منظر علوي، الظل يمتد مع المدى</span></figcaption><div class="cv ev"><canvas id="ev-sb" role="img" aria-label="صورة الانتشار الخلفي للقاع حول الهدف مع الأدلة"></canvas></div></figure>
+          <figure><figcaption>مسار عمود الماء <span>مقطع عرضي، العمق بالمتر</span></figcaption><div class="cv ev"><canvas id="ev-wc" role="img" aria-label="مقطع عمود الماء حول الهدف مع الأدلة"></canvas></div></figure>
+        </div>
+        <ol class="ledger" id="ledger"></ol>
+        <p class="ltotal" id="ltotal"></p>
+      </section>
+      <div class="ctx">
+        <section class="cbox" aria-labelledby="loc-t">
+          <h3 id="loc-t">الموقع الدقيق</h3>
+          <div class="loc"><div class="cv mini"><canvas id="mini" role="img" aria-label="خريطة مقرّبة لموقع الهدف ودائرة دقته"></canvas></div><dl class="kv" id="d-loc"></dl></div>
+        </section>
+        <div class="cpair">
+          <section class="cbox" id="box-sway" aria-labelledby="sway-t"><h3 id="sway-t">التأرجح عبر الزمن</h3><div class="cv sq"><canvas id="sway" role="img" aria-label="مواضع الهدف في كل تمريرة حول نقطة الارتساء"></canvas></div><p class="cnote" id="sway-note"></p></section>
+          <section class="cbox" id="box-cons" aria-labelledby="cons-t"><h3 id="cons-t">إجماع الزوايا</h3><div class="cv sq"><canvas id="polar" role="img" aria-label="اتجاهات التمريرات ونتيجة كل منها"></canvas></div><p class="cnote" id="cons-note"></p></section>
+        </div>
+        <section class="cbox" aria-labelledby="alt-t"><h3 id="alt-t">البدائل التي قارنها النموذج</h3><ul class="alts" id="alts"></ul></section>
+        <section class="cbox" aria-labelledby="time-t"><h3 id="time-t">الطابع الزمني</h3><dl class="kv" id="d-time" style="margin-top:6px"></dl></section>
+        <section class="cbox" aria-labelledby="sig-t">
+          <h3 id="sig-t">التوقيع الرقمي وسلسلة الحيازة</h3>
+          <p class="sigline"><span class="ok"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 L12.5 3 V7 C12.5 10 10 12.2 7 13 C4 12.2 1.5 10 1.5 7 V3 Z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 7 L6.3 8.8 L9.6 5.3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>التوقيع صحيح</span><span>Ed25519، المفتاح <span class="n">B01-EDGE-07</span></span></p>
+          <p class="hash"><span>بصمة SHA-256</span><span class="n" id="d-hash"></span><button class="mini-btn" id="copy-hash">نسخ البصمة</button></p>
+          <ol class="custody" id="custody"></ol>
+        </section>
+      </div>
+    </div>
+    <footer class="dact">
+      <button class="btn primary" id="act-approve">اعتماد وتسليم لفريق التحقق</button>
+      <button class="btn" id="act-cross">طلب تمريرة متقاطعة</button>
+      <button class="btn ghost" id="act-reject">رفض كإنذار كاذب</button>
+      <div class="reasons" id="reasons" hidden role="group" aria-label="سبب الرفض">
+        <span>اختر السبب:</span>
+        <button class="chip" data-r="صخرة">صخرة</button>
+        <button class="chip" data-r="سرب أسماك">سرب أسماك</button>
+        <button class="chip" data-r="حطام">حطام</button>
+        <button class="chip" data-r="خلل في البيانات">خلل في البيانات</button>
+        <button class="chip" data-r="">إلغاء</button>
+      </div>
+    </footer>
+  </section>
+</main>
+
+<section class="health" aria-label="صحة النظام والأمن السيبراني">
+  <section class="panel plate hp" id="hp-power" tabindex="-1" aria-labelledby="hp-power-t">
+    <h2 id="hp-power-t">الطاقة الهجينة</h2>
+    <p class="state">البطارية <span class="n" id="batt">72.4%</span>، والشحن الشمسي يغطي ثلث الحمل</p>
+    <div class="bar"><i id="batt-bar" style="width:72%"></i></div>
+    <dl class="kv">
+      <dt>الشمسية</dt><dd><span class="n" id="solar">+0.41 kW</span></dd>
+      <dt>المولد</dt><dd>احتياطي، الوقود <span class="n">64%</span></dd>
+      <dt>الحمل</dt><dd><span class="n" id="load">1.18 kW</span></dd>
+      <dt>زمن التشغيل المتبقي</dt><dd><span class="n" id="endur">9:40</span> ساعة</dd>
+    </dl>
+  </section>
+  <section class="panel plate hp" id="hp-comms" tabindex="-1" aria-labelledby="hp-comms-t">
+    <h2 id="hp-comms-t">روابط الاتصال</h2>
+    <p class="state">الراديو نشط، والتحويل التلقائي جاهز</p>
+    <ul class="links">
+      <li class="on"><span class="bars" data-l="4" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>راديو UHF، نشط</span><span class="n" id="uhf">-71 dBm 38 ms</span></li>
+      <li><span class="bars" data-l="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>قمر صناعي، احتياطي</span><span class="n">610 ms</span></li>
+      <li class="off"><span class="bars" data-l="0" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>4G، خارج التغطية</span><span>غير متاح</span></li>
+    </ul>
+    <p class="small">ترتيب التحويل: الراديو، ثم 4G، ثم القمر الصناعي.</p>
+  </section>
+  <section class="panel plate hp" id="hp-edge" tabindex="-1" aria-labelledby="hp-edge-t">
+    <h2 id="hp-edge-t">الحاسوب الطرفي</h2>
+    <p class="state" style="display:flex;align-items:center;gap:8px"><span class="dot" id="hb-dot"></span>مراقب التشغيل سليم</p>
+    <dl class="kv">
+      <dt>آخر نبضة</dt><dd>قبل <span class="n" id="hb-age">0.3 s</span></dd>
+      <dt>الاستدلال</dt><dd><span class="n" id="infer">12.4</span> رشقة في الثانية</dd>
+      <dt>النموذج</dt><dd>CNN ثنائي المسار <span class="n">v2.3</span></dd>
+      <dt>حرارة المعالج</dt><dd><span class="n" id="gpu">61°C</span></dd>
+    </dl>
+  </section>
+  <section class="panel plate hp" id="hp-crypto" tabindex="-1" aria-labelledby="hp-crypto-t">
+    <h2 id="hp-crypto-t">التشفير المتبادل</h2>
+    <p class="state">التوثيق المتبادل سليم بين المركبة والمركز</p>
+    <dl class="kv">
+      <dt>البروتوكول</dt><dd><span class="n">TLS 1.3 mTLS</span></dd>
+      <dt>التشفير</dt><dd><span class="n">AES-256-GCM</span></dd>
+      <dt>تدوير المفتاح</dt><dd>بعد <span class="n" id="rot">07:12</span></dd>
+      <dt>الحزم الموقّعة</dt><dd><span class="n">100%</span></dd>
+    </dl>
+  </section>
+  <section class="panel plate hp caution" id="hp-spec" tabindex="-1" aria-labelledby="hp-spec-t">
+    <h2 id="hp-spec-t">المراقبة الطيفية <span class="n">GNSS L1</span></h2>
+    <p class="state">تشويش محتمل منخفض: الضجيج أعلى بـ <span class="n" id="jam-db">+6 dB</span></p>
+    <div class="cv spec"><canvas id="spec" role="img" aria-label="طيف نطاق GNSS L1 مع حد التشويش"></canvas></div>
+    <p class="small">الانتحال: لا مؤشرات، والفرق بين INS وGNSS <span class="n" id="insgnss">0.3 m</span>. بدأ الارتفاع مع اقتراب <span class="n">S-07</span>.</p>
+  </section>
+  <section class="panel plate hp" id="hp-seal" tabindex="-1" aria-labelledby="hp-seal-t">
+    <h2 id="hp-seal-t">الإحكام والحماية</h2>
+    <p class="state">كل الحساسات والحجرات محكمة وجافة</p>
+    <svg class="vessel" viewBox="0 0 260 70" role="img" aria-label="مخطط جانبي للمركبة B01 يبيّن مواضع الحساسات المحكمة">
+      <path class="v-below" d="M8 40 L252 40 L238 47 L186 55 L150 59 L98 59 L60 54 L22 49 Z"/>
+      <path class="v-above" d="M8 40 L36 31 L92 27 L178 27 L232 33 L252 40 Z"/>
+      <path class="v-above" d="M86 27 L100 18 L150 17 L168 27 Z"/>
+      <path class="v-line" d="M36 31 L64 40 M92 27 L120 40 M178 27 L150 40 M232 33 L206 40 M64 40 L98 59 M150 40 L186 55 M120 40 L150 59"/>
+      <path class="v-mast" d="M112 18 V3 M118 18 V9"/>
+      <circle class="v-kit" cx="131" cy="12" r="5"/>
+      <path class="v-kit" d="M141 17 A7 5 0 0 1 155 17 Z"/>
+      <ellipse class="v-kit" cx="161" cy="17" rx="3.5" ry="1.6"/>
+      <rect class="v-kit" x="112" y="59" width="38" height="5"/>
+      <path class="v-water" d="M0 40 H260"/>
+      <circle class="spot" data-s="comms" cx="112" cy="4" r="3"/>
+      <circle class="spot" data-s="eoir" cx="131" cy="12" r="3"/>
+      <circle class="spot" data-s="radar" cx="148" cy="14" r="3"/>
+      <circle class="spot" data-s="gnss" cx="161" cy="17" r="3"/>
+      <circle class="spot" data-s="gland" cx="118" cy="27" r="3"/>
+      <circle class="spot" data-s="bay" cx="124" cy="47" r="3"/>
+    </svg>
+    <ul class="seals">
+      <li data-s="radar"><span>الرادار</span><span class="n">IP67</span></li>
+      <li data-s="eoir"><span>الحراري</span><span class="n">IP68</span></li>
+      <li data-s="gnss"><span>هوائي GNSS</span><span class="n">IP67</span></li>
+      <li data-s="comms"><span>الاتصال</span><span class="n">IP67</span></li>
+      <li data-s="bay"><span>رطوبة حجرة الحاسوب</span><span class="n" id="rh">18%</span></li>
+      <li data-s="gland"><span>منافذ الكابلات</span><span>جافة</span></li>
+    </ul>
+  </section>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const root=document.documentElement;root.lang='ar';root.dir='rtl';
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const app=$('#app');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+const cs=getComputedStyle(root);
+const K={};
+['abyss','hull','facet','chine','chine-2','fg','fg-2','fg-3','sea','sea-hi','target','trust','caution','against','map-deep','map-mid','map-shoal','map-land','map-coast','map-iso','map-sound'].forEach(n=>{K[n]=cs.getPropertyValue('--'+n).trim();});
+const FN='"B612 Mono", Consolas, monospace', FT='"Readex Pro", Tahoma, sans-serif';
+const rgba=(hex,a)=>{const n=parseInt(hex.slice(1),16);return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')';};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const D2R=Math.PI/180;
+const pad=(n,l)=>String(n).padStart(l||2,'0');
+
+/* ---------- noise ---------- */
+const h2=(x,y)=>{let h=(Math.imul(x|0,374761393)+Math.imul(y|0,668265263))|0;h=Math.imul(h^(h>>>13),1274126177);h^=h>>>16;return (h>>>0)/4294967296;};
+const vn=(x,y)=>{const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,a=h2(xi,yi),b=h2(xi+1,yi),c=h2(xi,yi+1),d=h2(xi+1,yi+1),u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v;};
+const fbm=(x,y)=>.55*vn(x,y)+.3*vn(x*2.03+17.1,y*2.03+5.3)+.15*vn(x*4.1+3.7,y*4.1+11.9);
+const rng=seed=>{let s=(seed>>>0)||1;return()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296;};};
+const strSeed=str=>{let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;};
+const hex3=c=>{const n=parseInt(c.slice(1),16);return[n>>16&255,n>>8&255,n&255];};
+function makeLut(stops){const out=new Uint8ClampedArray(768);for(let i=0;i<256;i++){const v=i/255;let j=0;while(j<stops.length-2&&v>stops[j+1][0])j++;const a=stops[j],b=stops[j+1],f=clamp((v-a[0])/(b[0]-a[0]),0,1),ca=hex3(a[1]),cb=hex3(b[1]);for(let k=0;k<3;k++)out[i*3+k]=ca[k]+(cb[k]-ca[k])*f;}return out;}
+/* acoustic imagery ramp: the sea colour of B01's render, from black water to bright return */
+const SONAR=makeLut([[0,'#040b12'],[.16,'#08222b'],[.36,'#0f4a52'],[.58,'#27858a'],[.8,'#7fcfc4'],[1,'#effffb']]);
+function put(D,o,v){const i=clamp(Math.round(v*255),0,255)*3;D[o]=SONAR[i];D[o+1]=SONAR[i+1];D[o+2]=SONAR[i+2];D[o+3]=255;}
+
+function fit(id){const el=document.getElementById(id);if(!el)return null;const r=el.getBoundingClientRect();if(r.width<4||r.height<4)return null;const dpr=Math.min(2,window.devicePixelRatio||1);const W=Math.round(r.width*dpr),H=Math.round(r.height*dpr);if(el.width!==W||el.height!==H){el.width=W;el.height=H;}const ctx=el.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.direction='ltr';return{ctx:ctx,w:r.width,h:r.height};}
+
+/* ---------- scenario (simulated) ---------- */
+const LAT0=21.4852,LON0=39.0316,MLAT=110574,MLON=111320*Math.cos(LAT0*D2R);
+const ll=(x,y)=>[LAT0+y/MLAT,LON0+x/MLON];
+function dm(v,isLat){const a=Math.abs(v),d=Math.floor(a),m=(a-d)*60;return pad(d,isLat?2:3)+'°'+m.toFixed(3).padStart(6,'0')+'′'+(isLat?(v>=0?'N':'S'):(v>=0?'E':'W'));}
+const depthAt=(x,y)=>6+(1150-x)*0.009+1.2*Math.sin(y/260);
+const isoX=(D,y)=>1150-(D-6-1.2*Math.sin(y/260))/0.009;
+const coastX=y=>1250+90*Math.sin(y/330)+40*Math.sin(y/97);
+const AREA={x0:-700,x1:700,y0:-420},SP=60,NL=15,L0=9;
+const V_SHIP=2.1,RATE=3,LINE_T=(AREA.x1-AREA.x0)/(V_SHIP*RATE),TURN_T=14,START_OFF=(AREA.x1+262)/(V_SHIP*RATE);
+function shipPos(t){t+=START_OFF;const seg=LINE_T+TURN_T,total=seg*6;t=((t%total)+total)%total;const k=Math.floor(t/seg),tt=t-k*seg,line=L0+k,y=AREA.y0+line*SP,west=line%2===1,v=V_SHIP*RATE;
+  if(tt<LINE_T){const s=tt*v;return{x:west?AREA.x1-s:AREA.x0+s,y:y,line:line,frac:s/(AREA.x1-AREA.x0),turning:false};}
+  const p=(tt-LINE_T)/TURN_T,r=SP/2,cy=y+r;
+  if(west){const f=-Math.PI/2-p*Math.PI;return{x:AREA.x0+r*Math.cos(f),y:cy+r*Math.sin(f),line:line,frac:1,turning:true};}
+  const f=-Math.PI/2+p*Math.PI;return{x:AREA.x1+r*Math.cos(f),y:cy+r*Math.sin(f),line:line,frac:1,turning:true};}
+function ship(t){const a=shipPos(t),b=shipPos(t+0.2);a.hdg=(Math.atan2(b.x-a.x,b.y-a.y)/D2R+360)%360;return a;}
+const FENCE=[[-1050,-680],[1000,-680],[1060,-150],[1000,680],[-1050,680]];
+const KEEP=[[720,-680],[1000,-680],[1030,-380],[770,-330]];
+const AIS=[
+  {name:'CORAL BAY',mmsi:'403118250',type:'سفينة بضائع',x:-1500,y:860,vx:5.6,vy:0},
+  {name:'HAMOUR 2',mmsi:'403551902',type:'قاطرة',x:1100,y:770,vx:-3.1,vy:0},
+  {name:'DHOW 114',mmsi:'403700114',type:'قارب صيد',x:-900,y:-875,vx:1.3,vy:0}];
+function aisPos(o,t){let x=o.x+o.vx*t*RATE;x=((x+1700)%3400+3400)%3400-1700;return{x:x,y:o.y};}
+function darkPos(t){const w=0.0254,ph=t*w+2.2;return{x:-1265+170*Math.cos(ph),y:385+95*Math.sin(ph),vx:-170*Math.sin(ph)*w/RATE,vy:95*Math.cos(ph)*w/RATE};}
+
+const PASS_HDG=[90,0,45];
+const NOW0=Date.now(),T0=performance.now();
+const ALERTS=[
+{id:'TGT-0417',cls:'لغم مربوط محتمل',kind:'moored',conf:94,ci:3,pri:1,state:'new',age:4.2,last:3,x:-180,y:95,passes:[1,1,1],sig:[2,2,2,2],
+ geo:{depth:11.8,seabed:18.2,has:6.4,gap:2.1,slen:4.6,watch:.6,cep:1.8,anom:.88},
+ sway:[[.42,.31],[-.36,.43],[.11,-.52]],
+ fish:[[-6.2,4.6,.3],[-5.3,5.4,.26],[-6.9,5.8,.22],[-5.8,3.9,.2],[-6.6,4.1,.18]],
+ legs:[{a:0,done:1},{a:45,done:1}],base:12,
+ factors:[
+  {k:'shape',g:'wc',t:'الشكل',ev:'صدى كروي منتظم، قطره 1.0 م واستدارته 0.93',p:28},
+  {k:'pos',g:'wc',t:'الموضع في عمود الماء',ev:'معلّق على ارتفاع 6.4 م فوق القاع، ويظهر أثر خطي يصله بالقاع',p:9},
+  {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل منفصل عن الصدى بمسافة 2.1 م وطوله 4.6 م، أي أن الجسم لا يلامس القاع',p:18},
+  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'لم يكن في مسح الأساس لهذه الخلية، ودرجة شذوذه 0.88 مقارنة بخلفية المنطقة',p:12},
+  {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'يتحرك داخل دائرة نصف قطرها 0.6 م حول نقطة ثابتة، بدورة 7.8 ث، في 3 تمريرات',p:17},
+  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في 3 من 3 تمريرات بالاتجاهات 090° و000° و045°',p:6},
+  {k:'counter',g:'counter',t:'نشاط حيوي قريب',ev:'سرب أسماك على بعد 6 م قد يحاكي نمط التأرجح',p:-8,ov:{on:'wc',r:[-7.6,3.2,-4.6,6.4],label:'سرب أسماك'}}],
+ alts:[['لغم مربوط محتمل',94],['عوّامة صيد',3],['سرب أسماك',2],['حطام',1]],
+ swayNote:'ثلاث تمريرات داخل دائرة نصف قطرها 0.6 م حول نقطة الارتساء. الأرقام ترتيب التمريرات.',
+ consNote:'القرار يصدر عند اتفاق أغلب الزوايا، واتفقت الثلاث.',
+ sum:'يرجّح النظام أنه لغم مربوط لأن صداه كروي منتظم ومعلّق على ارتفاع 6.4 م فوق القاع، وظله منفصل عن القاع، ويتأرجح حول نقطة ثابتة عبر ثلاث تمريرات، ولم يكن موجودًا في مسح الأساس. سرب أسماك قريب يخفّض الثقة قليلًا.'},
+{id:'TGT-0415',cls:'لغم قاعي محتمل',kind:'bottom',conf:81,ci:6,pri:1,state:'review',age:23.5,last:9,x:250,y:-160,passes:[1,1,null],sig:[2,2,0,2],
+ geo:{seabed:19.6,has:.6,slen:1.4,cep:1.5,anom:.81},
+ sway:[[.02,.01],[-.01,.02]],rocks:[[-9,-5,.5],[-7.4,-3.6,.4],[-10,-3.2,.35]],
+ legs:[{a:0,done:1},{a:45,done:0}],base:12,
+ factors:[
+  {k:'shape',g:'sb',t:'الشكل',ev:'جسم أسطواني منتظم بطول 1.9 م على القاع',p:28},
+  {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل ملاصق حاد الحواف بطول 1.4 م، يقدّر ارتفاع الجسم بنحو 0.6 م',p:22},
+  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'جديد مقارنة بمسح الأساس، ودرجة شذوذه 0.81',p:16},
+  {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'ثابت عبر تمريرتين، وهذا متوقع لجسم قاعي غير مربوط',p:0},
+  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في تمريرتين من 3، والثالثة بانتظار التنفيذ',p:7},
+  {k:'counter',g:'counter',t:'قاع صخري متقطع',ev:'صخور متفرقة في الخلية نفسها تشبه هذا الصدى أحيانًا',p:-4,ov:{on:'sb',r:[-11,-6.2,-6.2,-2.2],label:'صخور'}}],
+ alts:[['لغم قاعي محتمل',81],['صخرة',11],['حطام',8]],
+ swayNote:'المواضع متطابقة تقريبًا، فالجسم ثابت ولا يدل على ارتساء.',
+ consNote:'اتفقت تمريرتان، والثالثة بزاوية 045° لم تُنفّذ بعد.',
+ sum:'يرجّح النظام أنه لغم قاعي لأن شكله أسطواني منتظم وظله ملاصق حاد الحواف، وهو جديد مقارنة بمسح الأساس. التمريرة الثالثة لم تُنفّذ بعد، والقاع الصخري المحيط يخفّض الثقة قليلًا.'},
+{id:'TGT-0421',cls:'هدف في عمود الماء',kind:'partial',conf:67,ci:11,pri:2,state:'pending',age:1.1,last:0,x:-320,y:135,passes:[1,null,null],sig:[1,0,2,1],
+ geo:{depth:12.1,seabed:19,has:6.9,cep:3.2,anom:.62},
+ sway:[[.3,.1],[-.2,.35]],
+ fish:[[4.2,11.2,.2],[5.6,12.4,.18],[6.4,10.6,.16],[4.9,12.9,.15]],
+ legs:[{a:0,done:0},{a:45,done:0}],base:12,
+ factors:[
+  {k:'shape',g:'wc',t:'الشكل',ev:'صدى مستدير، لكن حوافه غير مكتملة من زاوية واحدة',p:20},
+  {k:'pos',g:'wc',t:'الموضع في عمود الماء',ev:'على عمق 12.1 م، ولم يظهر أثر ارتساء بعد',p:7},
+  {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'لا ظل واضح من زاوية المسح الحالية',p:0},
+  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'جديد مقارنة بالأساس، ودرجة شذوذه 0.62',p:10},
+  {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'إزاحة 0.5 م بين رشقتين متتاليتين، وتحتاج تمريرة أخرى للتأكيد',p:18},
+  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد من اتجاه واحد فقط، والقرار معلّق حتى تتفق تمريرتان إضافيتان',p:2},
+  {k:'counter',g:'counter',t:'أصداء حيوية متفرقة',ev:'أصداء صغيرة في الطبقة نفسها قد تكون أسماكًا',p:-2,ov:{on:'wc',r:[3.4,9.8,7.2,13.6],label:'أصداء متفرقة'}}],
+ alts:[['لغم مربوط محتمل',67],['سرب أسماك',21],['عوّامة',12]],
+ swayNote:'رشقتان فقط حتى الآن، والنمط غير مؤكد.',
+ consNote:'رُصد من اتجاه واحد. التمريرتان المتقاطعتان مجدولتان.',
+ sum:'هدف في عمود الماء رُصد من اتجاه واحد فقط. تحرّكه بين رشقتين يشبه التأرجح، لكن القرار معلّق حتى تتفق تمريرتان إضافيتان.'},
+{id:'TGT-0419',cls:'جسم مجهول',kind:'unknown',conf:52,ci:14,pri:2,state:'review',age:41,last:12,x:430,y:40,passes:[1,1,null],sig:[1,1,0,2],
+ geo:{seabed:16.9,has:.4,cep:2,anom:.79},
+ sway:[[.01,0],[0,.02]],
+ legs:[{a:0,done:1}],base:12,
+ factors:[
+  {k:'shape',g:'sb',t:'الشكل',ev:'شكل غير منتظم أبعاده 1.3 × 0.8 م',p:10},
+  {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل ملاصق قصير، والجسم منخفض',p:8},
+  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'يختلف بوضوح عن خلفية الخلية، ودرجة شذوذه 0.79',p:16},
+  {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'لا حركة بين تمريرتين',p:0},
+  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في تمريرتين من 3',p:6}],
+ alts:[['شبيه بلغم',52],['صخرة',30],['حطام',18]],
+ swayNote:'ثابت في مكانه عبر التمريرتين.',
+ consNote:'اتفقت تمريرتان، والثالثة لم تُنفّذ.',
+ sum:'جسم غير منتظم الشكل يختلف بوضوح عن خلفية المنطقة، لكنه ثابت ولا يحمل علامات الارتساء. يحتاج تحققًا بصريًا قبل أي قرار.'},
+{id:'TGT-0412',cls:'حطام على الأرجح',kind:'debris',conf:38,ci:9,pri:3,state:'review',age:58,last:20,x:520,y:-300,passes:[1,1,1],sig:[1,1,0,0],
+ geo:{seabed:14.8,has:1.1,cep:1.6,anom:.31},
+ sway:[[0,0],[.01,-.01],[0,.01]],
+ legs:[{a:0,done:1},{a:45,done:1}],base:12,
+ factors:[
+  {k:'shape',g:'sb',t:'الشكل',ev:'حواف مستقيمة متعددة وأبعاد 4.2 × 1.1 م، أكبر من نمط الألغام',p:18},
+  {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل ملاصق ممتد وغير منتظم',p:10},
+  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'موجود جزئيًا في مسح الأساس، وتغيّر طفيف فقط',p:4},
+  {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'ثابت في 3 تمريرات',p:0},
+  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'التمريرات الثلاث متسقة على الشكل نفسه',p:0},
+  {k:'counter',g:'counter',t:'تطابق مع حطام مسجّل',ev:'يطابق حطامًا في سجل المنطقة بدرجة 0.71',p:-6}],
+ alts:[['حطام',58],['شبيه بلغم',38],['صخرة',4]],
+ swayNote:'ثابت في 3 تمريرات.',
+ consNote:'الزوايا الثلاث متسقة على أنه جسم ممتد.',
+ sum:'على الأرجح حطام: أبعاده أكبر من نمط الألغام وحوافه مستقيمة متعددة، ويطابق حطامًا مسجّلًا في المنطقة. الظل الممتد يُبقي احتمالًا منخفضًا لجسم شبيه بلغم.'},
+{id:'TGT-0409',cls:'سرب أسماك على الأرجح',kind:'bio',conf:14,ci:5,pri:3,state:'new',age:12,last:6,x:-560,y:-250,passes:[1,1,0],sig:[0,0,0,0],
+ geo:{depth:8.5,seabed:20.4,has:0,cep:5},
+ sway:[[2.8,1.5],[-3.4,4.1],[4.6,-2.2]],
+ fish:[[-3,7.5,.35],[-2.2,8.4,.3],[-1,7.1,.25],[.5,9.2,.35],[1.6,8.1,.3],[2.8,9.6,.28],[-.4,10.1,.22],[3.5,7.4,.25]],
+ legs:[{a:0,done:1}],base:12,
+ factors:[
+  {k:'shape',g:'wc',t:'الشكل',ev:'أصداء متفرقة غير متماسكة',p:2},
+  {k:'pos',g:'wc',t:'الموضع في عمود الماء',ev:'على عمق 7 إلى 10 م',p:6},
+  {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'لا ظل على القاع',p:0},
+  {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'حركة عشوائية تتجاوز 4 م بين التمريرات، ولا تدور حول نقطة ثابتة',p:0},
+  {k:'counter',g:'counter',t:'نمط حيوي',ev:'كثافة الأصداء وحركتها تطابق نشاطًا حيويًا موسميًا في المنطقة',p:-6,ov:{on:'wc',r:[-3.8,6.4,4.2,10.8],label:'نمط حيوي'}}],
+ alts:[['سرب أسماك',83],['شبيه بلغم',14],['ضجيج',3]],
+ swayNote:'المواضع متباعدة وتتجاوز المقياس، فالحركة عشوائية.',
+ consNote:'رُصد في تمريرتين واختفى في الثالثة، وهذا سلوك حيوي.',
+ sum:'على الأرجح سرب أسماك: أصداء متفرقة غير متماسكة تتحرك عشوائيًا بين التمريرات، بلا ظل على القاع.'}
+];
+const byId={};ALERTS.forEach(a=>{a.t0=NOW0-a.age*60000-(strSeed(a.id)%997);byId[a.id]=a;});
+
+const S={mode:'watch',sel:null,hl:null,pin:null,filter:'all',layers:{radar:true,ais:true,thermal:true,fence:true,survey:true,targets:true},hits:[],t:0,mapView:null};
+const STATE={new:'جديد',review:'قيد المراجعة',pending:'بانتظار تمريرة',handed:'سُلّم للتحقق',rejected:'مرفوض'};
+const PRI=['','أولوية أولى','أولوية ثانية','أولوية ثالثة'];
+const fmtUTC=ms=>{const d=new Date(ms);return pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds())+'.'+pad(d.getUTCMilliseconds(),3);};
+const fmtDate=ms=>{const d=new Date(ms);return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());};
+function ago(a){const m=(Date.now()-a.t0)/60000;if(m<1)return 'الآن';if(m<60)return 'منذ '+Math.floor(m)+' د';return 'منذ '+Math.floor(m/60)+' س';}
+function hashOf(id){let out='',s=strSeed(id);for(let i=0;i<8;i++){s=(Math.imul(s,1664525)+1013904223)>>>0;out+=s.toString(16).padStart(8,'0');}return out;}
+
+/* ---------- queue ---------- */
+const GLYPH={shape:'<circle cx="6.5" cy="6.5" r="4.6"/>',shadow:'<circle cx="4.2" cy="6.5" r="2.7"/><ellipse cx="9.9" cy="6.5" rx="2.8" ry="1.5"/>',sway:'<path d="M6.5 1 L9.6 8.4" fill="none"/><circle cx="9.9" cy="9.4" r="2.3"/><path d="M2.6 10.6 Q6.5 13.2 11.6 10.2" fill="none"/>',anomaly:'<path d="M6.5 1.4 L11.6 6.5 L6.5 11.6 L1.4 6.5 Z"/>'};
+const GK=['shape','shadow','sway','anomaly'],GNAME={shape:'الشكل',shadow:'الظل',sway:'التأرجح',anomaly:'الشذوذ'},LVL=['غير موجود','جزئي','قوي'];
+function sigHTML(sig){return '<span class="sig">'+GK.map((k,i)=>'<svg class="g'+sig[i]+'" viewBox="0 0 13 13" aria-hidden="true">'+GLYPH[k]+'</svg>').join('')+'<span class="sr">'+GK.map((k,i)=>GNAME[k]+': '+LVL[sig[i]]).join('، ')+'</span></span>';}
+function depthTxt(a){return a.geo.depth!=null?'عمق <span class="n">'+a.geo.depth.toFixed(1)+'</span> م':'على القاع <span class="n">'+a.geo.seabed.toFixed(1)+'</span> م';}
+function renderQueue(){
+  const list=ALERTS.filter(a=>S.filter==='all'||(S.filter==='p1'&&a.pri===1)||(S.filter==='pending'&&a.state==='pending')).sort((a,b)=>b.conf-a.conf);
+  const ol=$('#qlist');
+  if(!list.length){ol.innerHTML='<li class="qempty">لا تنبيهات ضمن هذه التصفية. اختر «الكل» لعرض كل الأهداف.</li>';return;}
+  ol.innerHTML=list.map(a=>{const det=a.passes.filter(p=>p===1).length;
+    return '<li><button class="qi'+(a.state==='rejected'?' rej':'')+'" data-id="'+a.id+'"'+(S.sel===a.id?' aria-current="true"':'')+'>'+
+      '<span class="qconf p'+a.pri+'"><span class="n">'+a.conf+'</span><small>%</small></span>'+
+      '<span class="qb"><span class="qtop"><span class="n">'+a.id+'</span><span class="st st-'+a.state+'">'+STATE[a.state]+'</span><span class="qage" data-age="'+a.id+'">'+ago(a)+'</span></span>'+
+      '<span class="qcls">'+a.cls+'</span>'+
+      '<span class="qmeta">'+sigHTML(a.sig)+'<span><span class="n">'+det+'/'+a.passes.length+'</span> تمريرات</span><span>'+depthTxt(a)+'</span></span></span></button></li>';}).join('');
+}
+function renderThreat(){$('#threat-n').textContent=ALERTS.filter(a=>a.pri===1&&(a.state==='new'||a.state==='review'||a.state==='pending')).length;}
+$('#qlist').addEventListener('click',e=>{const b=e.target.closest('.qi');if(b)openDossier(b.dataset.id);});
+$$('[data-f]').forEach(b=>b.addEventListener('click',()=>{S.filter=b.dataset.f;$$('[data-f]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderQueue();}));
+
+/* ---------- modes ---------- */
+function setMode(m){
+  if(m==='inv'&&!S.sel){const top=ALERTS.filter(a=>a.state!=='rejected').sort((a,b)=>b.conf-a.conf)[0];if(top){openDossier(top.id);return;}}
+  S.mode=m;app.dataset.mode=m;
+  $('#dossier').hidden=m!=='inv';$('#map-panel').hidden=m==='inv';$('#sensing').hidden=m==='inv';
+  $('#tab-watch').setAttribute('aria-selected',String(m==='watch'));$('#tab-inv').setAttribute('aria-selected',String(m==='inv'));
+  if(m==='watch'){S.hl=null;S.pin=null;$('#reasons').hidden=true;}
+}
+$('#tab-watch').addEventListener('click',()=>setMode('watch'));
+$('#tab-inv').addEventListener('click',()=>setMode('inv'));
+$('#back').addEventListener('click',()=>{const id=S.sel;setMode('watch');const b=$('.qi[data-id="'+id+'"]');if(b)b.focus();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.mode==='inv'){if(!$('#reasons').hidden){$('#reasons').hidden=true;return;}setMode('watch');}});
+
+/* ---------- handover package ---------- */
+function openDossier(id){
+  const a=byId[id];if(!a)return;
+  S.sel=id;S.hl=null;S.pin=null;
+  setMode('inv');
+  $('#d-id').textContent=a.id;
+  const pri=$('#d-pri');pri.textContent=PRI[a.pri];pri.className='tag'+(a.pri===1?' pri1':'');
+  $('#d-title').textContent=a.cls;$('#d-sum').textContent=a.sum;
+  $('#d-conf').textContent=a.conf;$('#d-ci').textContent='±'+a.ci;
+  renderLedger(a);renderAlts(a);renderLoc(a);renderTime(a);renderTrust(a);
+  $('#sway-note').textContent=a.swayNote;$('#cons-note').textContent=a.consNote;
+  renderQueue();
+  $('#dossier').scrollTop=0;
+  requestAnimationFrame(()=>drawDossier());
+}
+function refreshState(a){const st=$('#d-state');st.textContent=STATE[a.state];st.className='tag';
+  const closed=a.state==='handed'||a.state==='rejected';$('#act-approve').disabled=closed;$('#act-reject').disabled=closed;$('#act-cross').disabled=a.state==='rejected';}
+const GROUPS=[['wc','مسار عمود الماء'],['sb','مسار القاع'],['time','البصمة الزمنية'],['angle','الزوايا المتعددة'],['counter','أدلة معاكسة']];
+function renderLedger(a){
+  let html='';
+  GROUPS.forEach(g=>{const fs=a.factors.filter(f=>f.g===g[0]);if(!fs.length)return;
+    html+='<li class="lg"><h4>'+g[1]+'</h4><ul>'+fs.map(f=>{const cls='lf'+(f.p<0?' neg':'')+(f.p===0?' zero':'');const sign=f.p>0?'+':f.p<0?'−':'';
+      return '<li><button class="'+cls+'" data-k="'+f.k+'" aria-pressed="false"><span class="nm">'+f.t+'</span><span class="pt n">'+sign+Math.abs(f.p)+'</span><span class="ev2">'+f.ev+'</span><span class="lb" aria-hidden="true"><i style="width:'+Math.round(Math.abs(f.p)/30*100)+'%"></i></span></button></li>';}).join('')+'</ul></li>';});
+  $('#ledger').innerHTML=html;
+  const pos=a.factors.filter(f=>f.p>0).reduce((s,f)=>s+f.p,0),neg=a.factors.filter(f=>f.p<0).reduce((s,f)=>s-f.p,0);
+  $('#ltotal').innerHTML='أساس المنطقة <span class="n">'+a.base+'</span> + الأدلة الداعمة <span class="n">'+pos+'</span> − الأدلة المعاكسة <span class="n">'+neg+'</span> = <strong class="n">'+a.conf+'</strong> نقطة ثقة';
+}
+function renderAlts(a){$('#alts').innerHTML=a.alts.map(x=>'<li><span>'+x[0]+'</span><span class="n">'+x[1]+'%</span><span class="ab" aria-hidden="true"><i style="width:'+x[1]+'%"></i></span></li>').join('');}
+function renderLoc(a){const p=ll(a.x,a.y),G=a.geo;const rows=[['خط العرض','<span class="n">'+dm(p[0],true)+'</span>'],['خط الطول','<span class="n">'+dm(p[1],false)+'</span>'],[G.depth!=null?'عمق الهدف':'الموضع',G.depth!=null?'<span class="n">'+G.depth.toFixed(1)+'</span> م':'على القاع'],['عمق القاع','<span class="n">'+G.seabed.toFixed(1)+'</span> م'],['دقة الموقع','<span class="n">CEP95 '+G.cep.toFixed(1)+'</span> م'],['تحقق الموقع','مطابق لحساب IMU، الفرق <span class="n">0.4</span> م']];$('#d-loc').innerHTML=rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('');}
+function renderTime(a){const rows=[['أول رصد','<span class="n">'+fmtUTC(a.t0)+'</span> UTC'],['التاريخ','<span class="n">'+fmtDate(a.t0)+'</span>'],['آخر تمريرة','<span class="n">'+fmtUTC(a.t0+a.last*60000+412)+'</span> UTC'],['مصدر الزمن','GNSS مع نبضة PPS، الإزاحة <span class="n">+18 ns</span>'],['محاذاة المستشعرات','أقل من <span class="n">1 ms</span> بين السونار والملاحة']];$('#d-time').innerHTML=rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('');}
+function renderTrust(a){const hs=hashOf(a.id);const el=$('#d-hash');el.textContent=hs.slice(0,8)+'…'+hs.slice(-8);el.title=hs;renderCustody(a);refreshState(a);}
+function renderCustody(a){const t0=a.t0,closed=a.state==='handed'||a.state==='rejected';
+  const steps=[['الرصد على متن B01 بواسطة الحاسوب الطرفي',t0,'done'],['توقيع الحزمة على المركبة',t0+18,'done'],['النقل عبر الرابط المشفر، راديو UHF',t0+742,'done'],['الاستلام في المركز والتحقق من التوقيع',t0+961,'done'],['مراجعة المحلل',closed?a.tDecide:null,closed?'done':'now'],[a.state==='rejected'?'الإغلاق كإنذار كاذب: '+a.reason:'التسليم لفريق التحقق',closed?a.tDecide+240:null,closed?'done':'todo']];
+  $('#custody').innerHTML=steps.map((s,i)=>'<li class="'+s[2]+'"><span class="k n">'+(i+1)+'</span><span>'+s[0]+(s[2]==='now'?'، قيد التنفيذ':'')+'</span><span class="ts n">'+(s[1]?fmtUTC(s[1]):'--:--:--')+'</span></li>').join('');}
+
+const ledgerEl=$('#ledger');
+function setHl(k){if(S.hl===k)return;S.hl=k;$$('.lf').forEach(b=>b.classList.toggle('hl',b.dataset.k===k));$('#box-sway').classList.toggle('hl',k==='sway');$('#box-cons').classList.toggle('hl',k==='consensus');drawDossier();}
+ledgerEl.addEventListener('mouseover',e=>{const b=e.target.closest('.lf');if(b)setHl(b.dataset.k);});
+ledgerEl.addEventListener('mouseleave',()=>setHl(S.pin));
+ledgerEl.addEventListener('focusin',e=>{const b=e.target.closest('.lf');if(b)setHl(b.dataset.k);});
+ledgerEl.addEventListener('focusout',()=>setHl(S.pin));
+ledgerEl.addEventListener('click',e=>{const b=e.target.closest('.lf');if(!b)return;const k=b.dataset.k;S.pin=S.pin===k?null:k;$$('.lf').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.k===S.pin)));setHl(S.pin===null?k:S.pin);});
+
+/* ---------- actions ---------- */
+let toastTimer=0;
+function toast(msg){const el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.hidden=true;},4600);}
+function afterAction(a){renderQueue();renderThreat();renderCustody(a);refreshState(a);drawMini(a);}
+$('#act-approve').addEventListener('click',()=>{const a=byId[S.sel];if(!a||a.state==='handed'||a.state==='rejected')return;a.state='handed';a.tDecide=Date.now();afterAction(a);toast('سُلّمت حزمة '+a.id+' لفريق التحقق، وأُضيف الاعتماد إلى سلسلة الحيازة.');});
+$('#act-cross').addEventListener('click',()=>{const a=byId[S.sel];if(!a)return;const used=a.legs.map(l=>l.a);const cand=[135,90,0,45].find(x=>used.indexOf(x)<0);if(cand===undefined){toast('كل الاتجاهات المتاحة مجدولة حول '+a.id+'.');return;}a.legs.push({a:cand,done:0,req:1});if(a.state==='new')a.state='pending';afterAction(a);toast('أُضيفت تمريرة متقاطعة باتجاه '+pad(cand,3)+'° حول '+a.id+'، وستنفذها B01 بعد الخط الحالي.');});
+$('#act-reject').addEventListener('click',()=>{const r=$('#reasons');r.hidden=false;const f=r.querySelector('button');if(f)f.focus();});
+$('#reasons').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('#reasons').hidden=true;const r=b.dataset.r;if(!r)return;const a=byId[S.sel];a.state='rejected';a.reason=r;a.tDecide=Date.now();afterAction(a);toast('رُفض '+a.id+' كإنذار كاذب ('+r+')، وأُرسل السبب إلى النموذج للتعلّم منه.');});
+$('#copy-hash').addEventListener('click',()=>{const a=byId[S.sel];if(!a)return;const full=hashOf(a.id);const fallback=()=>{const el=$('#d-hash');el.textContent=full;const rg=document.createRange();rg.selectNodeContents(el);const sel=getSelection();sel.removeAllRanges();sel.addRange(rg);toast('البصمة الكاملة محددة، انسخها بلوحة المفاتيح.');};
+  try{navigator.clipboard.writeText(full).then(()=>toast('نُسخت البصمة الكاملة لحزمة '+a.id+'.'),fallback);}catch(err){fallback();}});
+$$('.pip').forEach(b=>b.addEventListener('click',()=>{const p=document.getElementById(b.dataset.go);if(!p)return;p.classList.remove('flash');void p.offsetWidth;p.classList.add('flash');p.focus();}));
+$$('[data-layer]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.layer;S.layers[k]=!S.layers[k];b.setAttribute('aria-pressed',String(S.layers[k]));if(k==='thermal')$('#thermal-fig').hidden=!S.layers.thermal;}));
+$$('.seals li').forEach(li=>{li.addEventListener('mouseenter',()=>{const s=$('.spot[data-s="'+li.dataset.s+'"]');if(s)s.classList.add('on');});li.addEventListener('mouseleave',()=>{$$('.spot.on').forEach(x=>x.classList.remove('on'));});});
+
+/* ---------- fused surface picture ---------- */
+let trail=[],lastTrailT=-1;
+const RAD={k:-1,dots:[],hist:[]};
+function radarTick(t,s){const k=Math.floor(t/2.5);if(k===RAD.k)return;RAD.k=k;
+  AIS.forEach(o=>{const p=aisPos(o,t);RAD.dots.push({x:p.x+(Math.random()-.5)*14,y:p.y+(Math.random()-.5)*14,k:k});});
+  const d=darkPos(t);RAD.dots.push({x:d.x+(Math.random()-.5)*10,y:d.y+(Math.random()-.5)*10,k:k,dark:1});RAD.hist.push({x:d.x,y:d.y});if(RAD.hist.length>9)RAD.hist.shift();
+  for(let i=0;i<6;i++){const an=Math.random()*Math.PI*2,r=70+Math.random()*240;RAD.dots.push({x:s.x+Math.cos(an)*r,y:s.y+Math.sin(an)*r,k:k,cl:1});}
+  RAD.dots=RAD.dots.filter(p=>p.k>k-4);}
+function polyPath(ctx,pts,X,Y){ctx.beginPath();pts.forEach((p,i)=>{if(i)ctx.lineTo(X(p[0]),Y(p[1]));else ctx.moveTo(X(p[0]),Y(p[1]));});ctx.closePath();}
+function drawHull(ctx,x,y,a,L){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.beginPath();ctx.moveTo(0,-L*.6);ctx.lineTo(L*.2,-L*.12);ctx.lineTo(L*.17,L*.4);ctx.lineTo(-L*.17,L*.4);ctx.lineTo(-L*.2,-L*.12);ctx.closePath();ctx.fillStyle=K.fg;ctx.fill();ctx.strokeStyle=K.abyss;ctx.lineWidth=1.2;ctx.stroke();ctx.beginPath();ctx.moveTo(0,-L*.6);ctx.lineTo(0,L*.4);ctx.strokeStyle=rgba(K.abyss,.6);ctx.lineWidth=.8;ctx.stroke();ctx.restore();}
+function drawMap(t){
+  const c=fit('map');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h,L=S.layers;
+  const sc=Math.min(w/3150,h/2100),X=x=>w/2+x*sc,Y=y=>h/2-y*sc;
+  const s=ship(t);radarTick(t,s);S.hits=[];S.mapView={sc:sc,w:w,h:h};
+  const seg=(x0,y0,x1,y1)=>{ctx.beginPath();ctx.moveTo(X(x0),Y(y0));ctx.lineTo(X(x1),Y(y1));ctx.stroke();};
+  ctx.setLineDash([]);ctx.fillStyle=K['map-deep'];ctx.fillRect(0,0,w,h);
+  const yTop=(h/2)/sc+60,yBot=-yTop;
+  const curvePath=fx=>{ctx.beginPath();let first=true;for(let y=yBot;y<=yTop;y+=20){const px=X(fx(y)),py=Y(y);if(first){ctx.moveTo(px,py);first=false;}else ctx.lineTo(px,py);}};
+  const eastFill=(fx,col)=>{curvePath(fx);ctx.lineTo(w+5,Y(yTop));ctx.lineTo(w+5,Y(yBot));ctx.closePath();ctx.fillStyle=col;ctx.fill();};
+  eastFill(y=>isoX(20,y),K['map-mid']);eastFill(y=>isoX(10,y),K['map-shoal']);eastFill(coastX,K['map-land']);
+  curvePath(coastX);ctx.strokeStyle=K['map-coast'];ctx.lineWidth=1.2;ctx.stroke();
+  ctx.font='italic 10px '+FN;ctx.textBaseline='middle';ctx.textAlign='left';
+  [10,15,20,25].forEach(D=>{curvePath(y=>isoX(D,y));ctx.strokeStyle=K['map-iso'];ctx.lineWidth=1;ctx.stroke();const ly=-820+D*10;ctx.fillStyle=K['map-sound'];ctx.fillText(String(D),X(isoX(D,ly))+5,Y(ly));});
+  ctx.textAlign='center';
+  for(let gx=-1450;gx<=1450;gx+=290)for(let gy=-1000;gy<=1000;gy+=250){const jx=gx+(h2(gx,gy)-.5)*130,jy=gy+(h2(gy+7,gx)-.5)*110;if(jx>coastX(jy)-50)continue;if(jx>AREA.x0-70&&jx<AREA.x1+70&&jy>AREA.y0-70&&jy<AREA.y0+(NL-1)*SP+70)continue;const py=Y(jy);if(py<8||py>h-8)continue;ctx.fillStyle=K['map-sound'];ctx.fillText(depthAt(jx,jy).toFixed(1),X(jx),py);}
+  if(L.fence){
+    ctx.save();polyPath(ctx,KEEP,X,Y);ctx.clip();ctx.strokeStyle=rgba(K.caution,.22);ctx.lineWidth=1;const bx0=X(700),bx1=X(1060),by0=Y(-300),by1=Y(-700),hh=by1-by0;for(let i=-hh;i<bx1-bx0+hh;i+=7){ctx.beginPath();ctx.moveTo(bx0+i,by0);ctx.lineTo(bx0+i-hh,by1);ctx.stroke();}ctx.restore();
+    polyPath(ctx,KEEP,X,Y);ctx.strokeStyle=rgba(K.caution,.7);ctx.setLineDash([4,3]);ctx.lineWidth=1;ctx.stroke();
+    polyPath(ctx,FENCE,X,Y);ctx.strokeStyle=rgba(K['fg-2'],.55);ctx.setLineDash([8,5]);ctx.lineWidth=1.2;ctx.stroke();ctx.setLineDash([]);
+    ctx.font='11px '+FT;ctx.direction='rtl';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle=rgba(K.caution,.9);ctx.fillText('محظور: كابل بحري',X(1000)-4,Y(-680)-6);ctx.fillStyle=K['fg-3'];ctx.fillText('حد منطقة العمل',X(1000)-4,Y(680)-6);ctx.direction='ltr';
+  }
+  if(L.survey){
+    for(let i=0;i<NL;i++){const y=AREA.y0+i*SP;let a0=null,a1=null;
+      if(i<s.line||(i===s.line&&s.turning)){a0=AREA.x0;a1=AREA.x1;}else if(i===s.line){if(i%2===1){a0=s.x;a1=AREA.x1;}else{a0=AREA.x0;a1=s.x;}}
+      ctx.setLineDash([3,5]);ctx.strokeStyle=rgba(K['fg-3'],.4);ctx.lineWidth=1;seg(AREA.x0,y,AREA.x1,y);ctx.setLineDash([]);
+      if(a0!==null&&a1>a0){ctx.fillStyle=rgba(K.sea,.1);ctx.fillRect(X(a0),Y(y+30),(a1-a0)*sc,60*sc);ctx.strokeStyle=rgba(K.sea,.65);seg(a0,y,a1,y);}}
+  }
+  if(L.targets){ALERTS.forEach(a=>{if(a.state==='rejected')return;a.legs.forEach(l=>{const r=95,an=l.a*D2R,dx=Math.sin(an)*r,dy=Math.cos(an)*r;ctx.setLineDash(l.done?[]:[5,4]);ctx.strokeStyle=rgba(K.target,l.done?.5:.85);ctx.lineWidth=l.req?1.8:1.2;seg(a.x-dx,a.y-dy,a.x+dx,a.y+dy);});});ctx.setLineDash([]);}
+  if(lastTrailT<0||t-lastTrailT>0.8){const lp=trail[trail.length-1];if(lp&&Math.hypot(lp.x-s.x,lp.y-s.y)>150)trail=[];trail.push({x:s.x,y:s.y});if(trail.length>260)trail.shift();lastTrailT=t;}
+  ctx.beginPath();trail.forEach((p,i)=>{if(i)ctx.lineTo(X(p.x),Y(p.y));else ctx.moveTo(X(p.x),Y(p.y));});ctx.lineTo(X(s.x),Y(s.y));ctx.strokeStyle=rgba(K['sea-hi'],.55);ctx.lineWidth=1.5;ctx.stroke();
+  const d=darkPos(t),brg=Math.atan2(d.x-s.x,d.y-s.y),range=Math.hypot(d.x-s.x,d.y-s.y);
+  if(L.thermal){const half=3.5*D2R,len=range+120;ctx.beginPath();ctx.moveTo(X(s.x),Y(s.y));ctx.lineTo(X(s.x+Math.sin(brg-half)*len),Y(s.y+Math.cos(brg-half)*len));ctx.lineTo(X(s.x+Math.sin(brg+half)*len),Y(s.y+Math.cos(brg+half)*len));ctx.closePath();ctx.fillStyle=rgba(K.fg,.05);ctx.fill();ctx.strokeStyle=rgba(K.fg,.14);ctx.lineWidth=1;ctx.stroke();}
+  ctx.setLineDash([2,4]);ctx.strokeStyle=rgba(K['fg-3'],.3);ctx.lineWidth=1;[500,1000].forEach(r=>{ctx.beginPath();ctx.arc(X(s.x),Y(s.y),r*sc,0,Math.PI*2);ctx.stroke();});ctx.setLineDash([]);
+  ctx.font='10px '+FN;ctx.fillStyle=rgba(K['fg-3'],.85);ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillText('500 m',X(s.x)+500*sc*.71+3,Y(s.y)-500*sc*.71);ctx.fillText('1 km',X(s.x)+1000*sc*.71+3,Y(s.y)-1000*sc*.71);
+  if(L.radar){RAD.dots.forEach(p=>{const al=Math.max(0,1-(RAD.k-p.k)/4);ctx.fillStyle=p.dark?rgba(K.caution,.8*al):rgba(K['fg-2'],(p.cl?.35:.6)*al);ctx.beginPath();ctx.arc(X(p.x),Y(p.y),p.cl?1.4:2,0,Math.PI*2);ctx.fill();});
+    ctx.fillStyle=rgba(K.caution,.45);RAD.hist.forEach(p=>{ctx.beginPath();ctx.arc(X(p.x),Y(p.y),1.3,0,Math.PI*2);ctx.fill();});}
+  if(L.ais){ctx.font='10px '+FN;ctx.textAlign='left';ctx.textBaseline='alphabetic';AIS.forEach(o=>{const p=aisPos(o,t),px=X(p.x),py=Y(p.y);if(px<-30||px>w+30||py<-30||py>h+30)return;const cog=Math.atan2(o.vx,o.vy);ctx.save();ctx.translate(px,py);ctx.rotate(cog);ctx.beginPath();ctx.moveTo(0,-7);ctx.lineTo(5,6);ctx.lineTo(-5,6);ctx.closePath();ctx.strokeStyle=K['fg-2'];ctx.lineWidth=1.3;ctx.stroke();ctx.beginPath();ctx.moveTo(0,-7);ctx.lineTo(0,-7-Math.hypot(o.vx,o.vy)*30*sc);ctx.stroke();ctx.restore();ctx.fillStyle=K['fg-2'];ctx.fillText(o.name,px+9,py+14);S.hits.push({x:px,y:py,r:12,kind:'ais',o:o});});}
+  if(L.radar||L.thermal){const px=X(d.x),py=Y(d.y);ctx.save();ctx.translate(px,py);ctx.rotate(Math.PI/4);ctx.fillStyle=rgba(K.caution,.22);ctx.fillRect(-5,-5,10,10);ctx.strokeStyle=K.caution;ctx.lineWidth=1.5;ctx.strokeRect(-5,-5,10,10);ctx.restore();
+    const vv=Math.atan2(d.vx,d.vy),vl=Math.hypot(d.vx,d.vy)*60*sc;ctx.strokeStyle=K.caution;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+Math.sin(vv)*vl,py-Math.cos(vv)*vl);ctx.stroke();
+    ctx.font='bold 11px '+FN;ctx.fillStyle=K.caution;ctx.textAlign='left';ctx.fillText('S-07',px+10,py-8);ctx.font='11px '+FT;ctx.direction='rtl';ctx.textAlign='right';ctx.fillText('بلا AIS',px-10,py-8);ctx.direction='ltr';
+    S.hits.push({x:px,y:py,r:14,kind:'dark'});}
+  if(L.targets){ALERTS.forEach(a=>{const px=X(a.x),py=Y(a.y),sel=S.sel===a.id,rej=a.state==='rejected',r=a.pri===1?5.5:a.pri===2?4.5:3.5;
+    if(a.pri===1&&!rej){ctx.strokeStyle=rgba(K.target,.85);ctx.lineWidth=1.3;ctx.beginPath();ctx.arc(px,py,r+4.5,-.7,.7);ctx.stroke();ctx.beginPath();ctx.arc(px,py,r+4.5,Math.PI-.7,Math.PI+.7);ctx.stroke();}
+    ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);
+    if(rej){ctx.strokeStyle=rgba(K['fg-3'],.6);ctx.lineWidth=1;ctx.stroke();}
+    else if(a.conf>=80){ctx.fillStyle=K.target;ctx.fill();}
+    else if(a.conf>=50){ctx.fillStyle=rgba(K.target,.25);ctx.fill();ctx.strokeStyle=K.target;ctx.lineWidth=1.4;ctx.stroke();}
+    else{ctx.strokeStyle=rgba(K.target,.6);ctx.lineWidth=1.1;ctx.stroke();}
+    if(sel){ctx.strokeStyle=K.fg;ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(px,py,r+10,0,Math.PI*2);ctx.stroke();}
+    ctx.font='10px '+FN;ctx.textAlign='center';ctx.fillStyle=rej?K['fg-3']:K['fg-2'];ctx.fillText(a.id.slice(4),px,py-r-9);
+    S.hits.push({x:px,y:py,r:12,kind:'sub',id:a.id});});}
+  const hr=s.hdg*D2R;
+  ctx.strokeStyle=rgba(K['sea-hi'],.9);ctx.lineWidth=2;seg(s.x-Math.cos(hr)*40,s.y+Math.sin(hr)*40,s.x+Math.cos(hr)*40,s.y-Math.sin(hr)*40);
+  ctx.setLineDash([4,3]);ctx.strokeStyle=rgba(K.fg,.6);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X(s.x),Y(s.y));ctx.lineTo(X(s.x)+Math.sin(hr)*70,Y(s.y)-Math.cos(hr)*70);ctx.stroke();ctx.setLineDash([]);
+  drawHull(ctx,X(s.x),Y(s.y),hr,18);
+  ctx.font='bold 11px '+FN;ctx.fillStyle=K.fg;ctx.textAlign='left';ctx.fillText('B01',X(s.x)+12,Y(s.y)+16);
+  S.hits.push({x:X(s.x),y:Y(s.y),r:12,kind:'own'});
+  const sbl=500*sc,sx0=w-16-sbl,sy0=h-16;ctx.strokeStyle=K['fg-2'];ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(sx0,sy0-4);ctx.lineTo(sx0,sy0);ctx.lineTo(sx0+sbl,sy0);ctx.lineTo(sx0+sbl,sy0-4);ctx.stroke();ctx.font='10px '+FN;ctx.fillStyle=K['fg-2'];ctx.textAlign='center';ctx.fillText('500 m',sx0+sbl/2,sy0-8);
+  const nx=w-24,ny=h-58;ctx.beginPath();ctx.moveTo(nx,ny-11);ctx.lineTo(nx+6,ny+6);ctx.lineTo(nx,ny+2);ctx.lineTo(nx-6,ny+6);ctx.closePath();ctx.fillStyle=K['fg-2'];ctx.fill();ctx.fillText('N',nx,ny-16);
+  $('#th-brg').textContent=pad(Math.round((brg/D2R+360)%360),3)+'°';
+}
+function shipVel(t){const s=ship(t);return{x:Math.sin(s.hdg*D2R)*V_SHIP,y:Math.cos(s.hdg*D2R)*V_SHIP};}
+function cpaTxt(t,s,d){const vs=shipVel(t),px=d.x-s.x,py=d.y-s.y,vx=d.vx-vs.x,vy=d.vy-vs.y,v2=vx*vx+vy*vy;if(v2<1e-6)return '';const tc=-(px*vx+py*vy)/v2;if(tc<=0)return 'يبتعد عن B01';const cx=px+vx*tc,cy=py+vy*tc;return 'أقرب نقطة اقتراب <span class="n">'+(Math.hypot(cx,cy)/1000).toFixed(2)+' km</span> بعد <span class="n">'+Math.max(1,Math.round(tc/60))+'</span> د';}
+function tipHTML(hit){const t=S.t,s=ship(t);
+  if(hit.kind==='sub'){const a=byId[hit.id];return '<b class="n">'+a.id+'</b> '+a.cls+'<br>ثقة الاشتباه <span class="n">'+a.conf+'%</span>، '+STATE[a.state]+'<br><span class="cta">انقر لفتح حزمة التسليم</span>';}
+  if(hit.kind==='dark'){const d=darkPos(t),br=(Math.atan2(d.x-s.x,d.y-s.y)/D2R+360)%360,rg=Math.hypot(d.x-s.x,d.y-s.y)/1000;return '<b class="n">S-07</b> هدف سطحي لا يبث هويته<br>رادار: نعم، حراري: نعم، AIS: لا<br>الاتجاه <span class="n">'+pad(Math.round(br),3)+'°</span>، المدى <span class="n">'+rg.toFixed(2)+' km</span><br>يحوم قرب حد منطقة العمل بسرعة <span class="n">'+(Math.hypot(d.vx,d.vy)*1.944).toFixed(1)+' kn</span><br>'+cpaTxt(t,s,d);}
+  if(hit.kind==='ais'){const o=hit.o,p=aisPos(o,t),rg=Math.hypot(p.x-s.x,p.y-s.y)/1000;return '<b class="n">'+o.name+'</b> '+o.type+'<br>MMSI <span class="n">'+o.mmsi+'</span><br>السرعة <span class="n">'+(Math.abs(o.vx)*1.944).toFixed(1)+' kn</span>، المدى <span class="n">'+rg.toFixed(2)+' km</span>';}
+  return '';}
+const mapEl=$('#map'),tip=$('#maptip');
+mapEl.addEventListener('mousemove',e=>{const r=mapEl.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+  const hit=S.hits.find(o=>Math.hypot(o.x-mx,o.y-my)<o.r);
+  if(!hit||hit.kind==='own'){tip.hidden=true;mapEl.style.cursor='crosshair';return;}
+  tip.innerHTML=tipHTML(hit);tip.hidden=false;mapEl.style.cursor=hit.kind==='sub'?'pointer':'default';
+  const tw=tip.offsetWidth,th=tip.offsetHeight;let tx=mx+14,ty=my+14;if(tx+tw>r.width-8)tx=mx-tw-14;if(ty+th>r.height-8)ty=my-th-14;tip.style.left=Math.max(4,tx)+'px';tip.style.top=Math.max(4,ty)+'px';});
+mapEl.addEventListener('mouseleave',()=>{tip.hidden=true;});
+mapEl.addEventListener('click',e=>{const r=mapEl.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;const hit=S.hits.find(o=>o.kind==='sub'&&Math.hypot(o.x-mx,o.y-my)<o.r);if(hit){tip.hidden=true;openDossier(hit.id);}});
+
+function corners(ctx,x,y,w,h,l){ctx.beginPath();ctx.moveTo(x,y+l);ctx.lineTo(x,y);ctx.lineTo(x+l,y);ctx.moveTo(x+w-l,y);ctx.lineTo(x+w,y);ctx.lineTo(x+w,y+l);ctx.moveTo(x+w,y+h-l);ctx.lineTo(x+w,y+h);ctx.lineTo(x+w-l,y+h);ctx.moveTo(x+l,y+h);ctx.lineTo(x,y+h);ctx.lineTo(x,y+h-l);ctx.stroke();}
+function drawThermal(t){const c=fit('thermal');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h;
+  /* white-hot thermal imagery */
+  const hz=h*.42;let g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,'#1d2023');g.addColorStop(1,'#3a3f43');ctx.fillStyle=g;ctx.fillRect(0,0,w,hz);
+  g=ctx.createLinearGradient(0,hz,0,h);g.addColorStop(0,'#2a2e31');g.addColorStop(1,'#141618');ctx.fillStyle=g;ctx.fillRect(0,hz,w,h-hz);
+  for(let i=0;i<26;i++){const y=hz+((i*37+Math.floor(t*6)*3)%Math.max(1,Math.floor(h-hz)));const x=(h2(i,7)*w+t*8*(i%3+1))%w;ctx.fillStyle='rgba(120,128,134,'+(0.08+0.1*h2(i,3)).toFixed(3)+')';ctx.fillRect(x,y,12+20*h2(i,5),1);}
+  const bob=Math.sin(t*1.7)*1.4,bx=w*.52,by=hz+h*.14+bob,bl=w*.22;
+  ctx.fillStyle='rgba(170,176,180,.25)';ctx.fillRect(bx-bl*1.35,by+bl*.1,bl*.85,2);
+  ctx.fillStyle='#8f969b';ctx.beginPath();ctx.moveTo(bx-bl*.5,by);ctx.lineTo(bx+bl*.5,by-2);ctx.lineTo(bx+bl*.38,by+bl*.13);ctx.lineTo(bx-bl*.42,by+bl*.13);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#b7bdc1';ctx.fillRect(bx-bl*.12,by-bl*.12,bl*.2,bl*.12);
+  let rg=ctx.createRadialGradient(bx-bl*.45,by+bl*.05,0,bx-bl*.45,by+bl*.05,bl*.17);rg.addColorStop(0,'#ffffff');rg.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=rg;ctx.fillRect(bx-bl*.7,by-bl*.2,bl*.5,bl*.5);
+  rg=ctx.createRadialGradient(bx+bl*.05,by-bl*.2,0,bx+bl*.05,by-bl*.2,bl*.09);rg.addColorStop(0,'#f2f4f5');rg.addColorStop(1,'rgba(242,244,245,0)');ctx.fillStyle=rg;ctx.fillRect(bx-bl*.1,by-bl*.35,bl*.3,bl*.3);
+  for(let i=0;i<200;i++){ctx.fillStyle='rgba(255,255,255,'+(Math.random()*.06).toFixed(3)+')';ctx.fillRect(Math.random()*w,Math.random()*h,1,1);}
+  ctx.strokeStyle=K.caution;ctx.lineWidth=1.2;corners(ctx,bx-bl*.66,by-bl*.4,bl*1.32,bl*.66,6);
+  ctx.strokeStyle='rgba(255,255,255,.35)';ctx.beginPath();ctx.moveTo(w/2-8,h/2);ctx.lineTo(w/2+8,h/2);ctx.moveTo(w/2,h/2-8);ctx.lineTo(w/2,h/2+8);ctx.stroke();
+  ctx.font='10px '+FN;ctx.fillStyle='rgba(255,255,255,.75)';ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.fillText('IR WFOV',6,13);ctx.textAlign='right';ctx.fillText('S-07',w-6,13);}
+
+/* ---------- image: water column fan + seabed strip ---------- */
+const wcdBuf=document.createElement('canvas');let pingN=4182;
+function wcdTarget(s){const hr=s.hdg*D2R;for(const a of ALERTS){if(a.kind!=='partial'&&a.kind!=='moored')continue;const dx=a.x-s.x,dy=a.y-s.y,along=dx*Math.sin(hr)+dy*Math.cos(hr),across=dx*Math.cos(hr)-dy*Math.sin(hr);if(Math.abs(along)<28&&Math.abs(across)<30)return{u:across+Math.sin(S.t*.8)*.4,z:a.geo.depth,a:a,tether:a.kind==='moored'};}return null;}
+function drawWCD(s){const c=fit('wcd');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h;
+  const bw=Math.max(40,Math.round(w)),bh=Math.max(30,Math.round(h));if(wcdBuf.width!==bw||wcdBuf.height!==bh){wcdBuf.width=bw;wcdBuf.height=bh;}
+  const bctx=wcdBuf.getContext('2d'),img=bctx.createImageData(bw,bh),D=img.data;
+  const maxA=55*D2R,Rm=36,top=6,k=Math.max(Rm/(bh-top-4),(2*Rm*Math.sin(maxA))/(bw-8)),ax=bw/2;
+  const zb0=depthAt(s.x,s.y),tg=wcdTarget(s),ph=s.x*.013;
+  for(let py=0;py<bh;py++){const dz=(py-top)*k;for(let px=0;px<bw;px++){const o=(py*bw+px)*4,dx=(px-ax)*k,r=Math.hypot(dx,dz),an=Math.atan2(dx,dz);
+    if(dz<=0||r>Rm||Math.abs(an)>maxA){D[o+3]=0;continue;}
+    const zb=zb0+.7*Math.sin(dx*.09+ph);let v=.04+Math.random()*.07;if(Math.abs(r-zb0)<.22)v+=.16;const e=dz-zb;
+    if(e>-.3&&e<.5)v=.6+.32*Math.random()-Math.abs(e)*.5;else if(e>=.5)v=Math.max(.03,.3*Math.exp(-(e-.5)*.5)+Math.random()*.05);
+    if(tg){const dd=Math.hypot(dx-tg.u,dz-tg.z);if(dd<.75)v=Math.max(v,.97-dd*.45);else if(dd<1.5)v+=.18*(1.5-dd);if(tg.tether&&dz>tg.z+.6&&dz<zb&&Math.abs(dx-tg.u)<.1&&Math.random()<.7)v+=.28;}
+    put(D,o,v);}}
+  bctx.putImageData(img,0,0);ctx.clearRect(0,0,w,h);ctx.drawImage(wcdBuf,0,0,bw,bh,0,0,w,h);
+  const f=w/bw,AX=ax*f,AY=top*(h/bh),pxm=1/(k/f);
+  ctx.strokeStyle=rgba(K['fg-3'],.6);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(AX,AY);ctx.arc(AX,AY,Rm*pxm,Math.PI/2+maxA,Math.PI/2-maxA,true);ctx.closePath();ctx.stroke();
+  ctx.setLineDash([2,4]);ctx.strokeStyle=rgba(K['fg-3'],.35);[10,20,30].forEach(r=>{ctx.beginPath();ctx.arc(AX,AY,r*pxm,Math.PI/2+maxA,Math.PI/2-maxA,true);ctx.stroke();});ctx.beginPath();ctx.moveTo(AX,AY);ctx.lineTo(AX,AY+Rm*pxm);ctx.stroke();ctx.setLineDash([]);
+  ctx.font='9.5px '+FN;ctx.fillStyle=rgba(K.fg,.6);ctx.textAlign='right';ctx.textBaseline='middle';[10,20,30].forEach(r=>ctx.fillText(r+' m',AX-Math.sin(maxA)*r*pxm-3,AY+Math.cos(maxA)*r*pxm));
+  if(tg){const tx=AX+tg.u*pxm,ty=AY+tg.z*pxm;ctx.strokeStyle=K.target;ctx.lineWidth=1.3;corners(ctx,tx-10,ty-10,20,20,5);ctx.font='bold 10px '+FN;ctx.fillStyle=K.target;ctx.textAlign='left';ctx.fillText(tg.a.id.slice(4),tx+13,ty-8);}
+  $('#ping-n').textContent=pingN;}
+const swBuf=document.createElement('canvas'),swTmp=document.createElement('canvas');
+function swathRow(s){const c=fit('swath');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h,W=Math.max(20,Math.round(w)),H=Math.max(10,Math.round(h));
+  const b=swBuf.getContext('2d');
+  if(swBuf.width!==W||swBuf.height!==H){swBuf.width=W;swBuf.height=H;swTmp.width=W;swTmp.height=H;b.fillStyle='#040b12';b.fillRect(0,0,W,H);}
+  const tm=swTmp.getContext('2d');tm.clearRect(0,0,W,H);tm.drawImage(swBuf,0,0);b.clearRect(0,0,W,H);b.drawImage(swTmp,0,2);
+  const row=b.createImageData(W,2),D=row.data,hr=s.hdg*D2R,cx=Math.cos(hr),sy=-Math.sin(hr),half=40;
+  const objs=ALERTS.map(a=>{const dx=a.x-s.x,dy=a.y-s.y;return{a:a,along:dx*Math.sin(hr)+dy*Math.cos(hr),across:dx*Math.cos(hr)-dy*Math.sin(hr)};}).filter(o=>Math.abs(o.along)<2.2&&Math.abs(o.across)<half);
+  for(let j=0;j<W;j++){const ac=(j/(W-1)-.5)*2*half,wx=s.x+cx*ac,wy=s.y+sy*ac;let v=.24+.34*fbm(wx*.11,wy*.11)+(Math.random()-.5)*.12;if(Math.abs(ac)<2.4)v*=.35;v*=.75+.25*Math.min(1,Math.abs(ac)/12);
+    for(const o of objs){const kd=o.a.kind,dd=Math.abs(ac-o.across),sgn=Math.sign(o.across)||1,beyond=(ac-o.across)*sgn;if(dd<.9&&kd!=='bio')v=.95;if(kd==='moored'&&beyond>2.4&&beyond<6.8)v*=.18;if((kd==='bottom'||kd==='debris'||kd==='unknown')&&beyond>.6&&beyond<2.2)v*=.2;}
+    for(let r=0;r<2;r++)put(D,(r*W+j)*4,v);}
+  b.putImageData(row,0,0);ctx.clearRect(0,0,w,h);ctx.drawImage(swBuf,0,0,W,H,0,0,w,h);
+  ctx.strokeStyle=rgba(K.fg,.18);ctx.setLineDash([2,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(w/2,0);ctx.lineTo(w/2,h);ctx.stroke();ctx.setLineDash([]);}
+function drawSVP(){const c=fit('svp');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h;ctx.clearRect(0,0,w,h);
+  const z0=6,z1=h-16,x0=22,x1=w-4,S0=1508,S1=1532,Zm=25,X=v=>x0+(v-S0)/(S1-S0)*(x1-x0),Y=z=>z0+z/Zm*(z1-z0);
+  ctx.fillStyle=rgba(K.sea,.09);ctx.fillRect(x0,Y(11),x1-x0,Y(17)-Y(11));
+  ctx.strokeStyle=rgba(K['fg-3'],.25);ctx.lineWidth=1;[0,10,20].forEach(z=>{ctx.beginPath();ctx.moveTo(x0,Y(z));ctx.lineTo(x1,Y(z));ctx.stroke();});
+  ctx.font='9.5px '+FN;ctx.fillStyle=K['fg-3'];ctx.textAlign='right';ctx.textBaseline='middle';[0,10,20].forEach(z=>ctx.fillText(String(z),x0-4,Y(z)));
+  ctx.textAlign='center';ctx.textBaseline='alphabetic';[1510,1530].forEach(v=>ctx.fillText(String(v),X(v),h-2));
+  ctx.beginPath();for(let z=0;z<=Zm;z+=.25){const v=1528-14/(1+Math.exp(-(z-14)/1.6))-.08*z,px=X(v),py=Y(z);if(z)ctx.lineTo(px,py);else ctx.moveTo(px,py);}ctx.strokeStyle=K['sea-hi'];ctx.lineWidth=1.6;ctx.stroke();
+  ctx.fillStyle=K.fg;ctx.beginPath();ctx.arc(X(1527.8),Y(.3),3,0,Math.PI*2);ctx.fill();}
+
+/* ---------- motion, time, spectrum ---------- */
+const MOT={heave:[],roll:[],pitch:[]},MOT_N=120,LIM={heave:.3,roll:2.5,pitch:1.2};
+function motionTick(t){const m={heave:.14*Math.sin(t*1.05)+.05*Math.sin(t*2.7+1)+(Math.random()-.5)*.02,roll:1.1*Math.sin(t*.82+.4)+.35*Math.sin(t*2.1)+(Math.random()-.5)*.08,pitch:.45*Math.sin(t*1.3+1.2)+.12*Math.sin(t*3.1)+(Math.random()-.5)*.04};
+  Object.keys(m).forEach(k=>{MOT[k].push(m[k]);if(MOT[k].length>MOT_N)MOT[k].shift();});return m;}
+function drawSpark(id,arr,lim){const c=fit(id);if(!c)return;const ctx=c.ctx,w=c.w,h=c.h;ctx.clearRect(0,0,w,h);const sy=v=>h/2-v/lim*(h/2-1);
+  ctx.strokeStyle=rgba(K['fg-3'],.35);ctx.lineWidth=1;ctx.setLineDash([2,3]);[.8*lim,-.8*lim].forEach(v=>{ctx.beginPath();ctx.moveTo(0,sy(v));ctx.lineTo(w,sy(v));ctx.stroke();});ctx.setLineDash([]);
+  ctx.strokeStyle=rgba(K['fg-3'],.25);ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
+  if(arr.length<2)return;ctx.beginPath();arr.forEach((v,i)=>{const x=(i+MOT_N-arr.length)/(MOT_N-1)*(w-4),y=sy(v);if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);});ctx.strokeStyle=K['sea-hi'];ctx.lineWidth=1.4;ctx.stroke();
+  const lv=arr[arr.length-1];ctx.fillStyle=K.fg;ctx.beginPath();ctx.arc(w-4,sy(lv),2.4,0,Math.PI*2);ctx.fill();}
+const LAT_ROWS=[['ملتي بيم',.8],['عمود الماء',.8],['IMU',.2],['GNSS مرجع',0],['الرادار',3.1],['الكاميرا الحرارية',12.4]];
+$('#lat-list').innerHTML=LAT_ROWS.map((r,i)=>'<li><span class="lk">'+r[0]+'</span><span class="lbar"><i id="lb'+i+'" style="width:'+Math.max(1,r[1]/15*100)+'%"></i></span><span class="n" id="lv'+i+'">'+r[1].toFixed(1)+' ms</span></li>').join('');
+let jamDb=6;
+function drawSpec(t){const c=fit('spec');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h;ctx.clearRect(0,0,w,h);const N=72;jamDb=5.5+1.4*Math.sin(t*.21);
+  const sy=v=>h-2-(v+132)/18*(h-6);const thr=-124.5;
+  ctx.setLineDash([3,3]);ctx.strokeStyle=rgba(K.caution,.75);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,sy(thr));ctx.lineTo(w,sy(thr));ctx.stroke();ctx.setLineDash([]);
+  const pts=[];for(let i=0;i<N;i++){const f=(i/(N-1)-.5)*2;pts.push(-128.5+(Math.random()-.5)*2.2+jamDb*Math.exp(-f*f/.05));}
+  ctx.beginPath();ctx.moveTo(0,h);pts.forEach((v,i)=>ctx.lineTo(i/(N-1)*w,sy(v)));ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=rgba(K.caution,.14);ctx.fill();
+  ctx.beginPath();pts.forEach((v,i)=>{if(i)ctx.lineTo(i/(N-1)*w,sy(v));else ctx.moveTo(0,sy(v));});ctx.strokeStyle=K.caution;ctx.lineWidth=1.2;ctx.stroke();
+  ctx.font='9.5px '+FN;ctx.fillStyle=K['fg-3'];ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('1575.42 MHz',w/2,1);}
+
+/* ---------- handover package drawing ---------- */
+const evCache=new Map();
+function gs(x,y,sx,sy){return Math.exp(-(x*x)/(2*sx*sx)-(y*y)/(2*sy*sy));}
+function sbVal(a,u,v,R,seed){const G=a.geo,k=a.kind;let val=.3+.27*fbm(u*.75+seed,v*.75+seed*.37)+(R()-.5)*.16;
+  if(k==='moored'||k==='partial'){val+=(k==='partial'?.42:.72)*gs(u,v,.45,.45);if(k==='moored'){const s0=G.gap+.45,s1=s0+G.slen;if(u>s0-.3&&u<s1+.4){const f=clamp((u-s0)/(s1-s0),0,1),half=.62*(1-.35*Math.pow(2*f-1,2)),edge=clamp(Math.min((half-Math.abs(v))/.22,(u-s0+.3)/.6,(s1+.4-u)/.8),0,1);val*=1-.84*edge+(R()-.5)*.06*edge;}}}
+  else if(k==='bottom'){val+=.78*gs(u,v,.36,.95);if(u>.4&&u<.4+G.slen&&Math.abs(v)<.95)val*=.13;}
+  else if(k==='debris'){for(let i=-2;i<=2;i++)val+=.5*gs(u-.18*Math.sin(i*1.7),v-i*.8,.32,.42);if(u>.45&&u<2.5&&Math.abs(v)<2.1-.25*u)val*=.22;}
+  else if(k==='unknown'){val+=.62*gs(u,v,.5,.38)+.32*gs(u-.35,v+.45,.28,.28);if(u>.5&&u<1.3&&Math.abs(v)<.5)val*=.24;}
+  if(a.rocks)for(const r of a.rocks){val+=.6*gs(u-r[0],v-r[1],r[2],r[2]);if(u>r[0]+r[2]&&u<r[0]+r[2]*3.2&&Math.abs(v-r[1])<r[2])val*=.3;}
+  return clamp(val,0,1);}
+function wcVal(a,u,z,R,seed){const G=a.geo,k=a.kind,zb=G.seabed+.25*Math.sin(u*.7+seed);let val=.05+R()*.08;const e=z-zb;
+  if(e>-.3&&e<.45)val=.6+.3*R()-Math.abs(e)*.5;else if(e>=.45)val=Math.max(.03,.32*Math.exp(-(e-.45)*.55)+R()*.05);
+  if(k==='moored'||k==='partial'){const tz=G.depth,dd=Math.hypot(u,z-tz);if(dd<.5)val=Math.max(val,.97-dd*.4);else if(dd<1.1)val+=.22*(1.1-dd);if(k==='moored'&&z>tz+.5&&z<zb&&Math.abs(u-(z-tz)*.025)<.07&&R()<.75)val+=.32;}
+  if(k==='bottom'||k==='unknown'||k==='debris'){const wd=k==='debris'?2.2:k==='unknown'?.8:.95;if(Math.abs(u)<wd&&z>zb-G.has&&z<zb)val=Math.max(val,.82-R()*.2);}
+  if(a.fish)for(const b of a.fish){if(Math.hypot(u-b[0],z-b[1])<b[2])val=Math.max(val,.5+R()*.35);}
+  return clamp(val,0,1);}
+const WC_Z0=2.5;
+function evImage(a,which,w,h){const key=a.id+which+w+'x'+h;let cv=evCache.get(key);if(cv)return cv;if(evCache.size>30)evCache.clear();
+  cv=document.createElement('canvas');cv.width=w;cv.height=h;const cx=cv.getContext('2d'),img=cx.createImageData(w,h),D=img.data,R=rng(strSeed(key)),seed=strSeed(a.id)%997;
+  if(which==='sb'){const pxm=h/16;for(let py=0;py<h;py++){const v=(py-h/2)/pxm;for(let px=0;px<w;px++)put(D,(py*w+px)*4,sbVal(a,(px-w/2)/pxm,v,R,seed));}}
+  else{const pxm=h/(a.geo.seabed+2.5-WC_Z0);for(let py=0;py<h;py++){const z=WC_Z0+py/pxm;for(let px=0;px<w;px++)put(D,(py*w+px)*4,wcVal(a,(px-w/2)/pxm,z,R,seed));}}
+  cx.putImageData(img,0,0);evCache.set(key,cv);return cv;}
+function ovStyle(ctx,key,neg){const on=S.hl===key,any=S.hl!==null;ctx.globalAlpha=on?1:(any?.16:.75);const col=neg?K.against:K.target;ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=on?2:1.2;ctx.setLineDash(on?[]:[4,3]);}
+function lab(ctx,txt,x,y,al){y=Math.max(9,y);ctx.save();ctx.font='500 11px '+FT;ctx.direction='rtl';ctx.textAlign=al||'center';ctx.textBaseline='middle';ctx.setLineDash([]);ctx.lineWidth=3;ctx.strokeStyle='rgba(4,11,18,.85)';ctx.strokeText(txt,x,y);ctx.fillText(txt,x,y);ctx.restore();}
+function scaleBar(ctx,pxm,m,txt,w,h){const L=m*pxm,x1=w-10,x0=x1-L,y=h-10;ctx.globalAlpha=1;ctx.setLineDash([]);ctx.strokeStyle=rgba(K.fg,.75);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(x0,y-4);ctx.lineTo(x0,y);ctx.lineTo(x1,y);ctx.lineTo(x1,y-4);ctx.stroke();ctx.font='10px '+FN;ctx.fillStyle=rgba(K.fg,.8);ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.direction='ltr';ctx.fillText(txt,(x0+x1)/2,y-6);}
+const F=(a,k)=>a.factors.find(f=>f.k===k);
+function drawEv(a){
+  let c=fit('ev-sb');
+  if(c){const ctx=c.ctx,w=c.w,h=c.h,G=a.geo;ctx.globalAlpha=1;ctx.drawImage(evImage(a,'sb',Math.round(w),Math.round(h)),0,0,w,h);const pxm=h/16,U=u=>w/2+u*pxm,V=v=>h/2+v*pxm;
+    const fs=F(a,'shadow');
+    if(fs&&fs.p>0){ovStyle(ctx,'shadow');
+      if(a.kind==='moored'){const s0=G.gap+.45,s1=s0+G.slen;ctx.strokeRect(U(s0),V(-.75),(s1-s0)*pxm,1.5*pxm);const yy=V(-1.5);ctx.beginPath();ctx.moveTo(U(.45),yy);ctx.lineTo(U(s0),yy);ctx.moveTo(U(.45),yy-4);ctx.lineTo(U(.45),yy+4);ctx.moveTo(U(s0),yy-4);ctx.lineTo(U(s0),yy+4);ctx.stroke();lab(ctx,'فجوة '+G.gap.toFixed(1)+' م',(U(.45)+U(s0))/2,yy-10);lab(ctx,'ظل '+G.slen.toFixed(1)+' م',U((s0+s1)/2),V(.75)+12);}
+      else{const s0=.4,s1=s0+(G.slen||1.6);ctx.strokeRect(U(s0),V(-1.05),(s1-s0)*pxm,2.1*pxm);lab(ctx,'ظل ملاصق',U(s1)+6,V(0),'left');}
+      ctx.globalAlpha=1;}
+    const fa=F(a,'anomaly');
+    if(fa&&fa.p>0){ovStyle(ctx,'anomaly');ctx.beginPath();ctx.arc(U(0),V(0),2.6*pxm,0,Math.PI*2);ctx.stroke();lab(ctx,'شذوذ '+G.anom.toFixed(2),U(0),V(2.6)+10);ctx.globalAlpha=1;}
+    const fsh=F(a,'shape');
+    if(fsh&&fsh.g==='sb'&&fsh.p>0){ovStyle(ctx,'shape');const ry=a.kind==='bottom'?1.15:a.kind==='debris'?2.3:.8,rx=a.kind==='debris'?.9:.6;ctx.beginPath();ctx.ellipse(U(0),V(0),rx*pxm,ry*pxm,0,0,Math.PI*2);ctx.stroke();lab(ctx,a.kind==='bottom'?'أسطواني 1.9 م':a.kind==='debris'?'حواف مستقيمة':'غير منتظم',U(0)-rx*pxm-6,V(0),'right');ctx.globalAlpha=1;}
+    const fc=F(a,'counter');
+    if(fc&&fc.ov&&fc.ov.on==='sb'){ovStyle(ctx,'counter',true);const r=fc.ov.r;ctx.strokeRect(U(r[0]),V(r[1]),(r[2]-r[0])*pxm,(r[3]-r[1])*pxm);lab(ctx,fc.ov.label,U((r[0]+r[2])/2),V(r[1])-9);ctx.globalAlpha=1;}
+    ctx.setLineDash([]);scaleBar(ctx,pxm,2,'2 m',w,h);}
+  c=fit('ev-wc');
+  if(c){const ctx=c.ctx,w=c.w,h=c.h,G=a.geo;ctx.globalAlpha=1;ctx.drawImage(evImage(a,'wc',Math.round(w),Math.round(h)),0,0,w,h);const pxm=h/(G.seabed+2.5-WC_Z0),U=u=>w/2+u*pxm,Z=z=>(z-WC_Z0)*pxm,tz=G.depth;
+    const fsh=F(a,'shape');
+    if(fsh&&fsh.g==='wc'&&fsh.p>0){ovStyle(ctx,'shape');
+      if(a.kind==='bio'){const xs=a.fish.map(b=>b[0]),zs=a.fish.map(b=>b[1]),x0=Math.min.apply(null,xs)-.6,x1=Math.max.apply(null,xs)+.6,z0=Math.min.apply(null,zs)-.6,z1=Math.max.apply(null,zs)+.6;ctx.strokeRect(U(x0),Z(z0),(x1-x0)*pxm,(z1-z0)*pxm);lab(ctx,'أصداء متفرقة',U((x0+x1)/2),Z(z0)-10);}
+      else{ctx.beginPath();ctx.arc(U(0),Z(tz),.5*pxm+3,0,Math.PI*2);ctx.stroke();lab(ctx,a.kind==='moored'?'كروي، قطر 1.0 م':'مستدير، حواف ناقصة',U(0)+.5*pxm+9,Z(tz),'left');}
+      ctx.globalAlpha=1;}
+    const fp=F(a,'pos');
+    if(fp&&fp.p>0){ovStyle(ctx,'pos');
+      if(a.kind==='bio'){const x=U(-4.6);ctx.beginPath();ctx.moveTo(x,Z(7));ctx.lineTo(x,Z(10));ctx.moveTo(x-4,Z(7));ctx.lineTo(x+4,Z(7));ctx.moveTo(x-4,Z(10));ctx.lineTo(x+4,Z(10));ctx.stroke();lab(ctx,'7 إلى 10 م',x-7,Z(8.5),'right');}
+      else{const x=U(-1.7),zb=G.seabed;ctx.beginPath();ctx.moveTo(x,Z(tz+.5));ctx.lineTo(x,Z(zb));ctx.moveTo(x-4,Z(tz+.5));ctx.lineTo(x+4,Z(tz+.5));ctx.moveTo(x-4,Z(zb));ctx.lineTo(x+4,Z(zb));ctx.stroke();lab(ctx,(zb-tz).toFixed(1)+' م فوق القاع',x-7,Z((tz+zb)/2),'right');}
+      ctx.globalAlpha=1;}
+    const fw=F(a,'sway');
+    if(fw&&(a.kind==='moored'||a.kind==='partial')){ovStyle(ctx,'sway');ctx.setLineDash([2,2]);a.sway.forEach(p=>{ctx.beginPath();ctx.arc(U(p[0]),Z(tz),.5*pxm,0,Math.PI*2);ctx.stroke();});if(S.hl==='sway')lab(ctx,'مواضعه في التمريرات السابقة',U(0),Z(tz)+.5*pxm+14);ctx.globalAlpha=1;}
+    const fc=F(a,'counter');
+    if(fc&&fc.ov&&fc.ov.on==='wc'){ovStyle(ctx,'counter',true);const r=fc.ov.r;ctx.strokeRect(U(r[0]),Z(r[1]),(r[2]-r[0])*pxm,(r[3]-r[1])*pxm);lab(ctx,fc.ov.label,U((r[0]+r[2])/2),Z(r[1])-9);ctx.globalAlpha=1;}
+    ctx.setLineDash([]);ctx.globalAlpha=1;ctx.font='9.5px '+FN;ctx.fillStyle=rgba(K.fg,.6);ctx.textAlign='left';ctx.textBaseline='middle';ctx.direction='ltr';for(let z=5;z<=25;z+=5){const y=Z(z);if(y<6||y>h-6)continue;ctx.fillRect(0,y,5,1);ctx.fillText(String(z),7,y);}}
+}
+function drawSway(a){const c=fit('sway');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h;ctx.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-12,on=S.hl==='sway',pxm=R/1.0,G=a.geo;
+  ctx.strokeStyle=rgba(K['fg-3'],.3);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx-R,cy);ctx.lineTo(cx+R,cy);ctx.moveTo(cx,cy-R);ctx.lineTo(cx,cy+R);ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.stroke();
+  if(a.kind==='moored'||a.kind==='partial'){ctx.setLineDash([4,3]);ctx.strokeStyle=rgba(K.target,on?1:.7);ctx.lineWidth=on?1.8:1.2;ctx.beginPath();ctx.arc(cx,cy,(G.watch||.6)*pxm,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}
+  ctx.strokeStyle=K['fg-2'];ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(cx-4,cy-4);ctx.lineTo(cx+4,cy+4);ctx.moveTo(cx+4,cy-4);ctx.lineTo(cx-4,cy+4);ctx.stroke();
+  a.sway.forEach((p,i)=>{let x=cx+p[0]*pxm,y=cy-p[1]*pxm;const out=Math.hypot(p[0],p[1])>1;if(out){const an=Math.atan2(p[1],p[0]);x=cx+Math.cos(an)*(R-2);y=cy-Math.sin(an)*(R-2);}
+    ctx.fillStyle=out?K.against:K.target;ctx.beginPath();ctx.arc(x,y,out?3.5:4.5,0,Math.PI*2);ctx.fill();ctx.font='bold 10px '+FN;ctx.fillStyle=K.fg;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(i+1),x+(x>=cx?10:-10),y-8);});
+  ctx.font='9.5px '+FN;ctx.fillStyle=K['fg-3'];ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillText('1 m',cx+R-2,cy-4);}
+function drawPolar(a){const c=fit('polar');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h;ctx.clearRect(0,0,w,h);const cx=w/2,cy=h/2+4,R=Math.min(w,h)/2-18,on=S.hl==='consensus';
+  ctx.strokeStyle=rgba(K['fg-3'],.3);ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.stroke();
+  ctx.font='9.5px '+FN;ctx.fillStyle=K['fg-3'];ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('N',cx,cy-R-9);
+  a.passes.forEach((p,i)=>{const hd=PASS_HDG[i]*D2R,dx=Math.sin(hd)*R,dy=-Math.cos(hd)*R;
+    ctx.setLineDash(p===null?[3,3]:[]);ctx.strokeStyle=p===1?rgba(K.target,on?1:.8):rgba(K['fg-3'],p===0?.7:.5);ctx.lineWidth=p===1&&on?2:1.3;ctx.beginPath();ctx.moveTo(cx-dx,cy-dy);ctx.lineTo(cx+dx,cy+dy);ctx.stroke();ctx.setLineDash([]);
+    const ex=cx+dx,ey=cy+dy;
+    if(p===1){ctx.fillStyle=K.target;ctx.beginPath();ctx.arc(ex,ey,4,0,Math.PI*2);ctx.fill();}
+    else if(p===0){ctx.strokeStyle=K['fg-3'];ctx.beginPath();ctx.moveTo(ex-3,ey-3);ctx.lineTo(ex+3,ey+3);ctx.moveTo(ex+3,ey-3);ctx.lineTo(ex-3,ey+3);ctx.stroke();}
+    else{ctx.strokeStyle=K['fg-3'];ctx.fillStyle=K.abyss;ctx.beginPath();ctx.arc(ex,ey,3.5,0,Math.PI*2);ctx.fill();ctx.stroke();}
+    ctx.font='9.5px '+FN;ctx.fillStyle=K['fg-2'];ctx.fillText(pad(PASS_HDG[i],3)+'°',ex+Math.cos(hd)*12-Math.sin(hd)*2,ey+Math.sin(hd)*12+(Math.cos(hd)>.5?-4:6));});
+  const det=a.passes.filter(p=>p===1).length;ctx.font='bold 15px '+FN;ctx.fillStyle=K.fg;ctx.fillText(det+'/'+a.passes.length,cx,cy);}
+function drawMini(a){const c=fit('mini');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h,span=90,sc=Math.min(w,h)/span,X=x=>w/2+(x-a.x)*sc,Y=y=>h/2-(y-a.y)*sc;
+  ctx.setLineDash([]);ctx.fillStyle=K['map-deep'];ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle=rgba(K['fg-3'],.12);ctx.lineWidth=1;for(let g=Math.ceil((a.x-span)/10)*10;g<=a.x+span;g+=10){ctx.beginPath();ctx.moveTo(X(g),0);ctx.lineTo(X(g),h);ctx.stroke();}for(let g=Math.ceil((a.y-span)/10)*10;g<=a.y+span;g+=10){ctx.beginPath();ctx.moveTo(0,Y(g));ctx.lineTo(w,Y(g));ctx.stroke();}
+  for(let i=0;i<NL;i++){const y=AREA.y0+i*SP;if(Math.abs(y-a.y)>span)continue;ctx.fillStyle=rgba(K.sea,.1);ctx.fillRect(0,Y(y+30),w,60*sc);ctx.strokeStyle=rgba(K.sea,.6);ctx.beginPath();ctx.moveTo(0,Y(y));ctx.lineTo(w,Y(y));ctx.stroke();}
+  a.legs.forEach(l=>{const an=l.a*D2R,dx=Math.sin(an)*95,dy=Math.cos(an)*95;ctx.setLineDash(l.done?[]:[5,4]);ctx.strokeStyle=rgba(K.target,l.done?.6:.9);ctx.lineWidth=l.req?1.8:1.2;ctx.beginPath();ctx.moveTo(X(a.x-dx),Y(a.y-dy));ctx.lineTo(X(a.x+dx),Y(a.y+dy));ctx.stroke();});ctx.setLineDash([]);
+  const r=Math.max(6,a.geo.cep*sc);ctx.fillStyle=rgba(K.target,.18);ctx.beginPath();ctx.arc(w/2,h/2,r,0,Math.PI*2);ctx.fill();ctx.setLineDash([3,2]);ctx.strokeStyle=K.target;ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=K.target;ctx.beginPath();ctx.arc(w/2,h/2,2.6,0,Math.PI*2);ctx.fill();
+  scaleBar(ctx,sc,20,'20 m',w,h);ctx.fillStyle=K['fg-2'];ctx.font='9.5px '+FN;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('N',12,9);ctx.beginPath();ctx.moveTo(12,15);ctx.lineTo(16,26);ctx.lineTo(12,23);ctx.lineTo(8,26);ctx.closePath();ctx.fill();}
+function drawDossier(){if(S.mode!=='inv'||!S.sel)return;const a=byId[S.sel];drawEv(a);drawSway(a);drawPolar(a);drawMini(a);}
+
+/* ---------- live loop ---------- */
+const ppsDot=$('#pps-dot'),hbDot=$('#hb-dot');let lastSec=-1,lastHb=-1,battery=72.4,rot=432;
+function clock(){const ms=Date.now(),d=new Date(ms);$('#utc').textContent=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds())+'.'+Math.floor(d.getUTCMilliseconds()/100);
+  const sec=Math.floor(ms/1000);if(sec!==lastSec){lastSec=sec;if(!reduce.matches&&ppsDot.animate)ppsDot.animate([{transform:'scale(1.9)',opacity:1},{transform:'scale(1)',opacity:.6}],{duration:420,easing:'ease-out'});}
+  const hb=Math.floor(ms/500);if(hb!==lastHb){lastHb=hb;if(!reduce.matches&&hbDot.animate)hbDot.animate([{transform:'scale(1.7)',opacity:1},{transform:'scale(1)',opacity:.7}],{duration:300,easing:'ease-out'});}}
+function ping(t){const s=ship(t);pingN++;const m=motionTick(t);
+  if(S.mode==='watch'){drawWCD(s);swathRow(s);drawSpark('m-heave',MOT.heave,LIM.heave);drawSpark('m-roll',MOT.roll,LIM.roll);drawSpark('m-pitch',MOT.pitch,LIM.pitch);
+    const p=ll(s.x,s.y);$('#lat').textContent=dm(p[0],true);$('#lon').textContent=dm(p[1],false);$('#hdg').textContent=pad(Math.round(s.hdg),3)+'°';$('#sog').textContent=(V_SHIP*1.944+(Math.random()-.5)*.12).toFixed(1)+' kn';
+    $('#v-heave').textContent=(m.heave>=0?'+':'')+m.heave.toFixed(2)+' m';$('#v-roll').textContent=(m.roll>=0?'+':'')+m.roll.toFixed(1)+'°';$('#v-pitch').textContent=(m.pitch>=0?'+':'')+m.pitch.toFixed(1)+'°';}
+  drawSpec(t);}
+function slow(t){const s=ship(t);
+  $$('[data-age]').forEach(el=>{const a=byId[el.dataset.age];if(a)el.textContent=ago(a);});
+  battery=Math.max(20,battery-.004);$('#batt').textContent=battery.toFixed(1)+'%';$('#pip-batt').textContent=Math.round(battery)+'%';$('#batt-bar').style.width=battery.toFixed(1)+'%';
+  const solar=.41+.03*Math.sin(t*.05);$('#solar').textContent='+'+solar.toFixed(2)+' kW';$('#load').textContent=(1.18+(Math.random()-.5)*.04).toFixed(2)+' kW';
+  rot=rot>0?rot-1:900;$('#rot').textContent=pad(Math.floor(rot/60))+':'+pad(rot%60);
+  $('#hb-age').textContent=(.1+Math.random()*.4).toFixed(1)+' s';$('#infer').textContent=(12.1+Math.random()*.6).toFixed(1);$('#gpu').textContent=(60+Math.round(Math.random()*2))+'°C';
+  $('#uhf').textContent=(-70-Math.round(Math.random()*3))+' dBm '+(36+Math.round(Math.random()*5))+' ms';
+  $('#pps-off').textContent='+'+(15+Math.round(Math.random()*6))+' ns';$('#res').textContent=(.25+Math.random()*.1).toFixed(2)+' m';$('#insgnss').textContent=(.25+Math.random()*.1).toFixed(2)+' m';
+  $('#jam-db').textContent='+'+jamDb.toFixed(0)+' dB';$('#stab').textContent=(.95+Math.random()*.02).toFixed(2);$('#rh').textContent=(18+Math.round(Math.random()))+'%';
+  LAT_ROWS.forEach((r,i)=>{const v=Math.max(0,r[1]+(r[1]?(Math.random()-.5)*r[1]*.15:0));$('#lv'+i).textContent=v.toFixed(1)+' ms';$('#lb'+i).style.width=Math.max(1,v/15*100)+'%';});
+  const done=s.line+(s.turning?1:s.frac);$('#line-n').textContent=Math.min(NL,s.line+1)+'/'+NL;$('#cov').textContent=Math.round(done/NL*100)+'%';const rem=(NL-done)*((AREA.x1-AREA.x0)/V_SHIP+80);$('#eta').textContent=Math.floor(rem/3600)+':'+pad(Math.round(rem%3600/60));}
+let lastMap=0,lastPing=0,lastSlow=0,lastTh=0,lastClock=0;
+function frame(now){const t=(now-T0)/1000,rm=reduce.matches;S.t=t;
+  if(now-lastMap>(rm?1000:50)){lastMap=now;if(S.mode==='watch')drawMap(t);}
+  if(now-lastTh>(rm?1000:120)){lastTh=now;if(S.mode==='watch'&&S.layers.thermal)drawThermal(t);}
+  if(now-lastPing>(rm?1000:250)){lastPing=now;ping(t);}
+  if(now-lastSlow>1000){lastSlow=now;slow(t);}
+  if(now-lastClock>90){lastClock=now;clock();}
+  requestAnimationFrame(frame);}
+
+renderQueue();renderThreat();drawSVP();slow(0);clock();
+let rz=0;new ResizeObserver(()=>{cancelAnimationFrame(rz);rz=requestAnimationFrame(()=>{drawSVP();drawDossier();});}).observe(app);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{drawSVP();drawDossier();});
+requestAnimationFrame(frame);
+})();
+</script>
+<!--artifact:end-->
+</body>
+</html>
