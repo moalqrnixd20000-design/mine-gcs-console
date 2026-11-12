@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B01 Vessel Design</title>
+<meta name="description" content="ملف تصميم المركبة السطحية B01 لكشف الألغام البحرية: الرسم الهندسي، شرح التقنيات، حماية الحساسات، ومقارنة بالسوق.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=B612+Mono:wght@400;700&family=Readex+Pro:wght@300..700&display=swap">
+<style>
+/* Layout: one reading column (max 1180px). The drawing leads, numbered callouts tie it to the parts list,
+   and the technology cards, protection, and market comparison follow in that order. Same night palette as the console. */
+:root{
+  color-scheme:dark;
+  --abyss:#08111d; --hull:#0e1a2b; --facet:#152539; --chine:#22364e; --chine-2:#2f4a67;
+  --fg:#dce6ef; --fg-2:#a6b8ca; --fg-3:#7a91ab;
+  --sea:#3e9aa3; --sea-hi:#8fd6cf; --sea-soft:rgba(143,214,207,.12);
+  --target:#ff6b45; --trust:#a99cff; --caution:#f2b84b; --caution-soft:rgba(242,184,75,.10);
+  --f-text:"Readex Pro","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --f-num:"B612 Mono","Cascadia Mono",Consolas,monospace;
+  --ch:12px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--abyss);color:var(--fg);font-family:var(--f-text);font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+h1,h2,h3,h4,p,ol,ul,dl,dd,figure{margin:0}
+ol,ul{padding:0;list-style:none}
+a{color:var(--sea-hi)}
+a:hover{color:var(--fg)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+.n{font-family:var(--f-num);font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+:focus-visible{outline:2px solid var(--sea-hi);outline-offset:2px}
+.plate{clip-path:polygon(var(--ch) 0,100% 0,100% calc(100% - var(--ch)),calc(100% - var(--ch)) 100%,0 100%,0 var(--ch))}
+.page{max-width:1180px;margin:0 auto;padding-block:16px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:56px}
+
+/* top bar */
+.bar{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--fg-2);font-size:13px}
+.brand svg{width:56px;height:20px}
+.nav{display:flex;gap:4px;flex-wrap:wrap;margin-inline-start:auto}
+.nav a{padding:5px 10px;font-size:13px;color:var(--fg-2);text-decoration:none;background:var(--hull)}
+.nav a:hover{color:var(--fg);background:var(--facet)}
+.tag{padding:0 8px;line-height:22px;font-size:12px;color:var(--fg-2);box-shadow:inset 0 0 0 1px var(--chine-2)}
+
+/* hero */
+.hero{display:flex;flex-direction:column;gap:18px}
+.hero h1{font-size:40px;font-weight:600;line-height:1.2;text-wrap:balance;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hero h1 .n{font-size:38px;color:var(--fg)}
+.lead{max-width:68ch;font-size:16.5px;color:var(--fg-2);line-height:1.9}
+.drawing{background:var(--hull);padding:10px;display:flex;flex-direction:column;gap:8px}
+.dtools{display:flex;gap:3px;align-self:flex-start}
+.dtools button{padding:5px 12px;font-size:13px;color:var(--fg-2);background:var(--abyss)}
+.dtools button[aria-pressed="true"]{color:var(--fg);background:var(--facet);box-shadow:inset 0 -2px 0 var(--sea)}
+.view svg,.view img{display:block;width:100%;height:auto;max-width:100%}
+.drawing figcaption{font-size:12.5px;color:var(--fg-3);padding:2px 4px}
+.parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:4px}
+.parts button{width:100%;display:flex;align-items:center;gap:10px;padding:7px 10px;font-size:13.5px;line-height:1.4;background:var(--hull)}
+.parts button:hover,.parts button.on{background:var(--facet);color:var(--fg)}
+.num{flex:none;display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:12px;font-weight:700;color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--sea-hi)}
+.on .num,.card.flash .num{background:var(--sea-hi);color:var(--abyss)}
+
+/* svg drawing */
+#b01 .hullno{font-family:var(--f-num);font-weight:700;font-size:30px;fill:#e9ddb0;letter-spacing:1px}
+#b01 .comp{transition:filter .2s}
+#b01 .comp.on{filter:drop-shadow(0 0 4px #8fd6cf) drop-shadow(0 0 12px rgba(143,214,207,.55))}
+#b01 .bl{cursor:pointer}
+#b01 .bl .halo{stroke:rgba(8,17,29,.8);stroke-width:4}
+#b01 .bl .ld{stroke:#8fd6cf;stroke-width:1.4}
+#b01 .bl .tp{fill:#8fd6cf;stroke:#08111d;stroke-width:1.5}
+#b01 .bl .bc{fill:#0e1a2b;stroke:#8fd6cf;stroke-width:1.6}
+#b01 .bl text{font-family:var(--f-num);font-weight:700;font-size:15px;fill:#dce6ef;text-anchor:middle;dominant-baseline:central}
+#b01 .bl.on .bc,#b01 .bl:hover .bc,#b01 .bl:focus-visible .bc{fill:#8fd6cf}
+#b01 .bl.on text,#b01 .bl:hover text,#b01 .bl:focus-visible text{fill:#08111d}
+#b01 .bl:focus{outline:none}
+
+/* sections */
+.sec{display:flex;flex-direction:column;gap:18px}
+.sec>h2{font-size:26px;font-weight:600;line-height:1.3;text-wrap:balance}
+.sec>.intro{max-width:70ch;color:var(--fg-2)}
+.principles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.principle{background:var(--hull);padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px}
+.principle h3{font-size:17px;font-weight:600}
+.principle p{color:var(--fg-2);font-size:14.5px}
+.principle svg{width:100%;height:64px}
+
+.group{display:flex;flex-direction:column;gap:10px}
+.group>h3{font-size:15px;font-weight:500;color:var(--fg-3);padding-bottom:6px;border-bottom:1px solid var(--chine)}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{background:var(--hull);padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.card.flash{box-shadow:inset 0 0 0 1px var(--sea-hi)}
+.card header{display:flex;align-items:flex-start;gap:12px}
+.card h4{font-size:17px;font-weight:600;line-height:1.4}
+.card .en{display:block;font-size:12.5px;color:var(--fg-3);direction:ltr;text-align:right;unicode-bidi:isolate}
+.card dl{display:flex;flex-direction:column;gap:8px}
+.card dt{font-size:12.5px;color:var(--sea-hi);font-weight:500}
+.card dd{font-size:14.5px;color:var(--fg-2);line-height:1.8}
+
+.protect{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pbox{background:var(--hull);padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px}
+.pbox h3{font-size:17px;font-weight:600}
+.pbox p,.pbox li{font-size:14.5px;color:var(--fg-2)}
+.pbox ul{display:flex;flex-direction:column;gap:6px}
+.pbox li{padding-inline-start:14px;position:relative}
+.pbox li::before{content:"";position:absolute;inset-inline-start:0;top:.75em;width:6px;height:6px;background:var(--sea)}
+.tablebox{overflow-x:auto;background:var(--hull)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:720px}
+th,td{padding:11px 14px;text-align:start;vertical-align:top;border-bottom:1px solid var(--chine);line-height:1.7}
+th{font-size:12.5px;font-weight:500;color:var(--fg-3);background:var(--facet)}
+td:first-child{font-weight:500;color:var(--fg)}
+td{color:var(--fg-2)}
+td .src{font-size:12px}
+.iptable td:first-child{font-family:var(--f-num)}
+.verdict{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.vbox{background:var(--hull);padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px}
+.vbox h3{font-size:17px;font-weight:600}
+.vbox ul{display:flex;flex-direction:column;gap:8px}
+.vbox li{font-size:14.5px;color:var(--fg-2);padding-inline-start:16px;position:relative}
+.vbox li::before{content:"";position:absolute;inset-inline-start:0;top:.7em;width:7px;height:7px;border-radius:50%;background:var(--fg-3)}
+.vbox.unique{box-shadow:inset 0 0 0 1px var(--sea)}
+.vbox.unique li::before{background:var(--sea-hi)}
+.note{font-size:13px;color:var(--fg-3);max-width:80ch}
+.callout{background:var(--caution-soft);padding:14px 18px;font-size:14.5px;color:var(--fg);max-width:none}
+.callout b{color:var(--caution);font-weight:500}
+.recs{counter-reset:r;display:flex;flex-direction:column;gap:8px}
+.recs li{background:var(--hull);padding:12px 16px;font-size:14.5px;color:var(--fg-2);display:flex;gap:12px}
+.recs li b{color:var(--fg);font-weight:500}
+.sources ol{display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.sources li{color:var(--fg-3)}
+.sources a{word-break:break-word}
+footer{font-size:12.5px;color:var(--fg-3);border-top:1px solid var(--chine);padding-top:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (max-width:900px){
+  .principles,.protect,.verdict{grid-template-columns:minmax(0,1fr)}
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .hero h1{font-size:30px}.hero h1 .n{font-size:28px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media print{
+  @page{size:A4;margin:10mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#08111d}
+  .noprint{display:none!important}
+  .page{gap:28px;padding:0;max-width:none}
+  .card,.principle,.pbox,.vbox,.recs li,tr,.drawing{break-inside:avoid}
+  .sec>h2{break-after:avoid}
+  .group>h3{break-after:avoid}
+  .tablebox{overflow:visible}table{min-width:0;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="bar">
+  <a class="brand" href="index.html" aria-label="العودة إلى لوحة المركز الأمني">
+    <svg viewBox="0 0 64 22" aria-hidden="true"><path d="M2 13 L10 9 L24 7.5 L44 7.5 L57 10.5 L62 13 L57 15.5 L44 18 L20 18 L6 15.5 Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M24 7.5 L27 4 L38 4 L41 7.5 M10 9 L18 13 M44 7.5 L36 13 M57 10.5 L50 13 M31 4 V1" fill="none" stroke="currentColor" stroke-width="1"/><path d="M0 13 H64" stroke="#3e9aa3" stroke-width="1" stroke-dasharray="2 2"/></svg>
+    <span>ملف تصميم المركبة</span>
+  </a>
+  <nav class="nav noprint" aria-label="أقسام الصفحة">
+    <a href="#tech">التقنيات</a>
+    <a href="#protect">حماية الحساسات</a>
+    <a href="#market">مقارنة بالسوق</a>
+    <a href="index.html">لوحة المركز الأمني</a>
+  </nav>
+  <span class="tag">نموذج مفاهيمي</span>
+</header>
+
+<section class="hero" aria-labelledby="h-title">
+  <h1 id="h-title">المركبة السطحية <span class="n">B01</span></h1>
+  <p class="lead">مركبة سطحية غير مأهولة لكشف الألغام البحرية. بدنها شبحي متعدد الأوجه ومنخفض جدًا عن سطح الماء، وتحمل تحتها حاضنة سونار. تتخذ قرار التصنيف على متنها، ثم ترسله إلى المركز الأمني مشروحًا وموقّعًا رقميًا.</p>
+
+  <figure class="drawing plate">
+    <div class="dtools noprint" role="group" aria-label="طريقة العرض">
+      <button data-v="draw" aria-pressed="true">الرسم الهندسي</button>
+      <button data-v="render" aria-pressed="false">الصورة المرجعية</button>
+    </div>
+    <div class="view" id="v-draw">
+<svg id="b01" viewBox="0 0 1400 760" role="img" aria-labelledby="b01-t b01-d">
+<title id="b01-t">مسقط جانبي للمركبة B01</title>
+<desc id="b01-d">بدن متعدد الأوجه بلون كحلي، صاري عليه هوائيات وكاميرا حرارية ورادار، نافذة مقطعية تكشف الحاسوب والبطاريات، وحاضنة سونار أسفل البدن تخرج منها مروحة الحزم الصوتية.</desc>
+<defs>
+  <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d3dee4"/><stop offset="1" stop-color="#eaf0f2"/></linearGradient>
+  <linearGradient id="g-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8db0bd"/><stop offset="1" stop-color="#4e7e8f"/></linearGradient>
+  <linearGradient id="g-deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e6e78"/><stop offset="1" stop-color="#113c46"/></linearGradient>
+  <linearGradient id="g-uw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a6a74" stop-opacity=".42"/><stop offset="1" stop-color="#0e3640" stop-opacity=".72"/></linearGradient>
+  <linearGradient id="g-pod" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9bcbf"/><stop offset="1" stop-color="#5b777c"/></linearGradient>
+  <radialGradient id="g-ball" cx=".35" cy=".32" r=".75"><stop offset="0" stop-color="#4d74a0"/><stop offset="1" stop-color="#18304c"/></radialGradient>
+  <clipPath id="clip-hull"><path d="M150 392 L205 372 L335 338 L372 312 L430 284 L978 288 L1010 326 L1100 358 L1272 424 L1195 474 L1000 534 L790 564 L560 557 L330 517 L175 470 L150 440 Z"/></clipPath>
+  <clipPath id="clip-cut"><rect x="334" y="344" width="206" height="116" rx="14"/></clipPath>
+</defs>
+
+<!-- scene -->
+<rect width="1400" height="330" fill="url(#g-sky)"/>
+<path d="M0 330 V318 h40 v-8 h30 v12 h26 v-20 h22 v16 h40 v-6 h36 v14 h50 v-10 h30 v12 h60 V330 Z" fill="#c8d4d9"/>
+<path d="M1050 330 V320 h30 v-12 h44 v10 h26 v-18 h40 v14 h36 v-6 h52 v10 h40 v-14 h32 v20 h50 V330 Z" fill="#c8d4d9"/>
+<rect y="330" width="1400" height="125" fill="url(#g-sea)"/>
+<g stroke="#ffffff" stroke-opacity=".22" stroke-width="1.5" fill="none">
+  <path d="M40 360 h120 M260 350 h90 M960 352 h120 M1180 366 h150 M60 410 h140 M820 396 h70 M1300 412 h80 M480 342 h60"/>
+</g>
+<rect y="455" width="1400" height="305" fill="url(#g-deep)"/>
+
+<!-- 4: sonar fan under the gondola -->
+<g class="comp" data-c="4">
+  <polygon points="705,606 400,760 1010,760" fill="rgba(143,214,207,.12)"/>
+  <path d="M705 606 L400 760 M705 606 L1010 760 M705 606 V760" stroke="rgba(143,214,207,.6)" stroke-width="1.4" stroke-dasharray="6 5" fill="none"/>
+</g>
+
+<!-- 1: faceted hull -->
+<g class="comp" data-c="1" stroke="rgba(9,20,33,.35)" stroke-width=".8" stroke-linejoin="round">
+  <polygon fill="#1f3c5c" points="150,392 205,372 152,416"/>
+  <polygon fill="#26466b" points="205,372 260,392 152,416"/>
+  <polygon fill="#2e537b" points="205,372 335,338 260,392"/>
+  <polygon fill="#1f3c5c" points="335,338 372,360 260,392"/>
+  <polygon fill="#3a628e" points="335,338 372,312 372,360"/>
+  <polygon fill="#26466b" points="372,312 430,284 372,360"/>
+  <polygon fill="#2e537b" points="430,284 560,352 372,360"/>
+  <polygon fill="#1f3c5c" points="430,284 640,286 560,352"/>
+  <polygon fill="#3a628e" points="640,286 820,287 560,352"/>
+  <polygon fill="#26466b" points="820,287 760,354 560,352"/>
+  <polygon fill="#1f3c5c" points="820,287 978,288 760,354"/>
+  <polygon fill="#2e537b" points="978,288 990,360 760,354"/>
+  <polygon fill="#3a628e" points="978,288 1010,326 990,360"/>
+  <polygon fill="#26466b" points="1010,326 1100,358 990,360"/>
+  <polygon fill="#1f3c5c" points="1100,358 1120,384 990,360"/>
+  <polygon fill="#2e537b" points="1100,358 1272,424 1120,384"/>
+  <polygon fill="#19324d" points="152,416 260,392 160,440"/>
+  <polygon fill="#26466b" points="260,392 320,428 160,440"/>
+  <polygon fill="#1f3c5c" points="260,392 372,360 320,428"/>
+  <polygon fill="#2e537b" points="372,360 560,352 320,428"/>
+  <polygon fill="#1f3c5c" points="560,352 540,432 320,428"/>
+  <polygon fill="#26466b" points="560,352 760,354 540,432"/>
+  <polygon fill="#19324d" points="760,354 780,436 540,432"/>
+  <polygon fill="#1f3c5c" points="760,354 990,360 780,436"/>
+  <polygon fill="#2e537b" points="990,360 1000,430 780,436"/>
+  <polygon fill="#26466b" points="990,360 1120,384 1000,430"/>
+  <polygon fill="#19324d" points="1120,384 1170,446 1000,430"/>
+  <polygon fill="#1f3c5c" points="1120,384 1272,424 1170,446"/>
+  <polygon fill="#19324d" points="160,440 320,428 175,470"/>
+  <polygon fill="#13283d" points="320,428 330,517 175,470"/>
+  <polygon fill="#1f3c5c" points="320,428 540,432 330,517"/>
+  <polygon fill="#13283d" points="540,432 560,557 330,517"/>
+  <polygon fill="#19324d" points="540,432 780,436 560,557"/>
+  <polygon fill="#13283d" points="780,436 790,564 560,557"/>
+  <polygon fill="#1f3c5c" points="780,436 1000,430 790,564"/>
+  <polygon fill="#13283d" points="1000,430 1000,534 790,564"/>
+  <polygon fill="#19324d" points="1000,430 1170,446 1000,534"/>
+  <polygon fill="#13283d" points="1170,446 1195,474 1000,534"/>
+  <polygon fill="#19324d" points="1170,446 1272,424 1195,474"/>
+  <polygon fill="#13283d" points="152,416 160,440 150,440"/>
+  <polygon fill="#13283d" points="150,440 160,440 175,470"/>
+  <polygon fill="#4b74a1" points="430,284 978,288 962,276 452,272"/>
+  <g fill="#142b44" fill-opacity=".85" stroke="none">
+    <polygon points="470,300 540,296 532,328 474,334"/>
+    <polygon points="860,300 930,302 918,330 852,326"/>
+    <polygon points="1030,346 1082,360 1064,382 1018,372"/>
+    <polygon points="230,386 292,370 300,396 242,408"/>
+    <polygon points="640,362 700,360 690,392 636,390"/>
+    <polygon points="880,374 940,374 930,404 872,402"/>
+  </g>
+  <rect y="455" width="1400" height="305" fill="url(#g-uw)" clip-path="url(#clip-hull)" stroke="none"/>
+</g>
+
+<!-- 12: integrated solar cells -->
+<g class="comp" data-c="12">
+  <polygon points="552,300 640,300 646,330 548,330" fill="#0d1b2b" stroke="#3a5f86" stroke-opacity=".7"/>
+  <polygon points="654,300 772,300 782,332 660,332" fill="#0d1b2b" stroke="#3a5f86" stroke-opacity=".7"/>
+  <path d="M566 300 V330 M582 300 V330 M598 300 V330 M614 300 V330 M630 300 V330 M670 300 V332 M690 300 V332 M710 300 V332 M730 300 V332 M750 300 V332 M550 315 H643 M657 316 H777" stroke="rgba(120,160,200,.22)" stroke-width="1" fill="none"/>
+</g>
+
+<!-- 3: sealed compartments outline -->
+<g class="comp" data-c="3" fill="none">
+  <path d="M540 364 L994 368 L998 530 L790 559 L560 552 L334 512 L334 460" stroke="#eef3f6" stroke-opacity=".75" stroke-width="1.6"/>
+  <path d="M700 367 V556 M860 368 V548" stroke="#eef3f6" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="4 4"/>
+</g>
+
+<!-- cutaway window -->
+<rect x="334" y="344" width="206" height="116" rx="14" fill="#c3cace" stroke="#eef3f6" stroke-width="2"/>
+<g clip-path="url(#clip-cut)">
+  <g class="comp" data-c="10">
+    <rect x="348" y="356" width="78" height="42" fill="#e6eaed" stroke="#8e979d"/>
+    <path d="M358 362 V392 M366 362 V392 M374 362 V392 M382 362 V392 M390 362 V392 M398 362 V392 M406 362 V392 M414 362 V392" stroke="#a9b2b8" stroke-width="1.2"/>
+  </g>
+  <g class="comp" data-c="6">
+    <rect x="434" y="358" width="44" height="34" fill="#d6dce0" stroke="#8e979d"/>
+    <circle cx="456" cy="375" r="8" fill="none" stroke="#6f7a81" stroke-width="1.5"/>
+    <rect x="486" y="362" width="42" height="24" fill="#eef1f3" stroke="#8e979d"/>
+    <circle cx="496" cy="374" r="2.5" fill="#6f7a81"/><circle cx="506" cy="374" r="2.5" fill="#6f7a81"/>
+  </g>
+  <g class="comp" data-c="11">
+    <rect x="348" y="408" width="126" height="42" fill="#aeb6bc" stroke="#7d878e"/>
+    <path d="M366 408 V450 M384 408 V450 M402 408 V450 M420 408 V450 M438 408 V450 M456 408 V450" stroke="#8d969c" stroke-width="1.2"/>
+    <rect x="482" y="398" width="48" height="52" fill="#cfd5d9" stroke="#7d878e"/>
+    <circle cx="506" cy="424" r="15" fill="none" stroke="#7d878e" stroke-width="1.5"/><circle cx="506" cy="424" r="5" fill="#7d878e"/>
+  </g>
+  <path d="M426 377 H434 M478 375 H486 M412 398 V408 M500 386 V398" stroke="#59646b" stroke-width="2" fill="none"/>
+</g>
+
+<!-- 4: gondola -->
+<g class="comp" data-c="4">
+  <polygon points="618,560 792,563 798,606 612,606" fill="url(#g-pod)" stroke="#4f6a70"/>
+  <path d="M626 603 H784" stroke="#2b3f44" stroke-width="3"/>
+</g>
+
+<!-- 13: propulsion -->
+<g class="comp" data-c="13">
+  <polygon points="214,452 232,452 238,508 219,510" fill="#1d4250"/>
+  <rect x="244" y="466" width="56" height="14" rx="7" fill="#23495a"/>
+  <ellipse cx="302" cy="473" rx="4" ry="15" fill="#2c5468"/>
+</g>
+
+<!-- mast -->
+<g class="comp" data-c="9">
+  <rect x="504" y="178" width="7" height="104" fill="#1c3552"/><circle cx="507.5" cy="178" r="3.5" fill="#1c3552"/>
+  <polygon points="546,282 551,238 564,238 563,282" fill="#1e3a5c" stroke="rgba(0,0,0,.2)"/>
+</g>
+<g class="comp" data-c="5">
+  <polygon points="518,282 525,222 541,222 540,282" fill="#24456a" stroke="rgba(0,0,0,.2)"/>
+</g>
+<g class="comp" data-c="7">
+  <polygon points="584,284 590,262 622,262 628,284" fill="#1f3b5c"/>
+  <rect x="592" y="254" width="28" height="10" fill="#22405f"/>
+  <circle cx="606" cy="234" r="26" fill="url(#g-ball)"/>
+  <rect x="596" y="222" width="28" height="24" rx="6" fill="#0b1724"/>
+  <circle cx="612" cy="234" r="7.5" fill="#15283c" stroke="#7fa2c4" stroke-width="1.5"/>
+  <circle cx="600" cy="234" r="3.5" fill="#1a2f45" stroke="#7fa2c4" stroke-width="1"/>
+  <circle cx="609.5" cy="231.5" r="2" fill="#cfe3f5" fill-opacity=".85"/>
+</g>
+<g class="comp" data-c="8">
+  <rect x="670" y="280" width="38" height="6" fill="#1f3b5c"/>
+  <path d="M670 281 Q689 262 708 281 Z" fill="#26476d"/>
+  <path d="M678 274 Q689 268 699 272" stroke="#6f8fb3" stroke-width="1.2" fill="none"/>
+</g>
+
+<!-- 2: waterline -->
+<g class="comp" data-c="2" fill="none" stroke="#ffffff">
+  <path d="M140 452 C220 446 300 458 380 452 S540 448 620 455 S800 460 880 455 S1040 450 1120 456 S1190 462 1215 455" stroke-width="3" stroke-opacity=".9"/>
+  <path d="M1180 452 C1220 440 1250 446 1290 452 C1320 456 1350 450 1400 452" stroke-width="2" stroke-opacity=".6"/>
+  <path d="M0 446 C40 440 90 452 140 446 M20 462 C70 458 110 466 150 460" stroke-width="2" stroke-opacity=".5"/>
+</g>
+
+<text class="hullno" x="1088" y="414">B01</text>
+
+<!-- callouts -->
+<g class="bl" data-n="1" tabindex="0" role="button" aria-label="1 البدن الشبحي متعدد الأوجه"><path class="halo" d="M1150 250 L1040 382"/><path class="ld" d="M1150 250 L1040 382"/><circle class="tp" cx="1040" cy="382" r="4"/><circle class="bc" cx="1150" cy="250" r="17"/><text x="1150" y="251">1</text></g>
+<g class="bl" data-n="2" tabindex="0" role="button" aria-label="2 المقطع المنخفض والبدن الشاق للموج"><path class="halo" d="M1335 375 L1228 450"/><path class="ld" d="M1335 375 L1228 450"/><circle class="tp" cx="1228" cy="450" r="4"/><circle class="bc" cx="1335" cy="375" r="17"/><text x="1335" y="376">2</text></g>
+<g class="bl" data-n="3" tabindex="0" role="button" aria-label="3 الحجرات المحكمة"><path class="halo" d="M1095 640 L996 500"/><path class="ld" d="M1095 640 L996 500"/><circle class="tp" cx="996" cy="500" r="4"/><circle class="bc" cx="1095" cy="640" r="17"/><text x="1095" y="641">3</text></g>
+<g class="bl" data-n="4" tabindex="0" role="button" aria-label="4 حاضنة السونار"><path class="halo" d="M560 690 L640 600"/><path class="ld" d="M560 690 L640 600"/><circle class="tp" cx="640" cy="600" r="4"/><circle class="bc" cx="560" cy="690" r="17"/><text x="560" y="691">4</text></g>
+<g class="bl" data-n="5" tabindex="0" role="button" aria-label="5 هوائي GNSS"><path class="halo" d="M495 82 L533 222"/><path class="ld" d="M495 82 L533 222"/><circle class="tp" cx="533" cy="222" r="4"/><circle class="bc" cx="495" cy="82" r="17"/><text x="495" y="83">5</text></g>
+<g class="bl" data-n="6" tabindex="0" role="button" aria-label="6 وحدة القصور الذاتي ووحدة التزامن الزمني"><path class="halo" d="M470 232 L470 370"/><path class="ld" d="M470 232 L470 370"/><circle class="tp" cx="470" cy="370" r="4"/><circle class="bc" cx="470" cy="232" r="17"/><text x="470" y="233">6</text></g>
+<g class="bl" data-n="7" tabindex="0" role="button" aria-label="7 الكاميرا الحرارية والنهارية"><path class="halo" d="M640 95 L612 210"/><path class="ld" d="M640 95 L612 210"/><circle class="tp" cx="612" cy="210" r="4"/><circle class="bc" cx="640" cy="95" r="17"/><text x="640" y="96">7</text></g>
+<g class="bl" data-n="8" tabindex="0" role="button" aria-label="8 الرادار الملاحي"><path class="halo" d="M760 150 L692 270"/><path class="ld" d="M760 150 L692 270"/><circle class="tp" cx="692" cy="270" r="4"/><circle class="bc" cx="760" cy="150" r="17"/><text x="760" y="151">8</text></g>
+<g class="bl" data-n="9" tabindex="0" role="button" aria-label="9 هوائيات الاتصال"><path class="halo" d="M395 135 L506 190"/><path class="ld" d="M395 135 L506 190"/><circle class="tp" cx="506" cy="190" r="4"/><circle class="bc" cx="395" cy="135" r="17"/><text x="395" y="136">9</text></g>
+<g class="bl" data-n="10" tabindex="0" role="button" aria-label="10 حاسوب الحافة ومتحكم الملاحة"><path class="halo" d="M290 245 L385 372"/><path class="ld" d="M290 245 L385 372"/><circle class="tp" cx="385" cy="372" r="4"/><circle class="bc" cx="290" cy="245" r="17"/><text x="290" y="246">10</text></g>
+<g class="bl" data-n="11" tabindex="0" role="button" aria-label="11 الطاقة الهجينة"><path class="halo" d="M110 330 L400 430"/><path class="ld" d="M110 330 L400 430"/><circle class="tp" cx="400" cy="430" r="4"/><circle class="bc" cx="110" cy="330" r="17"/><text x="110" y="331">11</text></g>
+<g class="bl" data-n="12" tabindex="0" role="button" aria-label="12 الخلايا الشمسية المدمجة"><path class="halo" d="M880 205 L716 316"/><path class="ld" d="M880 205 L716 316"/><circle class="tp" cx="716" cy="316" r="4"/><circle class="bc" cx="880" cy="205" r="17"/><text x="880" y="206">12</text></g>
+<g class="bl" data-n="13" tabindex="0" role="button" aria-label="13 الدفع الكهربائي والدفة"><path class="halo" d="M140 620 L230 492"/><path class="ld" d="M140 620 L230 492"/><circle class="tp" cx="230" cy="492" r="4"/><circle class="bc" cx="140" cy="620" r="17"/><text x="140" y="621">13</text></g>
+</svg>
+    </div>
+    <div class="view" id="v-render" hidden>
+      <img src="assets/b01-render.jpg" width="1408" height="768" alt="الصورة المرجعية للمركبة B01 كما صممها الفريق: بدن كحلي متعدد الأوجه منخفض عن الماء مع نافذة مقطعية وحاضنة سونار أسفله" loading="lazy">
+    </div>
+    <figcaption>مسقط جانبي مع مقطع داخلي. الأرقام تقابل قائمة المكونات أدناه، ومرور المؤشر على أي رقم يبرز المكوّن.</figcaption>
+  </figure>
+
+  <ol class="parts" id="parts" aria-label="مكونات المركبة">
+    <li><button data-n="1"><span class="num n">1</span>البدن الشبحي متعدد الأوجه</button></li>
+    <li><button data-n="2"><span class="num n">2</span>المقطع المنخفض والبدن الشاق للموج</button></li>
+    <li><button data-n="3"><span class="num n">3</span>الحجرات المحكمة ومنافذ الكابلات</button></li>
+    <li><button data-n="4"><span class="num n">4</span>حاضنة السونار: ملتي بيم وعمود الماء</button></li>
+    <li><button data-n="5"><span class="num n">5</span>هوائي GNSS بدقة RTK</button></li>
+    <li><button data-n="6"><span class="num n">6</span>وحدة القصور الذاتي ووحدة التزامن</button></li>
+    <li><button data-n="7"><span class="num n">7</span>الكاميرا الحرارية والنهارية</button></li>
+    <li><button data-n="8"><span class="num n">8</span>الرادار الملاحي منخفض المقطع</button></li>
+    <li><button data-n="9"><span class="num n">9</span>هوائيات الاتصال المشفّر</button></li>
+    <li><button data-n="10"><span class="num n">10</span>حاسوب الحافة ومتحكم الملاحة</button></li>
+    <li><button data-n="11"><span class="num n">11</span>الطاقة الهجينة</button></li>
+    <li><button data-n="12"><span class="num n">12</span>الخلايا الشمسية المدمجة</button></li>
+    <li><button data-n="13"><span class="num n">13</span>الدفع الكهربائي الهادئ والدفة</button></li>
+  </ol>
+</section>
+
+<section class="sec" aria-labelledby="p-title">
+  <h2 id="p-title">ثلاثة مبادئ تحكم شكل المركبة</h2>
+  <div class="principles">
+    <article class="principle plate">
+      <svg viewBox="0 0 300 64" aria-hidden="true"><path d="M20 44 L90 20 L210 20 L280 44" fill="none" stroke="#a6b8ca" stroke-width="2"/><path d="M60 8 L120 30 M120 30 L40 58" stroke="#ff6b45" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/><path d="M200 8 L180 30 L280 2" stroke="#8fd6cf" stroke-width="1.5" fill="none"/></svg>
+      <h3>التخفي بالشكل</h3>
+      <p>كل سطح مستوٍ ومائل، فترتد موجات الرادار بعيدًا عن مصدرها بدل أن تعود إليه. الشكل هو العامل الأهم في التخفي، أما الطلاء الماص فمكلف ويتأثر بملوحة البحر.</p>
+    </article>
+    <article class="principle plate">
+      <svg viewBox="0 0 300 64" aria-hidden="true"><path d="M0 34 H300" stroke="#3e9aa3" stroke-width="1.5" stroke-dasharray="5 4"/><path d="M30 34 L60 24 L240 24 L280 34 L240 46 L60 46 Z" fill="#152539" stroke="#a6b8ca" stroke-width="1.5"/><path d="M290 10 V24 M285 10 H295 M285 24 H295" stroke="#8fd6cf" stroke-width="1.3"/></svg>
+      <h3>الالتصاق بسطح الماء</h3>
+      <p>ارتفاع صغير فوق خط الماء ومساحة جانبية قليلة. تقل رؤية المركبة بصريًا وراداريًا، ويقل ما تدفعه الرياح والتيارات الجانبية، فيبقى مسارها مستقيمًا.</p>
+    </article>
+    <article class="principle plate">
+      <svg viewBox="0 0 300 64" aria-hidden="true"><path d="M0 30 C30 18 60 42 90 30 S150 18 180 30 S240 42 300 30" fill="none" stroke="#7a91ab" stroke-width="1.5"/><path d="M60 30 L240 30" stroke="#8fd6cf" stroke-width="2.5"/><path d="M150 30 L110 64 M150 30 L190 64" stroke="#8fd6cf" stroke-width="1" stroke-dasharray="3 3"/></svg>
+      <h3>ثبات الحساسات</h3>
+      <p>البدن الانسيابي يشق الموج بدل أن يصعد فوقه، فيقل الرفع والتمايل. ثبات المنصة يجعل بيانات الملتي بيم نظيفة، ويسمح بمقارنة النقطة نفسها بين التمريرات.</p>
+    </article>
+  </div>
+</section>
+
+<section class="sec" id="tech" aria-labelledby="t-title">
+  <h2 id="t-title">التقنيات وما تفعله كل واحدة</h2>
+  <p class="intro">كل تقنية تخدم أحد الأبعاد الأربعة التي يحتاجها النموذج (الصورة، الموقع، الزمن، الحركة) أو تحمي المركبة أثناء المهمة.</p>
+
+  <div class="group">
+    <h3>البدن والتخفي</h3>
+    <div class="cards">
+      <article class="card plate" id="t1" data-n="1"><header><span class="num n">1</span><div><h4>البدن الشبحي متعدد الأوجه</h4><span class="en">Faceted stealth hull, low radar cross-section</span></div></header>
+        <dl><dt>ما هو</dt><dd>بدن مكوّن من أسطح مستوية بزوايا حادة بدل المنحنيات، على طريقة الطائرات الشبحية، مع نمط تمويه متعدد الأوجه.</dd>
+        <dt>كيف يعمل</dt><dd>الأسطح المائلة تعكس موجات الرادار بعيدًا عن مصدرها، فيصغر المقطع الراداري (RCS) وتقل المسافة التي تُكتشف منها المركبة. التمويه يكسر شكلها بصريًا.</dd>
+        <dt>لماذا في B01</dt><dd>المسح قرب الموانئ والممرات قد يجري في بيئة غير آمنة. المركبة التي يصعب رصدها يصعب استهدافها أو التشويش عليها.</dd></dl></article>
+      <article class="card plate" id="t2" data-n="2"><header><span class="num n">2</span><div><h4>المقطع المنخفض والبدن الشاق للموج</h4><span class="en">Ultra-low profile, wave-piercing hull</span></div></header>
+        <dl><dt>ما هو</dt><dd>ارتفاع صغير فوق خط الماء، ومقدمة حادة، وبدن انسيابي طويل.</dd>
+        <dt>كيف يعمل</dt><dd>المقدمة تشق الموج بدل الصعود فوقه، والمساحة الجانبية الصغيرة تقلل دفع الرياح والتيارات. النتيجة حركة أهدأ ومسار أدق.</dd>
+        <dt>لماذا في B01</dt><dd>ثبات المنصة شرط لجودة بيانات السونار، وهو أساس «التوقيع الزمني»: قياس تأرجح اللغم المربوط بمقارنة النقطة نفسها عبر تمريرات متكررة.</dd></dl></article>
+      <article class="card plate" id="t3" data-n="3"><header><span class="num n">3</span><div><h4>الحجرات المحكمة ومنافذ الكابلات</h4><span class="en">Sealed compartments, gaskets and O-rings</span></div></header>
+        <dl><dt>ما هو</dt><dd>حجرات داخلية مغلقة تحمي الحاسوب والبطاريات، تفصلها حواجز، وكل كابل يدخلها يمر عبر منفذ محكم.</dd>
+        <dt>كيف يعمل</dt><dd>حشوات وحلقات مطاطية تمنع دخول الماء والرطوبة، ومستشعر رطوبة في كل حجرة ينبّه مبكرًا إن بدأ تسرب.</dd>
+        <dt>لماذا في B01</dt><dd>قطرة ماء واحدة على حاسوب الحافة قد توقف المهمة. الإحكام يحمي «عقل» المركبة طوال فترة العمل في البحر المفتوح.</dd></dl></article>
+    </div>
+  </div>
+
+  <div class="group">
+    <h3>الصورة: الاستشعار تحت الماء</h3>
+    <div class="cards">
+      <article class="card plate" id="t4" data-n="4"><header><span class="num n">4</span><div><h4>حاضنة السونار: ملتي بيم وعمود الماء</h4><span class="en">Multibeam echosounder and water-column sensing in a gondola</span></div></header>
+        <dl><dt>ما هو</dt><dd>حاضنة انسيابية أسفل البدن تحمل محوّل الملتي بيم ومجس سرعة الصوت.</dd>
+        <dt>كيف يعمل</dt><dd>في كل رشقة يرسل الملتي بيم مروحة من الحزم الصوتية، فيرسم شكل القاع ويسجل في الوقت نفسه كل الأصداء في عمود الماء. وجوده في حاضنة غاطسة يبعده عن الفقاعات وضجيج السطح، ومجس سرعة الصوت يصحح انحناء الحزم بين طبقات الماء.</dd>
+        <dt>لماذا في B01</dt><dd>اللغم القاعي يظهر على القاع، واللغم المربوط يطفو في عمود الماء. الحاضنة تلتقط الاثنين في رشقة واحدة، وهذه هي «الصورة» التي يحللها النموذج بمسارين.</dd></dl></article>
+    </div>
+  </div>
+
+  <div class="group">
+    <h3>الموقع والزمن والحركة</h3>
+    <div class="cards">
+      <article class="card plate" id="t5" data-n="5"><header><span class="num n">5</span><div><h4>هوائي GNSS بدقة RTK</h4><span class="en">Multi-constellation GNSS with RTK correction</span></div></header>
+        <dl><dt>ما هو</dt><dd>مستقبل لأقمار الملاحة من عدة أنظمة، مع تصحيح RTK.</dd>
+        <dt>كيف يعمل</dt><dd>يحدد موقع المركبة بدقة تصل إلى سنتيمترات عند توفر التصحيح، ويعطي كل نقطة مسح إحداثياتها.</dd>
+        <dt>لماذا في B01</dt><dd>بدون موقع دقيق لا يمكن العودة إلى الهدف نفسه ولا تسليم إحداثيات موثوقة لفريق التحقق. المراقبة الطيفية تحميه من التشويش والانتحال.</dd></dl></article>
+      <article class="card plate" id="t6" data-n="6"><header><span class="num n">6</span><div><h4>وحدة القصور الذاتي ووحدة التزامن الزمني</h4><span class="en">IMU / INS and PPS time synchronisation</span></div></header>
+        <dl><dt>ما هو</dt><dd>وحدة تقيس التسارع والدوران، ووحدة زمن تأخذ نبضة دقيقة كل ثانية من الأقمار.</dd>
+        <dt>كيف يعمل</dt><dd>وحدة القصور الذاتي تقيس الرفع والتمايل والترنح لتعويض حركة السونار، وتحافظ على الموقع والاتجاه لفترة إذا ضعفت إشارة الأقمار. وحدة التزامن تختم كل قراءة سونار وملاحة بزمن دقيق.</dd>
+        <dt>لماذا في B01</dt><dd>الموقع والزمن والحركة ثلاثة من الأبعاد الأربعة. بها نقارن النقطة نفسها بين التمريرات ونقيس تأرجح اللغم المربوط.</dd></dl></article>
+    </div>
+  </div>
+
+  <div class="group">
+    <h3>الوعي فوق الماء</h3>
+    <div class="cards">
+      <article class="card plate" id="t7" data-n="7"><header><span class="num n">7</span><div><h4>الكاميرا الحرارية والنهارية</h4><span class="en">Gyro-stabilised EO/IR gimbal</span></div></header>
+        <dl><dt>ما هو</dt><dd>كرة دوّارة مثبتة جيروسكوبيًا تجمع كاميرا نهارية وكاميرا حرارية.</dd>
+        <dt>كيف يعمل</dt><dd>تتبع الأهداف السطحية ليلًا ونهارًا، والحامل يلغي اهتزاز المركبة. الكاميرا الحرارية ترى حرارة المحركات والأشخاص في الظلام.</dd>
+        <dt>لماذا في B01</dt><dd>تؤكد بصريًا ما يرصده الرادار، وتكشف القوارب التي لا تبث هويتها قرب منطقة العمل.</dd></dl></article>
+      <article class="card plate" id="t8" data-n="8"><header><span class="num n">8</span><div><h4>الرادار الملاحي منخفض المقطع</h4><span class="en">Low-profile marine radar with AIS fusion</span></div></header>
+        <dl><dt>ما هو</dt><dd>رادار صغير داخل قبة منخفضة، يعمل مع مستقبل AIS.</dd>
+        <dt>كيف يعمل</dt><dd>يرصد السفن والعوائق حول المركبة ويغذي الخريطة الموحدة. مقارنة أهدافه ببيانات AIS تكشف أي هدف لا يبث هويته.</dd>
+        <dt>لماذا في B01</dt><dd>المركبة غير مأهولة، فالرادار عينها لتجنب الاصطدام في الممرات المزدحمة. القبة المنخفضة تحافظ على المقطع الراداري الصغير.</dd></dl></article>
+    </div>
+  </div>
+
+  <div class="group">
+    <h3>الاتصال والذكاء</h3>
+    <div class="cards">
+      <article class="card plate" id="t9" data-n="9"><header><span class="num n">9</span><div><h4>هوائيات الاتصال المشفّر</h4><span class="en">UHF radio, satellite and 4G with mutual TLS</span></div></header>
+        <dl><dt>ما هو</dt><dd>هوائي راديو للبيانات، وهوائيات للأقمار الصناعية و4G.</dd>
+        <dt>كيف يعمل</dt><dd>يتحول الاتصال تلقائيًا بين الراديو، و4G قرب الساحل، والقمر الصناعي في العمق. كل الحزم مشفرة بتوثيق متبادل بين المركبة والمركز، وموقّعة رقميًا.</dd>
+        <dt>لماذا في B01</dt><dd>حزمة التسليم يجب أن تصل كاملة وموثوقة. التوقيع الرقمي يثبت أنها خرجت من B01 ولم تُعدّل في الطريق.</dd></dl></article>
+      <article class="card plate" id="t10" data-n="10"><header><span class="num n">10</span><div><h4>حاسوب الحافة ومتحكم الملاحة</h4><span class="en">Edge AI computer and autonomy controller</span></div></header>
+        <dl><dt>ما هو</dt><dd>حاسوب مدمج داخل حجرة محكمة، ومعه متحكم الملاحة الذاتية.</dd>
+        <dt>كيف يعمل</dt><dd>يشغّل شبكة CNN بمسارين (القاع وعمود الماء) مع طبقة دمج لنمط التأرجح، ويصدر التصنيف مع أسبابه: الشكل والظل والتأرجح والشذوذ. متحكم الملاحة ينفذ خطوط المسح ويضيف التمريرات المتقاطعة حول الأهداف تلقائيًا، ومراقب التشغيل يعيد تشغيل أي عملية تتعطل.</dd>
+        <dt>لماذا في B01</dt><dd>القرار يُتخذ على المركبة لحظيًا دون انتظار الاتصال، ويصل إلى المركز قرارٌ مع أسبابه بدل صورة خام.</dd></dl></article>
+    </div>
+  </div>
+
+  <div class="group">
+    <h3>الطاقة والدفع</h3>
+    <div class="cards">
+      <article class="card plate" id="t11" data-n="11"><header><span class="num n">11</span><div><h4>الطاقة الهجينة</h4><span class="en">Lithium batteries with a standby generator</span></div></header>
+        <dl><dt>ما هو</dt><dd>بطاريات ليثيوم مصدرًا رئيسيًا، ومولد احتياطي صغير.</dd>
+        <dt>كيف يعمل</dt><dd>البطاريات تشغّل الحساسات والدفع بهدوء، والمولد يشحنها عند الحاجة، والخلايا الشمسية تمدد زمن المهمة.</dd>
+        <dt>لماذا في B01</dt><dd>مهام المسح المتكرر طويلة، والتشغيل على البطاريات يقلل الضجيج والبصمة الحرارية.</dd></dl></article>
+      <article class="card plate" id="t12" data-n="12"><header><span class="num n">12</span><div><h4>الخلايا الشمسية المدمجة</h4><span class="en">Solar cells integrated into the upper facets</span></div></header>
+        <dl><dt>ما هو</dt><dd>ألواح شمسية مسطحة تشكّل جزءًا من أسطح البدن العلوية.</dd>
+        <dt>كيف يعمل</dt><dd>تشحن البطاريات أثناء المهمة دون أن تبرز عن البدن.</dd>
+        <dt>لماذا في B01</dt><dd>طاقة إضافية بلا ضجيج، مع الحفاظ على الشكل الشبحي.</dd></dl></article>
+      <article class="card plate" id="t13" data-n="13"><header><span class="num n">13</span><div><h4>الدفع الكهربائي الهادئ والدفة</h4><span class="en">Quiet electric propulsion and rudder</span></div></header>
+        <dl><dt>ما هو</dt><dd>محرك كهربائي ومروحة ودفة في المؤخرة.</dd>
+        <dt>كيف يعمل</dt><dd>يدفع المركبة بسرعات المسح بضجيج منخفض.</dd>
+        <dt>لماذا في B01</dt><dd>ضجيج المحركات يشوش على السونار نفسه ويكشف المركبة صوتيًا. الدفع الهادئ يحمي جودة البيانات والتخفي معًا.</dd></dl></article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="protect" aria-labelledby="pr-title">
+  <h2 id="pr-title">حماية الحساسات العلوية</h2>
+  <p class="intro">في التصاميم البحرية المتقدمة، حماية الرادار والكاميرا الحرارية وهوائيات GNSS هي أساس التصميم، وتقوم على ثلاثة معايير.</p>
+  <div class="protect">
+    <article class="pbox plate">
+      <h3>معيار الحماية IP67 وIP68</h3>
+      <p>كل الحساسات العلوية مغلفة بأحد المعيارين، فتتحمل الغمر في الماء والأمواج التي تضرب الصاري ورذاذ مياه البحر المالحة.</p>
+    </article>
+    <article class="pbox plate">
+      <h3>مواد مقاومة للتآكل والملوحة</h3>
+      <p>أغطية الرادار وعدسات الكاميرا ومبيت الهوائيات من ألومنيوم بدرجة بحرية أو ألياف كربون، مطلية بمواد مقاومة للأكسدة والتآكل الملحي طوال المهمة.</p>
+    </article>
+    <article class="pbox plate">
+      <h3>الإحكام ومنع تسرب الرطوبة</h3>
+      <ul>
+        <li>حشوات وحلقات مطاطية في كل وصلة.</li>
+        <li>منافذ كابلات محكمة بين الصاري والبدن.</li>
+        <li>مستشعر رطوبة في حجرة حاسوب الحافة يظهر في لوحة المركز.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="tablebox plate">
+    <table class="iptable">
+      <caption class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)">معنى رمزي الحماية وتوزيعها على حساسات B01</caption>
+      <thead><tr><th scope="col">الرمز</th><th scope="col">الغبار (الرقم الأول)</th><th scope="col">الماء (الرقم الثاني)</th><th scope="col">أين في B01</th></tr></thead>
+      <tbody>
+        <tr><td>IP67</td><td>محكم تمامًا ضد الغبار</td><td>يتحمل الغمر المؤقت حتى عمق 1 م لمدة 30 دقيقة</td><td>الرادار، هوائي GNSS، هوائيات الاتصال</td></tr>
+        <tr><td>IP68</td><td>محكم تمامًا ضد الغبار</td><td>يتحمل الغمر المستمر لأعمق من 1 م بشروط تحددها الشركة المصنعة</td><td>الكاميرا الحرارية والنهارية، لأنها الأكثر تعرضًا للرذاذ والأمواج على الصاري</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">التعريفات وفق المعيار الدولي IEC 60529. اختيار IP68 للكاميرا مقترح تصميمي يمكن للفريق تعديله.</p>
+</section>
+
+<section class="sec" id="market" aria-labelledby="m-title">
+  <h2 id="m-title">هل يوجد مثل B01 في السوق البحري؟</h2>
+  <p class="intro">بحثنا في المصادر المنشورة عن مركبات تشبه B01 في الشكل أو في المهمة. وجدنا مركبات تشترك معها في جزء أو جزأين، لكن لم نجد مركبة تجمع كل ما تجمعه B01.</p>
+  <div class="tablebox plate">
+    <table>
+      <thead><tr><th scope="col">النظام</th><th scope="col">ما يشبه B01</th><th scope="col">ما يختلف عنها</th></tr></thead>
+      <tbody>
+        <tr><td>Sea Shadow (IX-529)<br><span class="src"><a href="https://hisutton.com/Lockheed-Sea-Shadow-Stealth-Ship.html" target="_blank" rel="noopener">Lockheed، الولايات المتحدة</a></span></td><td>أسطح جانبية مائلة متعددة الأوجه لتشتيت الرادار، مستوحاة من الطائرة F-117</td><td>سفينة تجريبية مأهولة لاختبار التخفي، ليست لكشف الألغام</td></tr>
+        <tr><td>M80 Stiletto<br><span class="src"><a href="https://en.wikipedia.org/wiki/M80_Stiletto" target="_blank" rel="noopener">الولايات المتحدة</a></span></td><td>واجهة أمامية متعددة الأوجه لتقليل البصمة الرادارية</td><td>قارب مأهول سريع، بلا منظومة سونار أو تصنيف</td></tr>
+        <tr><td>GHOST<br><span class="src"><a href="https://interestingengineering.com/innovation/meet-the-ghost-the-boat-that-sails-through-bubbles" target="_blank" rel="noopener">الولايات المتحدة</a></span></td><td>تصميم متعدد الأوجه مستوحى من الطائرات الشبحية</td><td>قارب سريع يعتمد طبقة فقاعات تحت البدن، ليس منصة مسح</td></tr>
+        <tr><td>Amada USV 750 HSC Stealth<br><span class="src"><a href="https://amadaship.com/unmanned-surface-vehicle-750-hsc-stealth" target="_blank" rel="noopener">Amada</a></span></td><td>مركبة غير مأهولة بأسطح مائلة ومقطع راداري صغير، حسب الشركة المصنعة</td><td>مركبة سريعة عامة الغرض، لا نعرف عنها منظومة لكشف الألغام أو شرح القرار</td></tr>
+        <tr><td>DriX<br><span class="src"><a href="https://www.bairdmaritime.com/unmanned/unmanned-survey/vessel-review-drix-unmanned-vehicle-to-support-noaas-ocean-exploration-programs" target="_blank" rel="noopener">Exail، فرنسا</a></span></td><td>حاضنة غاطسة على عمق نحو 2 م تحمل الملتي بيم بعيدًا عن الفقاعات، وبدن ثابت يشق الموج</td><td>مركبة مسح هيدروغرافي مدنية بطول 7.7 م تقريبًا، ليست شبحية ولا تصنف الألغام</td></tr>
+        <tr><td>Inspector 125<br><span class="src"><a href="https://www.exail.com/inspector-125-keeping-crews-out-of-the-danger-zone-2/" target="_blank" rel="noopener">Exail، فرنسا</a></span></td><td>مركبة غير مأهولة لمكافحة الألغام والأمن البحري</td><td>تعمل بإطلاق مركبات تحت الماء وسونارات مقطورة ضمن منظومة أكبر، وبدنها تقليدي غير شبحي</td></tr>
+        <tr><td>ARCIMS وزوارق Halcyon<br><span class="src"><a href="https://www.naval-technology.com/projects/atlas-remote-combined-influence-minesweeping-system-arcims/" target="_blank" rel="noopener">Atlas، المملكة المتحدة</a></span></td><td>منظومة غير مأهولة لصيد الألغام وكسحها في البحرية البريطانية</td><td>بدن تقليدي بطول 11 م، وتعتمد على سونار مقطور مثل <a href="https://www.janes.com/defence-news/naval-weapons/latest/dsei-2021-anaqs-20c-sonar-integration-with-arcims-set-for-wisex-demo" target="_blank" rel="noopener">AN/AQS-20C</a></td></tr>
+        <tr><td>Sea Specter و Spectre<br><span class="src"><a href="https://www.marinetechnologynews.com/news/hybrid-theory-multi-domain-656317" target="_blank" rel="noopener">Leidos</a>، <a href="https://saildrone.com/news/introducing-saildrone-spectre-next-generation-usv-anti-submarine-warfare-vls-strike" target="_blank" rel="noopener">Saildrone</a></span></td><td>مقطع منخفض أو شبه غاطس لتقليل البصمة</td><td>مخصصة للنقل اللوجستي أو مكافحة الغواصات والضربات، لا لكشف الألغام</td></tr>
+        <tr><td>أبحاث الذكاء التفسيري في السونار<br><span class="src"><a href="https://vivo.tib.eu/demo/display/W4401718392" target="_blank" rel="noopener">XAI لحرب الألغام</a>، <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8123111/" target="_blank" rel="noopener">تصنيف عمود الماء</a></span></td><td>شرح قرارات النماذج على صور السونار، وتصنيف أهداف عمود الماء بالتعلم الآلي</td><td>أبحاث على صور السونار الجانبي أو على أسراب الأسماك وتسربات الغاز. لم نجد منتجًا يطبقها على الألغام المربوطة مع تحليل زمني</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="verdict">
+    <article class="vbox plate">
+      <h3>موجود قبلنا، فلا ندّعيه</h3>
+      <ul>
+        <li>البدن الشبحي متعدد الأوجه، في سفن تجريبية وقوارب ومركبة غير مأهولة واحدة على الأقل.</li>
+        <li>المقطع المنخفض أو شبه الغاطس، في مركبات لوجستية وعسكرية حديثة.</li>
+        <li>الحاضنة الغاطسة للملتي بيم، في مركبات المسح مثل DriX.</li>
+        <li>المركبات غير المأهولة لمكافحة الألغام، في البحريتين الفرنسية والبريطانية.</li>
+      </ul>
+    </article>
+    <article class="vbox plate unique">
+      <h3>ما لم نجده مجتمعًا في مركبة واحدة</h3>
+      <ul>
+        <li>بدن شبحي منخفض المقطع مخصص لكشف الألغام، وليس للهجوم أو النقل.</li>
+        <li>كشف الألغام المربوطة من بيانات عمود الماء في الرشقة نفسها مع القاع.</li>
+        <li>قياس تأرجح الهدف عبر تمريرات متعددة بزمن مختوم بدقة.</li>
+        <li>قرار لا يصدر إلا بإجماع زوايا مسح مختلفة.</li>
+        <li>حزمة تسليم تشرح سبب التصنيف وموقّعة رقميًا، تصل إلى مركز أمني.</li>
+      </ul>
+    </article>
+  </div>
+  <p class="callout"><b>الخلاصة:</b> كل عنصر في B01 له أصل معروف، وتفرّدها في طريقة جمع هذه العناصر وفي طريقة اتخاذ القرار وشرحه. اعرضوها بهذه الصيغة، فهي دقيقة ويصعب الطعن فيها.</p>
+
+  <h3 style="font-size:17px;font-weight:600;margin-top:6px">كيف تحافظون على التفرد</h3>
+  <ol class="recs">
+    <li><span class="num n">1</span><span><b>لا تقولوا «أول مركبة شبحية غير مأهولة».</b> هناك مركبات أعلنت ذلك قبلكم. قولوا «أول منظومة لكشف الألغام تجمع التخفي والتوقيع الزمني والقرار المفسَّر».</span></li>
+    <li><span class="num n">2</span><span><b>اجعلوا طريقة القرار محور العرض.</b> التوقيع الزمني وإجماع الزوايا وحزمة التسليم المفسَّرة هي الأقل وجودًا في السوق، وهي ما يميزكم فعلًا.</span></li>
+    <li><span class="num n">3</span><span><b>وثّقوا تاريخ التصميم.</b> المستودع والوسوم على GitHub تثبت متى ظهرت الفكرة. ويمكنكم دراسة تسجيل التصميم الصناعي أو براءة اختراع للتكامل.</span></li>
+    <li><span class="num n">4</span><span><b>ميّزوا الشكل نفسه.</b> نمط الأوجه، والحاضنة المدمجة في البدن، وترتيب الصاري هي بصمة B01، فلا تقرّبوها من شكل Sea Shadow أو DriX.</span></li>
+  </ol>
+  <p class="note">البحث شمل المصادر المنشورة فقط. الأنظمة العسكرية المصنفة قد تتضمن حلولًا مشابهة غير معلنة، كما ذكرتم في العرض التقديمي.</p>
+</section>
+
+<section class="sec sources" aria-labelledby="s-title">
+  <h2 id="s-title">المصادر</h2>
+  <ol>
+    <li><a href="https://hisutton.com/Lockheed-Sea-Shadow-Stealth-Ship.html" target="_blank" rel="noopener">Lockheed Sea Shadow stealth ship (H I Sutton)</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/M80_Stiletto" target="_blank" rel="noopener">M80 Stiletto (Wikipedia)</a></li>
+    <li><a href="https://interestingengineering.com/innovation/meet-the-ghost-the-boat-that-sails-through-bubbles" target="_blank" rel="noopener">Meet the GHOST (Interesting Engineering)</a></li>
+    <li><a href="https://amadaship.com/unmanned-surface-vehicle-750-hsc-stealth" target="_blank" rel="noopener">Unmanned Surface Vehicle 750 HSC Stealth (Amada)</a></li>
+    <li><a href="https://www.bairdmaritime.com/unmanned/unmanned-survey/vessel-review-drix-unmanned-vehicle-to-support-noaas-ocean-exploration-programs" target="_blank" rel="noopener">Vessel review: DriX (Baird Maritime)</a></li>
+    <li><a href="https://www.exail.com/inspector-125-keeping-crews-out-of-the-danger-zone-2/" target="_blank" rel="noopener">Inspector 125 (Exail)</a></li>
+    <li><a href="https://www.naval-technology.com/projects/atlas-remote-combined-influence-minesweeping-system-arcims/" target="_blank" rel="noopener">ARCIMS (Naval Technology)</a></li>
+    <li><a href="https://www.janes.com/defence-news/naval-weapons/latest/dsei-2021-anaqs-20c-sonar-integration-with-arcims-set-for-wisex-demo" target="_blank" rel="noopener">AN/AQS-20C integration with ARCIMS (Janes)</a></li>
+    <li><a href="https://www.marinetechnologynews.com/news/hybrid-theory-multi-domain-656317" target="_blank" rel="noopener">Hybrid Theory: multi-domain unmanned systems (Marine Technology News)</a></li>
+    <li><a href="https://saildrone.com/news/introducing-saildrone-spectre-next-generation-usv-anti-submarine-warfare-vls-strike" target="_blank" rel="noopener">Introducing Saildrone Spectre (Saildrone)</a></li>
+    <li><a href="https://vivo.tib.eu/demo/display/W4401718392" target="_blank" rel="noopener">Explainable AI Methods for Underwater Mine Warfare (TIB)</a></li>
+    <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8123111/" target="_blank" rel="noopener">Water-column target classification with a multibeam echosounder (Sensors, 2021)</a></li>
+  </ol>
+</section>
+
+<footer>
+  <span>المركبة <span class="n">B01</span>، نموذج مفاهيمي. البيانات التصميمية أولية وتحتاج تحققًا هندسيًا.</span>
+  <a href="index.html">لوحة المركز الأمني</a>
+</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var svg=document.getElementById('b01');
+  function setOn(n){
+    document.querySelectorAll('#b01 .bl').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-n')===n);});
+    document.querySelectorAll('#b01 .comp').forEach(function(c){c.classList.toggle('on',c.getAttribute('data-c')===n);});
+    document.querySelectorAll('#parts button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-n')===n);});
+  }
+  function go(n){
+    var card=document.getElementById('t'+n);if(!card)return;
+    card.scrollIntoView({block:'center'});
+    card.classList.add('flash');setTimeout(function(){card.classList.remove('flash');},1600);
+  }
+  document.querySelectorAll('#b01 .bl').forEach(function(b){
+    var n=b.getAttribute('data-n');
+    b.addEventListener('mouseenter',function(){setOn(n);});
+    b.addEventListener('mouseleave',function(){setOn(null);});
+    b.addEventListener('focus',function(){setOn(n);});
+    b.addEventListener('blur',function(){setOn(null);});
+    b.addEventListener('click',function(){go(n);});
+    b.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go(n);}});
+  });
+  document.querySelectorAll('#parts button').forEach(function(b){
+    var n=b.getAttribute('data-n');
+    b.addEventListener('mouseenter',function(){setOn(n);});
+    b.addEventListener('mouseleave',function(){setOn(null);});
+    b.addEventListener('focus',function(){setOn(n);});
+    b.addEventListener('blur',function(){setOn(null);});
+    b.addEventListener('click',function(){go(n);});
+  });
+  document.querySelectorAll('.dtools button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var v=b.getAttribute('data-v');
+      document.querySelectorAll('.dtools button').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
+      document.getElementById('v-draw').hidden=v!=='draw';
+      document.getElementById('v-render').hidden=v!=='render';
+    });
+  });
+})();
+</script>
+</body>
+</html>

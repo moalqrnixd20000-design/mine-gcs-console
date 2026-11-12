@@ -5,6 +5,8 @@ Arabic, right-to-left. One static HTML file. **All data is simulated.**
 
 **Live site:** https://moalqrnixd20000-design.github.io/mine-gcs-console/ (GitHub Pages, served from `main`).
 
+**Vessel design dossier:** [vessel.html](vessel.html) has the B01 side-view drawing with numbered parts, an explanation of every technology, sensor protection (IP67/IP68), and a comparison with vessels on the market. A print copy is in [B01-vessel-design.pdf](B01-vessel-design.pdf).
+
 ## Run locally
 
 ```bash
