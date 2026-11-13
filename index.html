@@ -393,9 +393,11 @@ canvas{display:block;width:100%;height:100%}
     <div class="mapwrap">
       <canvas id="map" role="img" aria-label="خريطة تجمع مسار B01 وخطوط المسح والأهداف تحت الماء والسفن السطحية"></canvas>
       <dl class="mapinfo" aria-label="تقدم المسح">
-        <dt>الخط</dt><dd><span class="n" id="line-n">10/15</span></dd>
-        <dt>التغطية</dt><dd><span class="n" id="cov">61%</span></dd>
-        <dt>المتبقي</dt><dd><span class="n" id="eta">1:10</span> ساعة</dd>
+        <dt>المسح</dt><dd>شبكي بتمريرتين</dd>
+        <dt>الأفقية A</dt><dd><span class="n">100%</span></dd>
+        <dt>العمودية B</dt><dd><span class="n" id="cov-b">68%</span>، الخط <span class="n" id="line-n">28/40</span></dd>
+        <dt>التباعد</dt><dd><span class="n">25 m</span> بلا فجوات</dd>
+        <dt>المتبقي</dt><dd><span class="n" id="eta">0:25</span> ساعة</dd>
         <dd class="cap2">المحاكاة تُعرض بسرعة <span class="n">×3</span></dd>
       </dl>
       <figure class="thermal" id="thermal-fig">
@@ -407,7 +409,10 @@ canvas{display:block;width:100%;height:100%}
         <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M8 1 L12.5 11 L3.5 11 Z" fill="none" stroke="#a6b8ca" stroke-width="1.3"/></svg>سفينة تبث AIS</li>
         <li><svg viewBox="0 0 16 12" aria-hidden="true"><rect x="4.5" y="2.5" width="7" height="7" transform="rotate(45 8 6)" fill="rgba(242,184,75,.25)" stroke="#f2b84b" stroke-width="1.3"/></svg>هدف رادار بلا AIS</li>
         <li><svg viewBox="0 0 16 12" aria-hidden="true"><circle cx="8" cy="6" r="4" fill="#ff6b45"/></svg>هدف تحت الماء</li>
-        <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M0 6 H16" stroke="#ff6b45" stroke-width="1.4" stroke-dasharray="4 3"/></svg>تمريرة متقاطعة</li>
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M0 6 H16" stroke="#3e9aa3" stroke-width="1.6"/></svg>مسار منجز</li>
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M8 0 V12" stroke="#a6b8ca" stroke-width="1.4" stroke-dasharray="1 3"/></svg>التمريرة العمودية القادمة</li>
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M0 6 H16" stroke="#ff6b45" stroke-width="1.4" stroke-dasharray="4 3"/></svg>تمريرة تكيفية حول الهدف</li>
+        <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M1 12 L13 0 M7 12 L16 3 M0 6 L6 0" stroke="#7a91ab" stroke-width="1"/></svg>الانعطاف خارج المنطقة</li>
         <li><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M0 6 H16" stroke="#a6b8ca" stroke-width="1.2" stroke-dasharray="5 3"/></svg>حد منطقة العمل</li>
       </ul>
       <div class="maptip" id="maptip" hidden></div>
@@ -503,9 +508,9 @@ canvas{display:block;width:100%;height:100%}
         <section class="cbox" aria-labelledby="alt-t"><h3 id="alt-t">البدائل التي قارنها النموذج</h3><ul class="alts" id="alts"></ul></section>
         <section class="cbox" aria-labelledby="time-t"><h3 id="time-t">الطابع الزمني</h3><dl class="kv" id="d-time" style="margin-top:6px"></dl></section>
         <section class="cbox" aria-labelledby="sig-t">
-          <h3 id="sig-t">التوقيع الرقمي وسلسلة الحيازة</h3>
-          <p class="sigline"><span class="ok"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 L12.5 3 V7 C12.5 10 10 12.2 7 13 C4 12.2 1.5 10 1.5 7 V3 Z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 7 L6.3 8.8 L9.6 5.3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>التوقيع صحيح</span><span>Ed25519، المفتاح <span class="n">B01-EDGE-07</span></span></p>
-          <p class="hash"><span>بصمة SHA-256</span><span class="n" id="d-hash"></span><button class="mini-btn" id="copy-hash">نسخ البصمة</button></p>
+          <h3 id="sig-t">سلامة الحزمة وسلسلة الحيازة</h3>
+          <p class="sigline"><span class="ok"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 L12.5 3 V7 C12.5 10 10 12.2 7 13 C4 12.2 1.5 10 1.5 7 V3 Z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 7 L6.3 8.8 L9.6 5.3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>سليمة ومشفّرة</span><span>بأحدث إصدار تشفير متاح</span></p>
+          <p class="hash"><span>بصمة الحزمة</span><span class="n" id="d-hash"></span><button class="mini-btn" id="copy-hash">نسخ البصمة</button></p>
           <ol class="custody" id="custody"></ol>
         </section>
       </div>
@@ -542,7 +547,7 @@ canvas{display:block;width:100%;height:100%}
     <h2 id="hp-comms-t">روابط الاتصال</h2>
     <p class="state">الراديو نشط، والتحويل التلقائي جاهز</p>
     <ul class="links">
-      <li class="on"><span class="bars" data-l="4" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>راديو UHF، نشط</span><span class="n" id="uhf">-71 dBm 38 ms</span></li>
+      <li class="on"><span class="bars" data-l="4" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>راديو، نشط</span><span class="n" id="uhf">-71 dBm 38 ms</span></li>
       <li><span class="bars" data-l="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>قمر صناعي، احتياطي</span><span class="n">610 ms</span></li>
       <li class="off"><span class="bars" data-l="0" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>4G، خارج التغطية</span><span>غير متاح</span></li>
     </ul>
@@ -559,14 +564,9 @@ canvas{display:block;width:100%;height:100%}
     </dl>
   </section>
   <section class="panel plate hp" id="hp-crypto" tabindex="-1" aria-labelledby="hp-crypto-t">
-    <h2 id="hp-crypto-t">التشفير المتبادل</h2>
-    <p class="state">التوثيق المتبادل سليم بين المركبة والمركز</p>
-    <dl class="kv">
-      <dt>البروتوكول</dt><dd><span class="n">TLS 1.3 mTLS</span></dd>
-      <dt>التشفير</dt><dd><span class="n">AES-256-GCM</span></dd>
-      <dt>تدوير المفتاح</dt><dd>بعد <span class="n" id="rot">07:12</span></dd>
-      <dt>الحزم الموقّعة</dt><dd><span class="n">100%</span></dd>
-    </dl>
+    <h2 id="hp-crypto-t">التشفير</h2>
+    <p class="state">الاتصال بين المركبة والمركز مشفّر</p>
+    <p class="small">سنستخدم أحدث إصدار تشفير متاح.</p>
   </section>
   <section class="panel plate hp caution" id="hp-spec" tabindex="-1" aria-labelledby="hp-spec-t">
     <h2 id="hp-spec-t">المراقبة الطيفية <span class="n">GNSS L1</span></h2>
@@ -644,96 +644,104 @@ function fit(id){const el=document.getElementById(id);if(!el)return null;const r
 const LAT0=21.4852,LON0=39.0316,MLAT=110574,MLON=111320*Math.cos(LAT0*D2R);
 const ll=(x,y)=>[LAT0+y/MLAT,LON0+x/MLON];
 function dm(v,isLat){const a=Math.abs(v),d=Math.floor(a),m=(a-d)*60;return pad(d,isLat?2:3)+'°'+m.toFixed(3).padStart(6,'0')+'′'+(isLat?(v>=0?'N':'S'):(v>=0?'E':'W'));}
-const depthAt=(x,y)=>6+(1150-x)*0.009+1.2*Math.sin(y/260);
-const isoX=(D,y)=>1150-(D-6-1.2*Math.sin(y/260))/0.009;
-const coastX=y=>1250+90*Math.sin(y/330)+40*Math.sin(y/97);
-const AREA={x0:-700,x1:700,y0:-420},SP=60,NL=15,L0=9;
-const V_SHIP=2.1,RATE=3,LINE_T=(AREA.x1-AREA.x0)/(V_SHIP*RATE),TURN_T=14,START_OFF=(AREA.x1+262)/(V_SHIP*RATE);
-function shipPos(t){t+=START_OFF;const seg=LINE_T+TURN_T,total=seg*6;t=((t%total)+total)%total;const k=Math.floor(t/seg),tt=t-k*seg,line=L0+k,y=AREA.y0+line*SP,west=line%2===1,v=V_SHIP*RATE;
-  if(tt<LINE_T){const s=tt*v;return{x:west?AREA.x1-s:AREA.x0+s,y:y,line:line,frac:s/(AREA.x1-AREA.x0),turning:false};}
-  const p=(tt-LINE_T)/TURN_T,r=SP/2,cy=y+r;
-  if(west){const f=-Math.PI/2-p*Math.PI;return{x:AREA.x0+r*Math.cos(f),y:cy+r*Math.sin(f),line:line,frac:1,turning:true};}
-  const f=-Math.PI/2+p*Math.PI;return{x:AREA.x1+r*Math.cos(f),y:cy+r*Math.sin(f),line:line,frac:1,turning:true};}
+const depthAt=(x,y)=>6+(1000-x)*0.0105+1.2*Math.sin(y/260);
+const isoX=(D,y)=>1000-(D-6-1.2*Math.sin(y/260))/0.0105;
+const coastX=y=>1060+60*Math.sin(y/330)+30*Math.sin(y/97);
+/* Two-pass crosshatch grid survey: Pass A horizontal (complete), then Pass B vertical (in progress).
+   Dead zones handled in the plan:
+   - outside the minimum slant range the seabed's side-lobe echo masks the water column, so the clean
+     water-column swath is only about ±14 m: lines are 25 m apart and neighbouring swaths overlap;
+   - the gap under the hull on one heading is seen off-nadir from the other heading;
+   - every line runs RUN metres straight beyond the box and turns outside it, so turning data is never counted. */
+const AREA={x0:-500,x1:500,y0:-300,y1:300},SP=25,SW=14,RUN=40,NA=24,NB=40,B0=27;
+const A_Y=i=>AREA.y0+SP/2+i*SP,B_X=j=>AREA.x0+SP/2+j*SP;
+const V_SHIP=2.1,RATE=3,LEN_B=(AREA.y1-AREA.y0)+2*RUN,TURN_LEN=Math.PI*SP/2,LINE_T=LEN_B/(V_SHIP*RATE),TURN_T=TURN_LEN/(V_SHIP*RATE),START_OFF=(90-(AREA.y0-RUN))/(V_SHIP*RATE);
+function shipPos(t){t+=START_OFF;const seg=LINE_T+TURN_T,total=seg*(NB-B0);t=((t%total)+total)%total;
+  const k=Math.floor(t/seg),tt=t-k*seg,j=B0+k,x=B_X(j),south=j%2===0,yT=AREA.y1+RUN,yB=AREA.y0-RUN,v=V_SHIP*RATE;
+  if(tt<LINE_T){const s=tt*v;return{x:x,y:south?yT-s:yB+s,line:j,frac:s/LEN_B,turning:false};}
+  const r=SP/2,f=(tt-LINE_T)/TURN_T*Math.PI;
+  if(south)return{x:x+r-r*Math.cos(f),y:yB-r*Math.sin(f),line:j,frac:1,turning:true};
+  return{x:x+r-r*Math.cos(f),y:yT+r*Math.sin(f),line:j,frac:1,turning:true};}
 function ship(t){const a=shipPos(t),b=shipPos(t+0.2);a.hdg=(Math.atan2(b.x-a.x,b.y-a.y)/D2R+360)%360;return a;}
-const FENCE=[[-1050,-680],[1000,-680],[1060,-150],[1000,680],[-1050,680]];
-const KEEP=[[720,-680],[1000,-680],[1030,-380],[770,-330]];
+const FENCE=[[-760,-480],[760,-480],[800,-150],[760,480],[-760,480]];
+const KEEP=[[560,-480],[760,-480],[790,-260],[600,-230]];
 const AIS=[
-  {name:'CORAL BAY',mmsi:'403118250',type:'سفينة بضائع',x:-1500,y:860,vx:5.6,vy:0},
-  {name:'HAMOUR 2',mmsi:'403551902',type:'قاطرة',x:1100,y:770,vx:-3.1,vy:0},
-  {name:'DHOW 114',mmsi:'403700114',type:'قارب صيد',x:-900,y:-875,vx:1.3,vy:0}];
-function aisPos(o,t){let x=o.x+o.vx*t*RATE;x=((x+1700)%3400+3400)%3400-1700;return{x:x,y:o.y};}
-function darkPos(t){const w=0.0254,ph=t*w+2.2;return{x:-1265+170*Math.cos(ph),y:385+95*Math.sin(ph),vx:-170*Math.sin(ph)*w/RATE,vy:95*Math.cos(ph)*w/RATE};}
+  {name:'CORAL BAY',mmsi:'403118250',type:'سفينة بضائع',x:-1300,y:650,vx:5.6,vy:0},
+  {name:'HAMOUR 2',mmsi:'403551902',type:'قاطرة',x:900,y:590,vx:-3.1,vy:0},
+  {name:'DHOW 114',mmsi:'403700114',type:'قارب صيد',x:-700,y:-640,vx:1.3,vy:0}];
+function aisPos(o,t){let x=o.x+o.vx*t*RATE;x=((x+1350)%2700+2700)%2700-1350;return{x:x,y:o.y};}
+function darkPos(t){const w=0.0254,ph=t*w+2.2;return{x:-985+150*Math.cos(ph),y:250+80*Math.sin(ph),vx:-150*Math.sin(ph)*w/RATE,vy:80*Math.cos(ph)*w/RATE};}
 
 const PASS_HDG=[90,0,45];
 const NOW0=Date.now(),T0=performance.now();
 const ALERTS=[
 {id:'TGT-0417',cls:'لغم مربوط محتمل',kind:'moored',conf:94,ci:3,pri:1,state:'new',age:4.2,last:3,x:-180,y:95,passes:[1,1,1],sig:[2,2,2,2],
- geo:{depth:11.8,seabed:18.2,has:6.4,gap:2.1,slen:4.6,watch:.6,cep:1.8,anom:.88},
+ geo:{depth:12.4,seabed:18.8,has:6.4,gap:2.1,slen:4.6,watch:.6,cep:1.8,anom:.88},
  sway:[[.42,.31],[-.36,.43],[.11,-.52]],
  fish:[[-6.2,4.6,.3],[-5.3,5.4,.26],[-6.9,5.8,.22],[-5.8,3.9,.2],[-6.6,4.1,.18]],
- legs:[{a:0,done:1},{a:45,done:1}],base:12,
+ legs:[{a:45,done:1}],base:12,
  factors:[
   {k:'shape',g:'wc',t:'الشكل',ev:'صدى كروي منتظم، قطره 1.0 م واستدارته 0.93',p:28},
   {k:'pos',g:'wc',t:'الموضع في عمود الماء',ev:'معلّق على ارتفاع 6.4 م فوق القاع، ويظهر أثر خطي يصله بالقاع',p:9},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل منفصل عن الصدى بمسافة 2.1 م وطوله 4.6 م، أي أن الجسم لا يلامس القاع',p:18},
   {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'لم يكن في مسح الأساس لهذه الخلية، ودرجة شذوذه 0.88 مقارنة بخلفية المنطقة',p:12},
   {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'يتحرك داخل دائرة نصف قطرها 0.6 م حول نقطة ثابتة، بدورة 7.8 ث، في 3 تمريرات',p:17},
-  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في 3 من 3 تمريرات بالاتجاهات 090° و000° و045°',p:6},
+  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في التمريرة الأفقية 090° والعمودية 000° والتكيفية 045°، أي 3 من 3',p:6},
   {k:'counter',g:'counter',t:'نشاط حيوي قريب',ev:'سرب أسماك على بعد 6 م قد يحاكي نمط التأرجح',p:-8,ov:{on:'wc',r:[-7.6,3.2,-4.6,6.4],label:'سرب أسماك'}}],
  alts:[['لغم مربوط محتمل',94],['عوّامة صيد',3],['سرب أسماك',2],['حطام',1]],
  swayNote:'ثلاث تمريرات داخل دائرة نصف قطرها 0.6 م حول نقطة الارتساء. الأرقام ترتيب التمريرات.',
  consNote:'القرار يصدر عند اتفاق أغلب الزوايا، واتفقت الثلاث.',
  sum:'يرجّح النظام أنه لغم مربوط لأن صداه كروي منتظم ومعلّق على ارتفاع 6.4 م فوق القاع، وظله منفصل عن القاع، ويتأرجح حول نقطة ثابتة عبر ثلاث تمريرات، ولم يكن موجودًا في مسح الأساس. سرب أسماك قريب يخفّض الثقة قليلًا.'},
-{id:'TGT-0415',cls:'لغم قاعي محتمل',kind:'bottom',conf:81,ci:6,pri:1,state:'review',age:23.5,last:9,x:250,y:-160,passes:[1,1,null],sig:[2,2,0,2],
- geo:{seabed:19.6,has:.6,slen:1.4,cep:1.5,anom:.81},
+{id:'TGT-0415',cls:'لغم قاعي محتمل',kind:'bottom',conf:81,ci:6,pri:1,state:'review',age:23.5,last:9,x:-330,y:-170,passes:[1,1,null],sig:[2,2,0,2],
+ geo:{seabed:19.2,has:.6,slen:1.4,cep:1.5,anom:.81},
  sway:[[.02,.01],[-.01,.02]],rocks:[[-9,-5,.5],[-7.4,-3.6,.4],[-10,-3.2,.35]],
- legs:[{a:0,done:1},{a:45,done:0}],base:12,
+ legs:[{a:45,done:0}],base:12,
  factors:[
   {k:'shape',g:'sb',t:'الشكل',ev:'جسم أسطواني منتظم بطول 1.9 م على القاع',p:28},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل ملاصق حاد الحواف بطول 1.4 م، يقدّر ارتفاع الجسم بنحو 0.6 م',p:22},
   {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'جديد مقارنة بمسح الأساس، ودرجة شذوذه 0.81',p:16},
   {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'ثابت عبر تمريرتين، وهذا متوقع لجسم قاعي غير مربوط',p:0},
-  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في تمريرتين من 3، والثالثة بانتظار التنفيذ',p:7},
+  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في التمريرتين الأفقية والعمودية، والتكيفية 045° بانتظار التنفيذ',p:7},
   {k:'counter',g:'counter',t:'قاع صخري متقطع',ev:'صخور متفرقة في الخلية نفسها تشبه هذا الصدى أحيانًا',p:-4,ov:{on:'sb',r:[-11,-6.2,-6.2,-2.2],label:'صخور'}}],
  alts:[['لغم قاعي محتمل',81],['صخرة',11],['حطام',8]],
  swayNote:'المواضع متطابقة تقريبًا، فالجسم ثابت ولا يدل على ارتساء.',
  consNote:'اتفقت تمريرتان، والثالثة بزاوية 045° لم تُنفّذ بعد.',
  sum:'يرجّح النظام أنه لغم قاعي لأن شكله أسطواني منتظم وظله ملاصق حاد الحواف، وهو جديد مقارنة بمسح الأساس. التمريرة الثالثة لم تُنفّذ بعد، والقاع الصخري المحيط يخفّض الثقة قليلًا.'},
-{id:'TGT-0421',cls:'هدف في عمود الماء',kind:'partial',conf:67,ci:11,pri:2,state:'pending',age:1.1,last:0,x:-320,y:135,passes:[1,null,null],sig:[1,0,2,1],
- geo:{depth:12.1,seabed:19,has:6.9,cep:3.2,anom:.62},
+{id:'TGT-0421',cls:'هدف في عمود الماء',kind:'partial',conf:67,ci:11,pri:2,state:'pending',age:38,last:0,x:190,y:135,passes:[1,null,null],sig:[1,0,2,1],
+ geo:{depth:9,seabed:15.1,has:6.1,cep:3.2,anom:.62},
  sway:[[.3,.1],[-.2,.35]],
  fish:[[4.2,11.2,.2],[5.6,12.4,.18],[6.4,10.6,.16],[4.9,12.9,.15]],
- legs:[{a:0,done:0},{a:45,done:0}],base:12,
+ legs:[{a:45,done:0}],base:12,
  factors:[
   {k:'shape',g:'wc',t:'الشكل',ev:'صدى مستدير، لكن حوافه غير مكتملة من زاوية واحدة',p:20},
-  {k:'pos',g:'wc',t:'الموضع في عمود الماء',ev:'على عمق 12.1 م، ولم يظهر أثر ارتساء بعد',p:7},
+  {k:'pos',g:'wc',t:'الموضع في عمود الماء',ev:'على عمق 9.0 م، ولم يظهر أثر ارتساء بعد',p:7},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'لا ظل واضح من زاوية المسح الحالية',p:0},
   {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'جديد مقارنة بالأساس، ودرجة شذوذه 0.62',p:10},
   {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'إزاحة 0.5 م بين رشقتين متتاليتين، وتحتاج تمريرة أخرى للتأكيد',p:18},
-  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد من اتجاه واحد فقط، والقرار معلّق حتى تتفق تمريرتان إضافيتان',p:2},
+  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في التمريرة الأفقية فقط، والعمودية تصل إليه الآن، والقرار معلّق حتى تتفق الزوايا',p:2},
   {k:'counter',g:'counter',t:'أصداء حيوية متفرقة',ev:'أصداء صغيرة في الطبقة نفسها قد تكون أسماكًا',p:-2,ov:{on:'wc',r:[3.4,9.8,7.2,13.6],label:'أصداء متفرقة'}}],
  alts:[['لغم مربوط محتمل',67],['سرب أسماك',21],['عوّامة',12]],
  swayNote:'رشقتان فقط حتى الآن، والنمط غير مؤكد.',
- consNote:'رُصد من اتجاه واحد. التمريرتان المتقاطعتان مجدولتان.',
- sum:'هدف في عمود الماء رُصد من اتجاه واحد فقط. تحرّكه بين رشقتين يشبه التأرجح، لكن القرار معلّق حتى تتفق تمريرتان إضافيتان.'},
-{id:'TGT-0419',cls:'جسم مجهول',kind:'unknown',conf:52,ci:14,pri:2,state:'review',age:41,last:12,x:430,y:40,passes:[1,1,null],sig:[1,1,0,2],
- geo:{seabed:16.9,has:.4,cep:2,anom:.79},
+ consNote:'رُصد من الاتجاه الأفقي فقط، والتمريرة العمودية تقترب منه الآن.',
+ sum:'هدف في عمود الماء رُصد في التمريرة الأفقية فقط. تحرّكه بين رشقتين يشبه التأرجح، لكن القرار معلّق حتى تراه التمريرة العمودية والتكيفية.'},
+{id:'TGT-0419',cls:'جسم مجهول',kind:'unknown',conf:52,ci:14,pri:2,state:'review',age:41,last:12,x:380,y:40,passes:[1,null,null],sig:[1,1,0,2],
+ geo:{seabed:12.7,has:.4,cep:2,anom:.79},
  sway:[[.01,0],[0,.02]],
- legs:[{a:0,done:1}],base:12,
+ legs:[],base:12,
  factors:[
   {k:'shape',g:'sb',t:'الشكل',ev:'شكل غير منتظم أبعاده 1.3 × 0.8 م',p:10},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل ملاصق قصير، والجسم منخفض',p:8},
-  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'يختلف بوضوح عن خلفية الخلية، ودرجة شذوذه 0.79',p:16},
-  {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'لا حركة بين تمريرتين',p:0},
-  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في تمريرتين من 3',p:6}],
+  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'يختلف بوضوح عن خلفية الخلية، ودرجة شذوذه 0.79',p:20},
+  {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'لا حركة بين رشقات التمريرة الأفقية',p:0},
+  {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في التمريرة الأفقية فقط، والعمودية لم تصل إليه بعد',p:2}],
  alts:[['شبيه بلغم',52],['صخرة',30],['حطام',18]],
- swayNote:'ثابت في مكانه عبر التمريرتين.',
- consNote:'اتفقت تمريرتان، والثالثة لم تُنفّذ.',
+ swayNote:'رشقات تمريرة واحدة فقط، ولا حركة بينها.',
+ consNote:'رُصد من الاتجاه الأفقي فقط، والتمريرة العمودية لم تصل إليه بعد.',
  sum:'جسم غير منتظم الشكل يختلف بوضوح عن خلفية المنطقة، لكنه ثابت ولا يحمل علامات الارتساء. يحتاج تحققًا بصريًا قبل أي قرار.'},
-{id:'TGT-0412',cls:'حطام على الأرجح',kind:'debris',conf:38,ci:9,pri:3,state:'review',age:58,last:20,x:520,y:-300,passes:[1,1,1],sig:[1,1,0,0],
- geo:{seabed:14.8,has:1.1,cep:1.6,anom:.31},
+{id:'TGT-0412',cls:'حطام على الأرجح',kind:'debris',conf:38,ci:9,pri:3,state:'review',age:58,last:20,x:-420,y:-250,passes:[1,1,1],sig:[1,1,0,0],
+ geo:{seabed:19.9,has:1.1,cep:1.6,anom:.31},
  sway:[[0,0],[.01,-.01],[0,.01]],
- legs:[{a:0,done:1},{a:45,done:1}],base:12,
+ legs:[{a:45,done:1}],base:12,
  factors:[
   {k:'shape',g:'sb',t:'الشكل',ev:'حواف مستقيمة متعددة وأبعاد 4.2 × 1.1 م، أكبر من نمط الألغام',p:18},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل ملاصق ممتد وغير منتظم',p:10},
@@ -745,11 +753,11 @@ const ALERTS=[
  swayNote:'ثابت في 3 تمريرات.',
  consNote:'الزوايا الثلاث متسقة على أنه جسم ممتد.',
  sum:'على الأرجح حطام: أبعاده أكبر من نمط الألغام وحوافه مستقيمة متعددة، ويطابق حطامًا مسجّلًا في المنطقة. الظل الممتد يُبقي احتمالًا منخفضًا لجسم شبيه بلغم.'},
-{id:'TGT-0409',cls:'سرب أسماك على الأرجح',kind:'bio',conf:14,ci:5,pri:3,state:'new',age:12,last:6,x:-560,y:-250,passes:[1,1,0],sig:[0,0,0,0],
- geo:{depth:8.5,seabed:20.4,has:0,cep:5},
+{id:'TGT-0409',cls:'سرب أسماك على الأرجح',kind:'bio',conf:14,ci:5,pri:3,state:'new',age:12,last:6,x:-60,y:-240,passes:[1,1,0],sig:[0,0,0,0],
+ geo:{depth:8.5,seabed:16.2,has:0,cep:5},
  sway:[[2.8,1.5],[-3.4,4.1],[4.6,-2.2]],
  fish:[[-3,7.5,.35],[-2.2,8.4,.3],[-1,7.1,.25],[.5,9.2,.35],[1.6,8.1,.3],[2.8,9.6,.28],[-.4,10.1,.22],[3.5,7.4,.25]],
- legs:[{a:0,done:1}],base:12,
+ legs:[],base:12,
  factors:[
   {k:'shape',g:'wc',t:'الشكل',ev:'أصداء متفرقة غير متماسكة',p:2},
   {k:'pos',g:'wc',t:'الموضع في عمود الماء',ev:'على عمق 7 إلى 10 م',p:6},
@@ -836,7 +844,7 @@ function renderLoc(a){const p=ll(a.x,a.y),G=a.geo;const rows=[['خط العرض'
 function renderTime(a){const rows=[['أول رصد','<span class="n">'+fmtUTC(a.t0)+'</span> UTC'],['التاريخ','<span class="n">'+fmtDate(a.t0)+'</span>'],['آخر تمريرة','<span class="n">'+fmtUTC(a.t0+a.last*60000+412)+'</span> UTC'],['مصدر الزمن','GNSS مع نبضة PPS، الإزاحة <span class="n">+18 ns</span>'],['محاذاة المستشعرات','أقل من <span class="n">1 ms</span> بين السونار والملاحة']];$('#d-time').innerHTML=rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('');}
 function renderTrust(a){const hs=hashOf(a.id);const el=$('#d-hash');el.textContent=hs.slice(0,8)+'…'+hs.slice(-8);el.title=hs;renderCustody(a);refreshState(a);}
 function renderCustody(a){const t0=a.t0,closed=a.state==='handed'||a.state==='rejected';
-  const steps=[['الرصد على متن B01 بواسطة الحاسوب الطرفي',t0,'done'],['توقيع الحزمة على المركبة',t0+18,'done'],['النقل عبر الرابط المشفر، راديو UHF',t0+742,'done'],['الاستلام في المركز والتحقق من التوقيع',t0+961,'done'],['مراجعة المحلل',closed?a.tDecide:null,closed?'done':'now'],[a.state==='rejected'?'الإغلاق كإنذار كاذب: '+a.reason:'التسليم لفريق التحقق',closed?a.tDecide+240:null,closed?'done':'todo']];
+  const steps=[['الرصد على متن B01 بواسطة الحاسوب الطرفي',t0,'done'],['تشفير الحزمة على المركبة',t0+18,'done'],['النقل عبر رابط مشفّر',t0+742,'done'],['الاستلام في المركز والتحقق من سلامتها',t0+961,'done'],['مراجعة المحلل',closed?a.tDecide:null,closed?'done':'now'],[a.state==='rejected'?'الإغلاق كإنذار كاذب: '+a.reason:'التسليم لفريق التحقق',closed?a.tDecide+240:null,closed?'done':'todo']];
   $('#custody').innerHTML=steps.map((s,i)=>'<li class="'+s[2]+'"><span class="k n">'+(i+1)+'</span><span>'+s[0]+(s[2]==='now'?'، قيد التنفيذ':'')+'</span><span class="ts n">'+(s[1]?fmtUTC(s[1]):'--:--:--')+'</span></li>').join('');}
 
 const ledgerEl=$('#ledger');
@@ -873,7 +881,7 @@ function polyPath(ctx,pts,X,Y){ctx.beginPath();pts.forEach((p,i)=>{if(i)ctx.line
 function drawHull(ctx,x,y,a,L){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.beginPath();ctx.moveTo(0,-L*.6);ctx.lineTo(L*.2,-L*.12);ctx.lineTo(L*.17,L*.4);ctx.lineTo(-L*.17,L*.4);ctx.lineTo(-L*.2,-L*.12);ctx.closePath();ctx.fillStyle=K.fg;ctx.fill();ctx.strokeStyle=K.abyss;ctx.lineWidth=1.2;ctx.stroke();ctx.beginPath();ctx.moveTo(0,-L*.6);ctx.lineTo(0,L*.4);ctx.strokeStyle=rgba(K.abyss,.6);ctx.lineWidth=.8;ctx.stroke();ctx.restore();}
 function drawMap(t){
   const c=fit('map');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h,L=S.layers;
-  const sc=Math.min(w/3150,h/2100),X=x=>w/2+x*sc,Y=y=>h/2-y*sc;
+  const sc=Math.min(w/2500,h/1650),X=x=>w/2+x*sc,Y=y=>h/2-y*sc;
   const s=ship(t);radarTick(t,s);S.hits=[];S.mapView={sc:sc,w:w,h:h};
   const seg=(x0,y0,x1,y1)=>{ctx.beginPath();ctx.moveTo(X(x0),Y(y0));ctx.lineTo(X(x1),Y(y1));ctx.stroke();};
   ctx.setLineDash([]);ctx.fillStyle=K['map-deep'];ctx.fillRect(0,0,w,h);
@@ -883,20 +891,44 @@ function drawMap(t){
   eastFill(y=>isoX(20,y),K['map-mid']);eastFill(y=>isoX(10,y),K['map-shoal']);eastFill(coastX,K['map-land']);
   curvePath(coastX);ctx.strokeStyle=K['map-coast'];ctx.lineWidth=1.2;ctx.stroke();
   ctx.font='italic 10px '+FN;ctx.textBaseline='middle';ctx.textAlign='left';
-  [10,15,20,25].forEach(D=>{curvePath(y=>isoX(D,y));ctx.strokeStyle=K['map-iso'];ctx.lineWidth=1;ctx.stroke();const ly=-820+D*10;ctx.fillStyle=K['map-sound'];ctx.fillText(String(D),X(isoX(D,ly))+5,Y(ly));});
+  [10,15,20,25].forEach(D=>{curvePath(y=>isoX(D,y));ctx.strokeStyle=K['map-iso'];ctx.lineWidth=1;ctx.stroke();const ly=-760+D*12;ctx.fillStyle=K['map-sound'];ctx.fillText(String(D),X(isoX(D,ly))+5,Y(ly));});
   ctx.textAlign='center';
-  for(let gx=-1450;gx<=1450;gx+=290)for(let gy=-1000;gy<=1000;gy+=250){const jx=gx+(h2(gx,gy)-.5)*130,jy=gy+(h2(gy+7,gx)-.5)*110;if(jx>coastX(jy)-50)continue;if(jx>AREA.x0-70&&jx<AREA.x1+70&&jy>AREA.y0-70&&jy<AREA.y0+(NL-1)*SP+70)continue;const py=Y(jy);if(py<8||py>h-8)continue;ctx.fillStyle=K['map-sound'];ctx.fillText(depthAt(jx,jy).toFixed(1),X(jx),py);}
+  for(let gx=-1200;gx<=1200;gx+=240)for(let gy=-800;gy<=800;gy+=220){const jx=gx+(h2(gx,gy)-.5)*110,jy=gy+(h2(gy+7,gx)-.5)*90;if(jx>coastX(jy)-50)continue;if(jx>AREA.x0-100&&jx<AREA.x1+100&&jy>AREA.y0-100&&jy<AREA.y1+100)continue;const py=Y(jy);if(py<8||py>h-8)continue;ctx.fillStyle=K['map-sound'];ctx.fillText(depthAt(jx,jy).toFixed(1),X(jx),py);}
   if(L.fence){
-    ctx.save();polyPath(ctx,KEEP,X,Y);ctx.clip();ctx.strokeStyle=rgba(K.caution,.22);ctx.lineWidth=1;const bx0=X(700),bx1=X(1060),by0=Y(-300),by1=Y(-700),hh=by1-by0;for(let i=-hh;i<bx1-bx0+hh;i+=7){ctx.beginPath();ctx.moveTo(bx0+i,by0);ctx.lineTo(bx0+i-hh,by1);ctx.stroke();}ctx.restore();
+    ctx.save();polyPath(ctx,KEEP,X,Y);ctx.clip();ctx.strokeStyle=rgba(K.caution,.22);ctx.lineWidth=1;const bx0=X(540),bx1=X(800),by0=Y(-220),by1=Y(-500),hh=by1-by0;for(let i=-hh;i<bx1-bx0+hh;i+=7){ctx.beginPath();ctx.moveTo(bx0+i,by0);ctx.lineTo(bx0+i-hh,by1);ctx.stroke();}ctx.restore();
     polyPath(ctx,KEEP,X,Y);ctx.strokeStyle=rgba(K.caution,.7);ctx.setLineDash([4,3]);ctx.lineWidth=1;ctx.stroke();
     polyPath(ctx,FENCE,X,Y);ctx.strokeStyle=rgba(K['fg-2'],.55);ctx.setLineDash([8,5]);ctx.lineWidth=1.2;ctx.stroke();ctx.setLineDash([]);
-    ctx.font='11px '+FT;ctx.direction='rtl';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle=rgba(K.caution,.9);ctx.fillText('محظور: كابل بحري',X(1000)-4,Y(-680)-6);ctx.fillStyle=K['fg-3'];ctx.fillText('حد منطقة العمل',X(1000)-4,Y(680)-6);ctx.direction='ltr';
+    ctx.font='11px '+FT;ctx.direction='rtl';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle=rgba(K.caution,.9);ctx.fillText('محظور: كابل بحري',X(760)-4,Y(-480)-6);ctx.fillStyle=K['fg-3'];ctx.fillText('حد منطقة العمل',X(760)-4,Y(480)-6);ctx.direction='ltr';
   }
   if(L.survey){
-    for(let i=0;i<NL;i++){const y=AREA.y0+i*SP;let a0=null,a1=null;
-      if(i<s.line||(i===s.line&&s.turning)){a0=AREA.x0;a1=AREA.x1;}else if(i===s.line){if(i%2===1){a0=s.x;a1=AREA.x1;}else{a0=AREA.x0;a1=s.x;}}
-      ctx.setLineDash([3,5]);ctx.strokeStyle=rgba(K['fg-3'],.4);ctx.lineWidth=1;seg(AREA.x0,y,AREA.x1,y);ctx.setLineDash([]);
-      if(a0!==null&&a1>a0){ctx.fillStyle=rgba(K.sea,.1);ctx.fillRect(X(a0),Y(y+30),(a1-a0)*sc,60*sc);ctx.strokeStyle=rgba(K.sea,.65);seg(a0,y,a1,y);}}
+    const yT=AREA.y1+RUN,yB=AREA.y0-RUN,xL=AREA.x0-RUN,xR=AREA.x1+RUN,bw=(AREA.x1-AREA.x0)*sc,bh=(AREA.y1-AREA.y0)*sc;
+    const turnPath=(x0,y0,dx,dy,ox,oy)=>{const cx=x0+dx/2,cy=y0+dy/2,r=Math.hypot(dx,dy)/2;for(let k=0;k<=12;k++){const f=k/12*Math.PI,x=cx-dx/2*Math.cos(f)+ox*r*Math.sin(f),y=cy-dy/2*Math.cos(f)+oy*r*Math.sin(f);if(k)ctx.lineTo(X(x),Y(y));else ctx.moveTo(X(x),Y(y));}};
+    /* turning margin outside the box: a dead zone for data, hatched and never counted */
+    ctx.save();ctx.beginPath();ctx.rect(X(xL-SP/2),Y(yT+SP/2),(xR-xL+SP)*sc,(yT-yB+SP)*sc);ctx.rect(X(AREA.x0),Y(AREA.y1),bw,bh);ctx.clip('evenodd');
+    ctx.strokeStyle=rgba(K['fg-3'],.18);ctx.lineWidth=1;const hx0=X(xL-SP/2),hx1=X(xR+SP/2),hy0=Y(yT+SP/2),hy1=Y(yB-SP/2),hd=hy1-hy0;for(let q=hx0-hd;q<hx1;q+=6){ctx.beginPath();ctx.moveTo(q,hy1);ctx.lineTo(q+hd,hy0);ctx.stroke();}ctx.restore();
+    /* coverage: every Pass A swath and Pass B so far; overlaps read brighter */
+    ctx.save();ctx.beginPath();ctx.rect(X(AREA.x0),Y(AREA.y1),bw,bh);ctx.clip();ctx.fillStyle=rgba(K.sea,.07);
+    for(let i=0;i<NA;i++)ctx.fillRect(X(AREA.x0),Y(A_Y(i)+SW),bw,2*SW*sc);
+    for(let j=0;j<=s.line;j++){let ya=AREA.y0,yb=AREA.y1;if(j===s.line&&!s.turning){if(j%2===1)yb=Math.min(AREA.y1,s.y);else ya=Math.max(AREA.y0,s.y);}if(yb>ya)ctx.fillRect(X(B_X(j)-SW),Y(yb),2*SW*sc,(yb-ya)*sc);}
+    ctx.restore();
+    /* Pass A: complete, with its turns and the transition leg to Pass B */
+    ctx.setLineDash([]);ctx.strokeStyle=rgba(K.sea,.5);ctx.lineWidth=1;
+    for(let i=0;i<NA;i++)seg(xL,A_Y(i),xR,A_Y(i));
+    ctx.setLineDash([2,3]);ctx.strokeStyle=rgba(K['fg-3'],.55);ctx.beginPath();
+    for(let i=0;i<NA-1;i++){if(i%2===0)turnPath(xR,A_Y(i),0,SP,1,0);else turnPath(xL,A_Y(i),0,SP,-1,0);}
+    ctx.moveTo(X(xL),Y(A_Y(NA-1)));ctx.bezierCurveTo(X(xL-70),Y(A_Y(NA-1)),X(B_X(0)),Y(yT+90),X(B_X(0)),Y(yT));
+    for(let j=0;j<s.line;j++){if(j%2===0)turnPath(B_X(j),yB,SP,0,0,-1);else turnPath(B_X(j),yT,SP,0,0,1);}
+    ctx.stroke();
+    /* Pass B: done, current, planned */
+    ctx.setLineDash([]);ctx.strokeStyle=rgba(K.sea,.5);
+    for(let j=0;j<s.line;j++)seg(B_X(j),yB,B_X(j),yT);
+    const cx0=B_X(s.line);
+    if(s.turning)seg(cx0,yB,cx0,yT);
+    else{ctx.strokeStyle=rgba(K.sea,.8);if(s.line%2===1)seg(cx0,yB,cx0,s.y);else seg(cx0,yT,cx0,s.y);ctx.setLineDash([5,4]);ctx.strokeStyle=rgba(K['sea-hi'],.85);if(s.line%2===1)seg(cx0,s.y,cx0,yT);else seg(cx0,s.y,cx0,yB);}
+    ctx.setLineDash([1,3]);ctx.strokeStyle=rgba(K['fg-2'],.42);
+    for(let j=s.line+1;j<NB;j++)seg(B_X(j),yB,B_X(j),yT);
+    ctx.setLineDash([]);ctx.strokeStyle=rgba(K['fg-2'],.7);ctx.lineWidth=1.2;ctx.strokeRect(X(AREA.x0),Y(AREA.y1),bw,bh);
+    ctx.font='11px '+FT;ctx.direction='rtl';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle=K['fg-3'];ctx.fillText('الانعطاف خارج منطقة المسح',X(AREA.x1),Y(yT+SP/2)-6);ctx.direction='ltr';
   }
   if(L.targets){ALERTS.forEach(a=>{if(a.state==='rejected')return;a.legs.forEach(l=>{const r=95,an=l.a*D2R,dx=Math.sin(an)*r,dy=Math.cos(an)*r;ctx.setLineDash(l.done?[]:[5,4]);ctx.strokeStyle=rgba(K.target,l.done?.5:.85);ctx.lineWidth=l.req?1.8:1.2;seg(a.x-dx,a.y-dy,a.x+dx,a.y+dy);});});ctx.setLineDash([]);}
   if(lastTrailT<0||t-lastTrailT>0.8){const lp=trail[trail.length-1];if(lp&&Math.hypot(lp.x-s.x,lp.y-s.y)>150)trail=[];trail.push({x:s.x,y:s.y});if(trail.length>260)trail.shift();lastTrailT=t;}
@@ -923,7 +955,7 @@ function drawMap(t){
     ctx.font='10px '+FN;ctx.textAlign='center';ctx.fillStyle=rej?K['fg-3']:K['fg-2'];ctx.fillText(a.id.slice(4),px,py-r-9);
     S.hits.push({x:px,y:py,r:12,kind:'sub',id:a.id});});}
   const hr=s.hdg*D2R;
-  ctx.strokeStyle=rgba(K['sea-hi'],.9);ctx.lineWidth=2;seg(s.x-Math.cos(hr)*40,s.y+Math.sin(hr)*40,s.x+Math.cos(hr)*40,s.y-Math.sin(hr)*40);
+  ctx.strokeStyle=rgba(K['sea-hi'],.9);ctx.lineWidth=2;seg(s.x-Math.cos(hr)*SW,s.y+Math.sin(hr)*SW,s.x+Math.cos(hr)*SW,s.y-Math.sin(hr)*SW);
   ctx.setLineDash([4,3]);ctx.strokeStyle=rgba(K.fg,.6);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X(s.x),Y(s.y));ctx.lineTo(X(s.x)+Math.sin(hr)*70,Y(s.y)-Math.cos(hr)*70);ctx.stroke();ctx.setLineDash([]);
   drawHull(ctx,X(s.x),Y(s.y),hr,18);
   ctx.font='bold 11px '+FN;ctx.fillStyle=K.fg;ctx.textAlign='left';ctx.fillText('B01',X(s.x)+12,Y(s.y)+16);
@@ -967,23 +999,27 @@ function drawThermal(t){const c=fit('thermal');if(!c)return;const ctx=c.ctx,w=c.
 
 /* ---------- image: water column fan + seabed strip ---------- */
 const wcdBuf=document.createElement('canvas');let pingN=4182;
-function wcdTarget(s){const hr=s.hdg*D2R;for(const a of ALERTS){if(a.kind!=='partial'&&a.kind!=='moored')continue;const dx=a.x-s.x,dy=a.y-s.y,along=dx*Math.sin(hr)+dy*Math.cos(hr),across=dx*Math.cos(hr)-dy*Math.sin(hr);if(Math.abs(along)<28&&Math.abs(across)<30)return{u:across+Math.sin(S.t*.8)*.4,z:a.geo.depth,a:a,tether:a.kind==='moored'};}return null;}
+function wcdTarget(s){const hr=s.hdg*D2R,zb=depthAt(s.x,s.y);for(const a of ALERTS){if(a.kind!=='partial'&&a.kind!=='moored')continue;const dx=a.x-s.x,dy=a.y-s.y,along=dx*Math.sin(hr)+dy*Math.cos(hr),across=dx*Math.cos(hr)-dy*Math.sin(hr),clean=Math.sqrt(Math.max(0,zb*zb-a.geo.depth*a.geo.depth))-.5;if(Math.abs(along)<24&&Math.abs(across)<clean)return{u:across+Math.sin(S.t*.8)*.4,z:a.geo.depth,a:a,tether:a.kind==='moored'};}return null;}
 function drawWCD(s){const c=fit('wcd');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h;
   const bw=Math.max(40,Math.round(w)),bh=Math.max(30,Math.round(h));if(wcdBuf.width!==bw||wcdBuf.height!==bh){wcdBuf.width=bw;wcdBuf.height=bh;}
   const bctx=wcdBuf.getContext('2d'),img=bctx.createImageData(bw,bh),D=img.data;
-  const maxA=55*D2R,Rm=36,top=6,k=Math.max(Rm/(bh-top-4),(2*Rm*Math.sin(maxA))/(bw-8)),ax=bw/2;
+  const maxA=55*D2R,Rm=Math.max(18,depthAt(s.x,s.y)*1.9),top=6,k=Math.max(Rm/(bh-top-4),(2*Rm*Math.sin(maxA))/(bw-8)),ax=bw/2;
   const zb0=depthAt(s.x,s.y),tg=wcdTarget(s),ph=s.x*.013;
   for(let py=0;py<bh;py++){const dz=(py-top)*k;for(let px=0;px<bw;px++){const o=(py*bw+px)*4,dx=(px-ax)*k,r=Math.hypot(dx,dz),an=Math.atan2(dx,dz);
     if(dz<=0||r>Rm||Math.abs(an)>maxA){D[o+3]=0;continue;}
     const zb=zb0+.7*Math.sin(dx*.09+ph);let v=.04+Math.random()*.07;if(Math.abs(r-zb0)<.22)v+=.16;const e=dz-zb;
+    if(r>zb0&&e<-.3){v+=.08+Math.random()*.14;if(((px+py)&7)===0)v+=.1;}
     if(e>-.3&&e<.5)v=.6+.32*Math.random()-Math.abs(e)*.5;else if(e>=.5)v=Math.max(.03,.3*Math.exp(-(e-.5)*.5)+Math.random()*.05);
     if(tg){const dd=Math.hypot(dx-tg.u,dz-tg.z);if(dd<.75)v=Math.max(v,.97-dd*.45);else if(dd<1.5)v+=.18*(1.5-dd);if(tg.tether&&dz>tg.z+.6&&dz<zb&&Math.abs(dx-tg.u)<.1&&Math.random()<.7)v+=.28;}
     put(D,o,v);}}
   bctx.putImageData(img,0,0);ctx.clearRect(0,0,w,h);ctx.drawImage(wcdBuf,0,0,bw,bh,0,0,w,h);
   const f=w/bw,AX=ax*f,AY=top*(h/bh),pxm=1/(k/f);
   ctx.strokeStyle=rgba(K['fg-3'],.6);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(AX,AY);ctx.arc(AX,AY,Rm*pxm,Math.PI/2+maxA,Math.PI/2-maxA,true);ctx.closePath();ctx.stroke();
-  ctx.setLineDash([2,4]);ctx.strokeStyle=rgba(K['fg-3'],.35);[10,20,30].forEach(r=>{ctx.beginPath();ctx.arc(AX,AY,r*pxm,Math.PI/2+maxA,Math.PI/2-maxA,true);ctx.stroke();});ctx.beginPath();ctx.moveTo(AX,AY);ctx.lineTo(AX,AY+Rm*pxm);ctx.stroke();ctx.setLineDash([]);
-  ctx.font='9.5px '+FN;ctx.fillStyle=rgba(K.fg,.6);ctx.textAlign='right';ctx.textBaseline='middle';[10,20,30].forEach(r=>ctx.fillText(r+' m',AX-Math.sin(maxA)*r*pxm-3,AY+Math.cos(maxA)*r*pxm));
+  ctx.setLineDash([2,4]);ctx.strokeStyle=rgba(K['fg-3'],.35);[10,20,30].filter(r=>r<Rm).forEach(r=>{ctx.beginPath();ctx.arc(AX,AY,r*pxm,Math.PI/2+maxA,Math.PI/2-maxA,true);ctx.stroke();});ctx.beginPath();ctx.moveTo(AX,AY);ctx.lineTo(AX,AY+Rm*pxm);ctx.stroke();ctx.setLineDash([]);
+  ctx.font='9.5px '+FN;ctx.fillStyle=rgba(K.fg,.6);ctx.textAlign='right';ctx.textBaseline='middle';[10,20,30].filter(r=>r<Rm).forEach(r=>ctx.fillText(r+' m',AX-Math.sin(maxA)*r*pxm-3,AY+Math.cos(maxA)*r*pxm));
+  /* dead zone: beyond the minimum slant range the seabed side-lobe masks the water column */
+  ctx.setLineDash([4,3]);ctx.strokeStyle=rgba(K.fg,.55);ctx.lineWidth=1;ctx.beginPath();ctx.arc(AX,AY,zb0*pxm,Math.PI/2+maxA,Math.PI/2-maxA,true);ctx.stroke();ctx.setLineDash([]);
+  {const la=50*D2R,lr=zb0*(1+1/Math.cos(la))/2*pxm;ctx.save();ctx.font='500 10.5px '+FT;ctx.direction='rtl';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=3;ctx.strokeStyle='rgba(4,11,18,.85)';ctx.fillStyle=K.fg;[-1,1].forEach(sg=>{const lx=AX+sg*Math.sin(la)*lr,ly=AY+Math.cos(la)*lr;ctx.strokeText('منطقة ميتة',lx,ly);ctx.fillText('منطقة ميتة',lx,ly);});ctx.restore();}
   if(tg){const tx=AX+tg.u*pxm,ty=AY+tg.z*pxm;ctx.strokeStyle=K.target;ctx.lineWidth=1.3;corners(ctx,tx-10,ty-10,20,20,5);ctx.font='bold 10px '+FN;ctx.fillStyle=K.target;ctx.textAlign='left';ctx.fillText(tg.a.id.slice(4),tx+13,ty-8);}
   $('#ping-n').textContent=pingN;}
 const swBuf=document.createElement('canvas'),swTmp=document.createElement('canvas');
@@ -1107,7 +1143,9 @@ function drawPolar(a){const c=fit('polar');if(!c)return;const ctx=c.ctx,w=c.w,h=
 function drawMini(a){const c=fit('mini');if(!c)return;const ctx=c.ctx,w=c.w,h=c.h,span=90,sc=Math.min(w,h)/span,X=x=>w/2+(x-a.x)*sc,Y=y=>h/2-(y-a.y)*sc;
   ctx.setLineDash([]);ctx.fillStyle=K['map-deep'];ctx.fillRect(0,0,w,h);
   ctx.strokeStyle=rgba(K['fg-3'],.12);ctx.lineWidth=1;for(let g=Math.ceil((a.x-span)/10)*10;g<=a.x+span;g+=10){ctx.beginPath();ctx.moveTo(X(g),0);ctx.lineTo(X(g),h);ctx.stroke();}for(let g=Math.ceil((a.y-span)/10)*10;g<=a.y+span;g+=10){ctx.beginPath();ctx.moveTo(0,Y(g));ctx.lineTo(w,Y(g));ctx.stroke();}
-  for(let i=0;i<NL;i++){const y=AREA.y0+i*SP;if(Math.abs(y-a.y)>span)continue;ctx.fillStyle=rgba(K.sea,.1);ctx.fillRect(0,Y(y+30),w,60*sc);ctx.strokeStyle=rgba(K.sea,.6);ctx.beginPath();ctx.moveTo(0,Y(y));ctx.lineTo(w,Y(y));ctx.stroke();}
+  const bl=ship(S.t).line;
+  for(let i=0;i<NA;i++){const y=A_Y(i);if(Math.abs(y-a.y)>span)continue;ctx.fillStyle=rgba(K.sea,.07);ctx.fillRect(0,Y(y+SW),w,2*SW*sc);ctx.strokeStyle=rgba(K.sea,.6);ctx.beginPath();ctx.moveTo(0,Y(y));ctx.lineTo(w,Y(y));ctx.stroke();}
+  for(let j=0;j<NB;j++){const x=B_X(j);if(Math.abs(x-a.x)>span)continue;const dn=j<bl;if(dn){ctx.fillStyle=rgba(K.sea,.07);ctx.fillRect(X(x-SW),0,2*SW*sc,h);}ctx.setLineDash(dn?[]:[1,3]);ctx.strokeStyle=dn?rgba(K.sea,.6):rgba(K['fg-2'],.45);ctx.beginPath();ctx.moveTo(X(x),0);ctx.lineTo(X(x),h);ctx.stroke();ctx.setLineDash([]);}
   a.legs.forEach(l=>{const an=l.a*D2R,dx=Math.sin(an)*95,dy=Math.cos(an)*95;ctx.setLineDash(l.done?[]:[5,4]);ctx.strokeStyle=rgba(K.target,l.done?.6:.9);ctx.lineWidth=l.req?1.8:1.2;ctx.beginPath();ctx.moveTo(X(a.x-dx),Y(a.y-dy));ctx.lineTo(X(a.x+dx),Y(a.y+dy));ctx.stroke();});ctx.setLineDash([]);
   const r=Math.max(6,a.geo.cep*sc);ctx.fillStyle=rgba(K.target,.18);ctx.beginPath();ctx.arc(w/2,h/2,r,0,Math.PI*2);ctx.fill();ctx.setLineDash([3,2]);ctx.strokeStyle=K.target;ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle=K.target;ctx.beginPath();ctx.arc(w/2,h/2,2.6,0,Math.PI*2);ctx.fill();
@@ -1128,13 +1166,12 @@ function slow(t){const s=ship(t);
   $$('[data-age]').forEach(el=>{const a=byId[el.dataset.age];if(a)el.textContent=ago(a);});
   battery=Math.max(20,battery-.004);$('#batt').textContent=battery.toFixed(1)+'%';$('#pip-batt').textContent=Math.round(battery)+'%';$('#batt-bar').style.width=battery.toFixed(1)+'%';
   const solar=.41+.03*Math.sin(t*.05);$('#solar').textContent='+'+solar.toFixed(2)+' kW';$('#load').textContent=(1.18+(Math.random()-.5)*.04).toFixed(2)+' kW';
-  rot=rot>0?rot-1:900;$('#rot').textContent=pad(Math.floor(rot/60))+':'+pad(rot%60);
   $('#hb-age').textContent=(.1+Math.random()*.4).toFixed(1)+' s';$('#infer').textContent=(12.1+Math.random()*.6).toFixed(1);$('#gpu').textContent=(60+Math.round(Math.random()*2))+'°C';
   $('#uhf').textContent=(-70-Math.round(Math.random()*3))+' dBm '+(36+Math.round(Math.random()*5))+' ms';
   $('#pps-off').textContent='+'+(15+Math.round(Math.random()*6))+' ns';$('#res').textContent=(.25+Math.random()*.1).toFixed(2)+' m';$('#insgnss').textContent=(.25+Math.random()*.1).toFixed(2)+' m';
   $('#jam-db').textContent='+'+jamDb.toFixed(0)+' dB';$('#stab').textContent=(.95+Math.random()*.02).toFixed(2);$('#rh').textContent=(18+Math.round(Math.random()))+'%';
   LAT_ROWS.forEach((r,i)=>{const v=Math.max(0,r[1]+(r[1]?(Math.random()-.5)*r[1]*.15:0));$('#lv'+i).textContent=v.toFixed(1)+' ms';$('#lb'+i).style.width=Math.max(1,v/15*100)+'%';});
-  const done=s.line+(s.turning?1:s.frac);$('#line-n').textContent=Math.min(NL,s.line+1)+'/'+NL;$('#cov').textContent=Math.round(done/NL*100)+'%';const rem=(NL-done)*((AREA.x1-AREA.x0)/V_SHIP+80);$('#eta').textContent=Math.floor(rem/3600)+':'+pad(Math.round(rem%3600/60));}
+  const doneB=s.line+(s.turning?1:clamp(s.frac,0,1));$('#line-n').textContent=(s.line+1)+'/'+NB;$('#cov-b').textContent=Math.round(doneB/NB*100)+'%';const rem=(NB-doneB)*((LEN_B+TURN_LEN)/V_SHIP);$('#eta').textContent=Math.floor(rem/3600)+':'+pad(Math.round(rem%3600/60));}
 let lastMap=0,lastPing=0,lastSlow=0,lastTh=0,lastClock=0;
 function frame(now){const t=(now-T0)/1000,rm=reduce.matches;S.t=t;
   if(now-lastMap>(rm?1000:50)){lastMap=now;if(S.mode==='watch')drawMap(t);}
