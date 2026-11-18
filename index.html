@@ -128,6 +128,11 @@ canvas{display:block;width:100%;height:100%}
 .st-pending{color:var(--fg-2);outline:1px dashed var(--chine-2);outline-offset:-1px}
 .st-handed{color:var(--trust);background:var(--trust-soft)}
 .st-rejected{color:var(--fg-3);text-decoration:line-through}
+.lv{padding:0 6px;font-size:11px;line-height:18px;white-space:nowrap}
+.lv-high{color:var(--on-target);background:var(--target)}
+.lv-potential{color:var(--target);box-shadow:inset 0 0 0 1px var(--target)}
+.lv-unknown{color:var(--fg);outline:1px dashed var(--fg-2);outline-offset:-1px}
+.lv-none{color:var(--fg-3);box-shadow:inset 0 0 0 1px var(--chine-2)}
 .sig{display:inline-flex;gap:3px;align-items:center}
 .sig svg{width:13px;height:13px;overflow:visible;stroke-width:1.3}
 .g2{fill:var(--target);stroke:var(--target)} .g1{fill:none;stroke:var(--target)} .g0{fill:none;stroke:var(--fg-3);opacity:.55}
@@ -352,19 +357,20 @@ canvas{display:block;width:100%;height:100%}
     <button class="pip caution" data-go="hp-spec"><i></i>GNSS</button>
     <button class="pip" data-go="hp-power"><i></i>الطاقة <span class="n" id="pip-batt">72%</span></button>
     <button class="pip" data-go="hp-seal"><i></i>الإحكام</button>
-    <button class="pip" data-go="hp-edge"><i></i>الحاسوب الطرفي</button>
+    <button class="pip" data-go="hp-edge"><i></i>حاسوب الحافة</button>
   </div>
-  <p class="threat"><span class="n" id="threat-n">2</span><span>أولوية أولى مفتوحة</span></p>
+  <p class="threat"><span class="n" id="threat-n">2</span><span>خطر مرتفع مفتوح</span></p>
 </header>
 
 <main class="main">
   <!-- alert queue -->
   <section class="panel plate queue" aria-labelledby="q-title">
-    <div class="ph"><h2 id="q-title">التنبيهات</h2><span class="meta">مرتبة حسب ثقة النموذج</span></div>
-    <p class="qcap">الرقم هو ثقة النموذج بأن الجسم شبيه بلغم. الرموز الأربعة تبيّن الأدلة التي وجدها.</p>
+    <div class="ph"><h2 id="q-title">التنبيهات</h2><span class="meta">مرتبة حسب مستوى الخطر ثم ثقة النموذج</span></div>
+    <p class="qcap">أربعة مستويات للخطر، و«غير معروف» لا يُفرض عليه تصنيف. الرقم ثقة النموذج بأن الجسم شبيه بلغم.</p>
     <div class="filters" role="group" aria-label="تصفية التنبيهات">
       <button class="chip" data-f="all" aria-pressed="true">الكل</button>
-      <button class="chip" data-f="p1" aria-pressed="false">أولوية أولى</button>
+      <button class="chip" data-f="high" aria-pressed="false">خطر مرتفع</button>
+      <button class="chip" data-f="unknown" aria-pressed="false">غير معروف</button>
       <button class="chip" data-f="pending" aria-pressed="false">بانتظار تمريرة</button>
     </div>
     <ol class="qlist" id="qlist"></ol>
@@ -380,7 +386,7 @@ canvas{display:block;width:100%;height:100%}
   <!-- fused surface picture -->
   <section class="panel plate map-panel" id="map-panel" aria-labelledby="m-title">
     <div class="ph">
-      <h2 id="m-title">الصورة السطحية الموحدة</h2><span class="meta">رادار، كاميرا حرارية، AIS، وخطوط المسح</span>
+      <h2 id="m-title">الصورة السطحية الموحدة</h2><span class="meta">رادار، كاميرا حرارية، AIS، ومسح شبكي</span>
       <div class="tools" role="group" aria-label="طبقات الخريطة">
         <button class="chip" data-layer="radar" aria-pressed="true">الرادار</button>
         <button class="chip" data-layer="ais" aria-pressed="true">AIS</button>
@@ -424,11 +430,11 @@ canvas{display:block;width:100%;height:100%}
     <div class="ph"><h2 id="s-title">الاستشعار تحت الماء</h2><span class="meta">الأبعاد الأربعة التي يحتاجها النموذج</span></div>
     <div class="sbody">
       <section class="dim" aria-labelledby="dim-img">
-        <h3 id="dim-img">الصورة <small>ملتي بيم وعمود الماء</small></h3>
+        <h3 id="dim-img">الصورة <small>ملتي بيم، عمود الماء، سونار جانبي</small></h3>
         <div class="cv wcd"><canvas id="wcd" role="img" aria-label="عرض حي لعمود الماء من سونار الملتي بيم"></canvas></div>
         <p class="cap"><span>ميمنة</span><span>عمود الماء، رشقة <span class="n" id="ping-n">4182</span> من <span class="n">256</span> حزمة</span><span>ميسرة</span></p>
-        <div class="cv swath"><canvas id="swath" role="img" aria-label="شريحة الانتشار الخلفي لقاع البحر"></canvas></div>
-        <p class="cap"><span>ميمنة</span><span>شريحة القاع، الأحدث في الأعلى</span><span>ميسرة</span></p>
+        <div class="cv swath"><canvas id="swath" role="img" aria-label="صورة السونار الجانبي لقاع البحر"></canvas></div>
+        <p class="cap"><span>ميمنة</span><span>السونار الجانبي، فجوة الوسط يغطيها الملتي بيم</span><span>ميسرة</span></p>
         <div class="svp">
           <div class="cv svpc"><canvas id="svp" role="img" aria-label="مقطع سرعة الصوت مع العمق"></canvas></div>
           <dl class="kv">
@@ -490,7 +496,7 @@ canvas{display:block;width:100%;height:100%}
         <h3 id="why">لماذا هذا التصنيف؟</h3>
         <p class="hint">مرّر المؤشر على أي دليل لترى أين وجده النموذج في صورة السونار، وانقر عليه لتثبيته.</p>
         <div class="streams">
-          <figure><figcaption>مسار القاع <span>منظر علوي، الظل يمتد مع المدى</span></figcaption><div class="cv ev"><canvas id="ev-sb" role="img" aria-label="صورة الانتشار الخلفي للقاع حول الهدف مع الأدلة"></canvas></div></figure>
+          <figure><figcaption>مسار القاع <span>سونار جانبي، الظل يمتد مع المدى</span></figcaption><div class="cv ev"><canvas id="ev-sb" role="img" aria-label="صورة الانتشار الخلفي للقاع حول الهدف مع الأدلة"></canvas></div></figure>
           <figure><figcaption>مسار عمود الماء <span>مقطع عرضي، العمق بالمتر</span></figcaption><div class="cv ev"><canvas id="ev-wc" role="img" aria-label="مقطع عمود الماء حول الهدف مع الأدلة"></canvas></div></figure>
         </div>
         <ol class="ledger" id="ledger"></ol>
@@ -534,7 +540,7 @@ canvas{display:block;width:100%;height:100%}
 <section class="health" aria-label="صحة النظام والأمن السيبراني">
   <section class="panel plate hp" id="hp-power" tabindex="-1" aria-labelledby="hp-power-t">
     <h2 id="hp-power-t">الطاقة الهجينة</h2>
-    <p class="state">البطارية <span class="n" id="batt">72.4%</span>، والشحن الشمسي يغطي ثلث الحمل</p>
+    <p class="state">البطارية <span class="n" id="batt">72.4%</span>، والدفع كهربائي صامت أثناء المسح</p>
     <div class="bar"><i id="batt-bar" style="width:72%"></i></div>
     <dl class="kv">
       <dt>الشمسية</dt><dd><span class="n" id="solar">+0.41 kW</span></dd>
@@ -547,21 +553,23 @@ canvas{display:block;width:100%;height:100%}
     <h2 id="hp-comms-t">روابط الاتصال</h2>
     <p class="state">الراديو نشط، والتحويل التلقائي جاهز</p>
     <ul class="links">
-      <li class="on"><span class="bars" data-l="4" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>راديو، نشط</span><span class="n" id="uhf">-71 dBm 38 ms</span></li>
+      <li class="on"><span class="bars" data-l="4" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>راديو RF، نشط</span><span class="n" id="uhf">-71 dBm 38 ms</span></li>
       <li><span class="bars" data-l="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>قمر صناعي، احتياطي</span><span class="n">610 ms</span></li>
       <li class="off"><span class="bars" data-l="0" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>4G، خارج التغطية</span><span>غير متاح</span></li>
     </ul>
     <p class="small">ترتيب التحويل: الراديو، ثم 4G، ثم القمر الصناعي.</p>
   </section>
   <section class="panel plate hp" id="hp-edge" tabindex="-1" aria-labelledby="hp-edge-t">
-    <h2 id="hp-edge-t">الحاسوب الطرفي</h2>
+    <h2 id="hp-edge-t">حاسوب الحافة <span class="n">GPU</span></h2>
     <p class="state" style="display:flex;align-items:center;gap:8px"><span class="dot" id="hb-dot"></span>مراقب التشغيل سليم</p>
     <dl class="kv">
       <dt>آخر نبضة</dt><dd>قبل <span class="n" id="hb-age">0.3 s</span></dd>
       <dt>الاستدلال</dt><dd><span class="n" id="infer">12.4</span> رشقة في الثانية</dd>
-      <dt>النموذج</dt><dd>CNN ثنائي المسار <span class="n">v2.3</span></dd>
-      <dt>حرارة المعالج</dt><dd><span class="n" id="gpu">61°C</span></dd>
+      <dt>حرارة GPU</dt><dd><span class="n" id="gpu">61°C</span></dd>
+      <dt>التخزين SSD</dt><dd><span class="n" id="ssd">41%</span> مستخدم</dd>
+      <dt>مبدّل الشبكة</dt><dd>سليم</dd>
     </dl>
+    <p class="small">البيانات الخام تبقى على المركبة، ولا يُرسل إلا التنبيهات المشفّرة.</p>
   </section>
   <section class="panel plate hp" id="hp-crypto" tabindex="-1" aria-labelledby="hp-crypto-t">
     <h2 id="hp-crypto-t">التشفير</h2>
@@ -594,12 +602,16 @@ canvas{display:block;width:100%;height:100%}
       <circle class="spot" data-s="gnss" cx="161" cy="17" r="3"/>
       <circle class="spot" data-s="gland" cx="118" cy="27" r="3"/>
       <circle class="spot" data-s="bay" cx="124" cy="47" r="3"/>
+      <circle class="spot" data-s="sss" cx="92" cy="52" r="3"/>
+      <circle class="spot" data-s="lights" cx="164" cy="29" r="3"/>
     </svg>
     <ul class="seals">
       <li data-s="radar"><span>الرادار</span><span class="n">IP67</span></li>
       <li data-s="eoir"><span>الحراري</span><span class="n">IP68</span></li>
       <li data-s="gnss"><span>هوائي GNSS</span><span class="n">IP67</span></li>
       <li data-s="comms"><span>الاتصال</span><span class="n">IP67</span></li>
+      <li data-s="sss"><span>السونار الجانبي</span><span class="n">IP68</span></li>
+      <li data-s="lights"><span>أضواء الملاحة</span><span class="n">IP67</span></li>
       <li data-s="bay"><span>رطوبة حجرة الحاسوب</span><span class="n" id="rh">18%</span></li>
       <li data-s="gland"><span>منافذ الكابلات</span><span>جافة</span></li>
     </ul>
@@ -675,7 +687,7 @@ function darkPos(t){const w=0.0254,ph=t*w+2.2;return{x:-985+150*Math.cos(ph),y:2
 const PASS_HDG=[90,0,45];
 const NOW0=Date.now(),T0=performance.now();
 const ALERTS=[
-{id:'TGT-0417',cls:'لغم مربوط محتمل',kind:'moored',conf:94,ci:3,pri:1,state:'new',age:4.2,last:3,x:-180,y:95,passes:[1,1,1],sig:[2,2,2,2],
+{id:'TGT-0417',cls:'لغم مربوط محتمل',kind:'moored',conf:94,ci:3,pri:1,lvl:'high',state:'new',age:4.2,last:3,x:-180,y:95,passes:[1,1,1],sig:[2,2,2,2],
  geo:{depth:12.4,seabed:18.8,has:6.4,gap:2.1,slen:4.6,watch:.6,cep:1.8,anom:.88},
  sway:[[.42,.31],[-.36,.43],[.11,-.52]],
  fish:[[-6.2,4.6,.3],[-5.3,5.4,.26],[-6.9,5.8,.22],[-5.8,3.9,.2],[-6.6,4.1,.18]],
@@ -684,7 +696,7 @@ const ALERTS=[
   {k:'shape',g:'wc',t:'الشكل',ev:'صدى كروي منتظم، قطره 1.0 م واستدارته 0.93',p:28},
   {k:'pos',g:'wc',t:'الموضع في عمود الماء',ev:'معلّق على ارتفاع 6.4 م فوق القاع، ويظهر أثر خطي يصله بالقاع',p:9},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل منفصل عن الصدى بمسافة 2.1 م وطوله 4.6 م، أي أن الجسم لا يلامس القاع',p:18},
-  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'لم يكن في مسح الأساس لهذه الخلية، ودرجة شذوذه 0.88 مقارنة بخلفية المنطقة',p:12},
+  {k:'anomaly',g:'sb',t:'تباين الخلفية والبصمة البيئية',ev:'لم يكن في مسح الأساس لهذه الخلية، ودرجة شذوذه 0.88 مقارنة بخلفية المنطقة',p:12},
   {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'يتحرك داخل دائرة نصف قطرها 0.6 م حول نقطة ثابتة، بدورة 7.8 ث، في 3 تمريرات',p:17},
   {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في التمريرة الأفقية 090° والعمودية 000° والتكيفية 045°، أي 3 من 3',p:6},
   {k:'counter',g:'counter',t:'نشاط حيوي قريب',ev:'سرب أسماك على بعد 6 م قد يحاكي نمط التأرجح',p:-8,ov:{on:'wc',r:[-7.6,3.2,-4.6,6.4],label:'سرب أسماك'}}],
@@ -692,14 +704,14 @@ const ALERTS=[
  swayNote:'ثلاث تمريرات داخل دائرة نصف قطرها 0.6 م حول نقطة الارتساء. الأرقام ترتيب التمريرات.',
  consNote:'القرار يصدر عند اتفاق أغلب الزوايا، واتفقت الثلاث.',
  sum:'يرجّح النظام أنه لغم مربوط لأن صداه كروي منتظم ومعلّق على ارتفاع 6.4 م فوق القاع، وظله منفصل عن القاع، ويتأرجح حول نقطة ثابتة عبر ثلاث تمريرات، ولم يكن موجودًا في مسح الأساس. سرب أسماك قريب يخفّض الثقة قليلًا.'},
-{id:'TGT-0415',cls:'لغم قاعي محتمل',kind:'bottom',conf:81,ci:6,pri:1,state:'review',age:23.5,last:9,x:-330,y:-170,passes:[1,1,null],sig:[2,2,0,2],
+{id:'TGT-0415',cls:'لغم قاعي محتمل',kind:'bottom',conf:81,ci:6,pri:1,lvl:'high',state:'review',age:23.5,last:9,x:-330,y:-170,passes:[1,1,null],sig:[2,2,0,2],
  geo:{seabed:19.2,has:.6,slen:1.4,cep:1.5,anom:.81},
  sway:[[.02,.01],[-.01,.02]],rocks:[[-9,-5,.5],[-7.4,-3.6,.4],[-10,-3.2,.35]],
  legs:[{a:45,done:0}],base:12,
  factors:[
   {k:'shape',g:'sb',t:'الشكل',ev:'جسم أسطواني منتظم بطول 1.9 م على القاع',p:28},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل ملاصق حاد الحواف بطول 1.4 م، يقدّر ارتفاع الجسم بنحو 0.6 م',p:22},
-  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'جديد مقارنة بمسح الأساس، ودرجة شذوذه 0.81',p:16},
+  {k:'anomaly',g:'sb',t:'تباين الخلفية والبصمة البيئية',ev:'جديد مقارنة بمسح الأساس، ودرجة شذوذه 0.81',p:16},
   {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'ثابت عبر تمريرتين، وهذا متوقع لجسم قاعي غير مربوط',p:0},
   {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في التمريرتين الأفقية والعمودية، والتكيفية 045° بانتظار التنفيذ',p:7},
   {k:'counter',g:'counter',t:'قاع صخري متقطع',ev:'صخور متفرقة في الخلية نفسها تشبه هذا الصدى أحيانًا',p:-4,ov:{on:'sb',r:[-11,-6.2,-6.2,-2.2],label:'صخور'}}],
@@ -707,7 +719,7 @@ const ALERTS=[
  swayNote:'المواضع متطابقة تقريبًا، فالجسم ثابت ولا يدل على ارتساء.',
  consNote:'اتفقت تمريرتان، والثالثة بزاوية 045° لم تُنفّذ بعد.',
  sum:'يرجّح النظام أنه لغم قاعي لأن شكله أسطواني منتظم وظله ملاصق حاد الحواف، وهو جديد مقارنة بمسح الأساس. التمريرة الثالثة لم تُنفّذ بعد، والقاع الصخري المحيط يخفّض الثقة قليلًا.'},
-{id:'TGT-0421',cls:'هدف في عمود الماء',kind:'partial',conf:67,ci:11,pri:2,state:'pending',age:38,last:0,x:190,y:135,passes:[1,null,null],sig:[1,0,2,1],
+{id:'TGT-0421',cls:'هدف في عمود الماء',kind:'partial',conf:67,ci:11,pri:2,lvl:'potential',state:'pending',age:38,last:0,x:190,y:135,passes:[1,null,null],sig:[1,0,2,1],
  geo:{depth:9,seabed:15.1,has:6.1,cep:3.2,anom:.62},
  sway:[[.3,.1],[-.2,.35]],
  fish:[[4.2,11.2,.2],[5.6,12.4,.18],[6.4,10.6,.16],[4.9,12.9,.15]],
@@ -716,7 +728,7 @@ const ALERTS=[
   {k:'shape',g:'wc',t:'الشكل',ev:'صدى مستدير، لكن حوافه غير مكتملة من زاوية واحدة',p:20},
   {k:'pos',g:'wc',t:'الموضع في عمود الماء',ev:'على عمق 9.0 م، ولم يظهر أثر ارتساء بعد',p:7},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'لا ظل واضح من زاوية المسح الحالية',p:0},
-  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'جديد مقارنة بالأساس، ودرجة شذوذه 0.62',p:10},
+  {k:'anomaly',g:'sb',t:'تباين الخلفية والبصمة البيئية',ev:'جديد مقارنة بالأساس، ودرجة شذوذه 0.62',p:10},
   {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'إزاحة 0.5 م بين رشقتين متتاليتين، وتحتاج تمريرة أخرى للتأكيد',p:18},
   {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في التمريرة الأفقية فقط، والعمودية تصل إليه الآن، والقرار معلّق حتى تتفق الزوايا',p:2},
   {k:'counter',g:'counter',t:'أصداء حيوية متفرقة',ev:'أصداء صغيرة في الطبقة نفسها قد تكون أسماكًا',p:-2,ov:{on:'wc',r:[3.4,9.8,7.2,13.6],label:'أصداء متفرقة'}}],
@@ -724,28 +736,28 @@ const ALERTS=[
  swayNote:'رشقتان فقط حتى الآن، والنمط غير مؤكد.',
  consNote:'رُصد من الاتجاه الأفقي فقط، والتمريرة العمودية تقترب منه الآن.',
  sum:'هدف في عمود الماء رُصد في التمريرة الأفقية فقط. تحرّكه بين رشقتين يشبه التأرجح، لكن القرار معلّق حتى تراه التمريرة العمودية والتكيفية.'},
-{id:'TGT-0419',cls:'جسم مجهول',kind:'unknown',conf:52,ci:14,pri:2,state:'review',age:41,last:12,x:380,y:40,passes:[1,null,null],sig:[1,1,0,2],
+{id:'TGT-0419',cls:'جسم غير معروف',kind:'unknown',conf:52,ci:14,pri:2,lvl:'unknown',state:'review',age:41,last:12,x:380,y:40,passes:[1,null,null],sig:[1,1,0,2],
  geo:{seabed:12.7,has:.4,cep:2,anom:.79},
  sway:[[.01,0],[0,.02]],
  legs:[],base:12,
  factors:[
   {k:'shape',g:'sb',t:'الشكل',ev:'شكل غير منتظم أبعاده 1.3 × 0.8 م',p:10},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل ملاصق قصير، والجسم منخفض',p:8},
-  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'يختلف بوضوح عن خلفية الخلية، ودرجة شذوذه 0.79',p:20},
+  {k:'anomaly',g:'sb',t:'تباين الخلفية والبصمة البيئية',ev:'يختلف بوضوح عن خلفية الخلية، ودرجة شذوذه 0.79',p:20},
   {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'لا حركة بين رشقات التمريرة الأفقية',p:0},
   {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'رُصد في التمريرة الأفقية فقط، والعمودية لم تصل إليه بعد',p:2}],
  alts:[['شبيه بلغم',52],['صخرة',30],['حطام',18]],
  swayNote:'رشقات تمريرة واحدة فقط، ولا حركة بينها.',
  consNote:'رُصد من الاتجاه الأفقي فقط، والتمريرة العمودية لم تصل إليه بعد.',
  sum:'جسم غير منتظم الشكل يختلف بوضوح عن خلفية المنطقة، لكنه ثابت ولا يحمل علامات الارتساء. يحتاج تحققًا بصريًا قبل أي قرار.'},
-{id:'TGT-0412',cls:'حطام على الأرجح',kind:'debris',conf:38,ci:9,pri:3,state:'review',age:58,last:20,x:-420,y:-250,passes:[1,1,1],sig:[1,1,0,0],
+{id:'TGT-0412',cls:'حطام على الأرجح',kind:'debris',conf:38,ci:9,pri:3,lvl:'potential',state:'review',age:58,last:20,x:-420,y:-250,passes:[1,1,1],sig:[1,1,0,0],
  geo:{seabed:19.9,has:1.1,cep:1.6,anom:.31},
  sway:[[0,0],[.01,-.01],[0,.01]],
  legs:[{a:45,done:1}],base:12,
  factors:[
   {k:'shape',g:'sb',t:'الشكل',ev:'حواف مستقيمة متعددة وأبعاد 4.2 × 1.1 م، أكبر من نمط الألغام',p:18},
   {k:'shadow',g:'sb',t:'الظل الصوتي',ev:'ظل ملاصق ممتد وغير منتظم',p:10},
-  {k:'anomaly',g:'sb',t:'الشذوذ عن البصمة البيئية',ev:'موجود جزئيًا في مسح الأساس، وتغيّر طفيف فقط',p:4},
+  {k:'anomaly',g:'sb',t:'تباين الخلفية والبصمة البيئية',ev:'موجود جزئيًا في مسح الأساس، وتغيّر طفيف فقط',p:4},
   {k:'sway',g:'time',t:'التأرجح عبر الزمن',ev:'ثابت في 3 تمريرات',p:0},
   {k:'consensus',g:'angle',t:'إجماع الزوايا',ev:'التمريرات الثلاث متسقة على الشكل نفسه',p:0},
   {k:'counter',g:'counter',t:'تطابق مع حطام مسجّل',ev:'يطابق حطامًا في سجل المنطقة بدرجة 0.71',p:-6}],
@@ -753,7 +765,7 @@ const ALERTS=[
  swayNote:'ثابت في 3 تمريرات.',
  consNote:'الزوايا الثلاث متسقة على أنه جسم ممتد.',
  sum:'على الأرجح حطام: أبعاده أكبر من نمط الألغام وحوافه مستقيمة متعددة، ويطابق حطامًا مسجّلًا في المنطقة. الظل الممتد يُبقي احتمالًا منخفضًا لجسم شبيه بلغم.'},
-{id:'TGT-0409',cls:'سرب أسماك على الأرجح',kind:'bio',conf:14,ci:5,pri:3,state:'new',age:12,last:6,x:-60,y:-240,passes:[1,1,0],sig:[0,0,0,0],
+{id:'TGT-0409',cls:'سرب أسماك على الأرجح',kind:'bio',conf:14,ci:5,pri:3,lvl:'none',state:'new',age:12,last:6,x:-60,y:-240,passes:[1,1,0],sig:[0,0,0,0],
  geo:{depth:8.5,seabed:16.2,has:0,cep:5},
  sway:[[2.8,1.5],[-3.4,4.1],[4.6,-2.2]],
  fish:[[-3,7.5,.35],[-2.2,8.4,.3],[-1,7.1,.25],[.5,9.2,.35],[1.6,8.1,.3],[2.8,9.6,.28],[-.4,10.1,.22],[3.5,7.4,.25]],
@@ -774,6 +786,10 @@ const byId={};ALERTS.forEach(a=>{a.t0=NOW0-a.age*60000-(strSeed(a.id)%997);byId[
 const S={mode:'watch',sel:null,hl:null,pin:null,filter:'all',layers:{radar:true,ais:true,thermal:true,fence:true,survey:true,targets:true},hits:[],t:0,mapView:null};
 const STATE={new:'جديد',review:'قيد المراجعة',pending:'بانتظار تمريرة',handed:'سُلّم للتحقق',rejected:'مرفوض'};
 const PRI=['','أولوية أولى','أولوية ثانية','أولوية ثالثة'];
+/* four threat levels; "unknown" is a class of its own, never forced into another */
+const THREAT={high:'خطر محتمل مرتفع',potential:'خطر محتمل',unknown:'غير معروف، يحتاج تحققًا',none:'غير خطِر'};
+const THREAT_S={high:'مرتفع',potential:'محتمل',unknown:'غير معروف',none:'غير خطِر'};
+const THREAT_R={high:4,unknown:3,potential:2,none:1};
 const fmtUTC=ms=>{const d=new Date(ms);return pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds())+'.'+pad(d.getUTCMilliseconds(),3);};
 const fmtDate=ms=>{const d=new Date(ms);return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());};
 function ago(a){const m=(Date.now()-a.t0)/60000;if(m<1)return 'الآن';if(m<60)return 'منذ '+Math.floor(m)+' د';return 'منذ '+Math.floor(m/60)+' س';}
@@ -785,17 +801,17 @@ const GK=['shape','shadow','sway','anomaly'],GNAME={shape:'الشكل',shadow:'�
 function sigHTML(sig){return '<span class="sig">'+GK.map((k,i)=>'<svg class="g'+sig[i]+'" viewBox="0 0 13 13" aria-hidden="true">'+GLYPH[k]+'</svg>').join('')+'<span class="sr">'+GK.map((k,i)=>GNAME[k]+': '+LVL[sig[i]]).join('، ')+'</span></span>';}
 function depthTxt(a){return a.geo.depth!=null?'عمق <span class="n">'+a.geo.depth.toFixed(1)+'</span> م':'على القاع <span class="n">'+a.geo.seabed.toFixed(1)+'</span> م';}
 function renderQueue(){
-  const list=ALERTS.filter(a=>S.filter==='all'||(S.filter==='p1'&&a.pri===1)||(S.filter==='pending'&&a.state==='pending')).sort((a,b)=>b.conf-a.conf);
+  const list=ALERTS.filter(a=>S.filter==='all'||(S.filter==='high'&&a.lvl==='high')||(S.filter==='unknown'&&a.lvl==='unknown')||(S.filter==='pending'&&a.state==='pending')).sort((a,b)=>THREAT_R[b.lvl]-THREAT_R[a.lvl]||b.conf-a.conf);
   const ol=$('#qlist');
   if(!list.length){ol.innerHTML='<li class="qempty">لا تنبيهات ضمن هذه التصفية. اختر «الكل» لعرض كل الأهداف.</li>';return;}
   ol.innerHTML=list.map(a=>{const det=a.passes.filter(p=>p===1).length;
     return '<li><button class="qi'+(a.state==='rejected'?' rej':'')+'" data-id="'+a.id+'"'+(S.sel===a.id?' aria-current="true"':'')+'>'+
       '<span class="qconf p'+a.pri+'"><span class="n">'+a.conf+'</span><small>%</small></span>'+
-      '<span class="qb"><span class="qtop"><span class="n">'+a.id+'</span><span class="st st-'+a.state+'">'+STATE[a.state]+'</span><span class="qage" data-age="'+a.id+'">'+ago(a)+'</span></span>'+
+      '<span class="qb"><span class="qtop"><span class="n">'+a.id+'</span><span class="lv lv-'+a.lvl+'">'+THREAT_S[a.lvl]+'</span><span class="st st-'+a.state+'">'+STATE[a.state]+'</span><span class="qage" data-age="'+a.id+'">'+ago(a)+'</span></span>'+
       '<span class="qcls">'+a.cls+'</span>'+
       '<span class="qmeta">'+sigHTML(a.sig)+'<span><span class="n">'+det+'/'+a.passes.length+'</span> تمريرات</span><span>'+depthTxt(a)+'</span></span></span></button></li>';}).join('');
 }
-function renderThreat(){$('#threat-n').textContent=ALERTS.filter(a=>a.pri===1&&(a.state==='new'||a.state==='review'||a.state==='pending')).length;}
+function renderThreat(){$('#threat-n').textContent=ALERTS.filter(a=>a.lvl==='high'&&(a.state==='new'||a.state==='review'||a.state==='pending')).length;}
 $('#qlist').addEventListener('click',e=>{const b=e.target.closest('.qi');if(b)openDossier(b.dataset.id);});
 $$('[data-f]').forEach(b=>b.addEventListener('click',()=>{S.filter=b.dataset.f;$$('[data-f]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderQueue();}));
 
@@ -818,7 +834,7 @@ function openDossier(id){
   S.sel=id;S.hl=null;S.pin=null;
   setMode('inv');
   $('#d-id').textContent=a.id;
-  const pri=$('#d-pri');pri.textContent=PRI[a.pri];pri.className='tag'+(a.pri===1?' pri1':'');
+  const pri=$('#d-pri');pri.textContent=THREAT[a.lvl];pri.className='tag'+(a.lvl==='high'?' pri1':'');
   $('#d-title').textContent=a.cls;$('#d-sum').textContent=a.sum;
   $('#d-conf').textContent=a.conf;$('#d-ci').textContent='±'+a.ci;
   renderLedger(a);renderAlts(a);renderLoc(a);renderTime(a);renderTrust(a);
@@ -967,14 +983,15 @@ function drawMap(t){
 function shipVel(t){const s=ship(t);return{x:Math.sin(s.hdg*D2R)*V_SHIP,y:Math.cos(s.hdg*D2R)*V_SHIP};}
 function cpaTxt(t,s,d){const vs=shipVel(t),px=d.x-s.x,py=d.y-s.y,vx=d.vx-vs.x,vy=d.vy-vs.y,v2=vx*vx+vy*vy;if(v2<1e-6)return '';const tc=-(px*vx+py*vy)/v2;if(tc<=0)return 'يبتعد عن B01';const cx=px+vx*tc,cy=py+vy*tc;return 'أقرب نقطة اقتراب <span class="n">'+(Math.hypot(cx,cy)/1000).toFixed(2)+' km</span> بعد <span class="n">'+Math.max(1,Math.round(tc/60))+'</span> د';}
 function tipHTML(hit){const t=S.t,s=ship(t);
-  if(hit.kind==='sub'){const a=byId[hit.id];return '<b class="n">'+a.id+'</b> '+a.cls+'<br>ثقة الاشتباه <span class="n">'+a.conf+'%</span>، '+STATE[a.state]+'<br><span class="cta">انقر لفتح حزمة التسليم</span>';}
+  if(hit.kind==='own')return '<b class="n">B01</b> على الخط <span class="n">'+(s.line+1)+'/'+NB+'</span> من التمريرة العمودية<br>الدفع كهربائي صامت، وأضواء الملاحة تعمل';
+  if(hit.kind==='sub'){const a=byId[hit.id];return '<b class="n">'+a.id+'</b> '+a.cls+'<br>'+THREAT[a.lvl]+'، ثقة <span class="n">'+a.conf+'%</span>، '+STATE[a.state]+'<br><span class="cta">انقر لفتح حزمة التسليم</span>';}
   if(hit.kind==='dark'){const d=darkPos(t),br=(Math.atan2(d.x-s.x,d.y-s.y)/D2R+360)%360,rg=Math.hypot(d.x-s.x,d.y-s.y)/1000;return '<b class="n">S-07</b> هدف سطحي لا يبث هويته<br>رادار: نعم، حراري: نعم، AIS: لا<br>الاتجاه <span class="n">'+pad(Math.round(br),3)+'°</span>، المدى <span class="n">'+rg.toFixed(2)+' km</span><br>يحوم قرب حد منطقة العمل بسرعة <span class="n">'+(Math.hypot(d.vx,d.vy)*1.944).toFixed(1)+' kn</span><br>'+cpaTxt(t,s,d);}
   if(hit.kind==='ais'){const o=hit.o,p=aisPos(o,t),rg=Math.hypot(p.x-s.x,p.y-s.y)/1000;return '<b class="n">'+o.name+'</b> '+o.type+'<br>MMSI <span class="n">'+o.mmsi+'</span><br>السرعة <span class="n">'+(Math.abs(o.vx)*1.944).toFixed(1)+' kn</span>، المدى <span class="n">'+rg.toFixed(2)+' km</span>';}
   return '';}
 const mapEl=$('#map'),tip=$('#maptip');
 mapEl.addEventListener('mousemove',e=>{const r=mapEl.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
   const hit=S.hits.find(o=>Math.hypot(o.x-mx,o.y-my)<o.r);
-  if(!hit||hit.kind==='own'){tip.hidden=true;mapEl.style.cursor='crosshair';return;}
+  if(!hit){tip.hidden=true;mapEl.style.cursor='crosshair';return;}
   tip.innerHTML=tipHTML(hit);tip.hidden=false;mapEl.style.cursor=hit.kind==='sub'?'pointer':'default';
   const tw=tip.offsetWidth,th=tip.offsetHeight;let tx=mx+14,ty=my+14;if(tx+tw>r.width-8)tx=mx-tw-14;if(ty+th>r.height-8)ty=my-th-14;tip.style.left=Math.max(4,tx)+'px';tip.style.top=Math.max(4,ty)+'px';});
 mapEl.addEventListener('mouseleave',()=>{tip.hidden=true;});
@@ -1027,9 +1044,9 @@ function swathRow(s){const c=fit('swath');if(!c)return;const ctx=c.ctx,w=c.w,h=c
   const b=swBuf.getContext('2d');
   if(swBuf.width!==W||swBuf.height!==H){swBuf.width=W;swBuf.height=H;swTmp.width=W;swTmp.height=H;b.fillStyle='#040b12';b.fillRect(0,0,W,H);}
   const tm=swTmp.getContext('2d');tm.clearRect(0,0,W,H);tm.drawImage(swBuf,0,0);b.clearRect(0,0,W,H);b.drawImage(swTmp,0,2);
-  const row=b.createImageData(W,2),D=row.data,hr=s.hdg*D2R,cx=Math.cos(hr),sy=-Math.sin(hr),half=40;
+  const row=b.createImageData(W,2),D=row.data,hr=s.hdg*D2R,cx=Math.cos(hr),sy=-Math.sin(hr),half=50;
   const objs=ALERTS.map(a=>{const dx=a.x-s.x,dy=a.y-s.y;return{a:a,along:dx*Math.sin(hr)+dy*Math.cos(hr),across:dx*Math.cos(hr)-dy*Math.sin(hr)};}).filter(o=>Math.abs(o.along)<2.2&&Math.abs(o.across)<half);
-  for(let j=0;j<W;j++){const ac=(j/(W-1)-.5)*2*half,wx=s.x+cx*ac,wy=s.y+sy*ac;let v=.24+.34*fbm(wx*.11,wy*.11)+(Math.random()-.5)*.12;if(Math.abs(ac)<2.4)v*=.35;v*=.75+.25*Math.min(1,Math.abs(ac)/12);
+  for(let j=0;j<W;j++){const ac=(j/(W-1)-.5)*2*half,wx=s.x+cx*ac,wy=s.y+sy*ac;let v=.24+.34*fbm(wx*.11,wy*.11)+(Math.random()-.5)*.12;if(Math.abs(ac)<6)v*=.18;v*=.75+.25*Math.min(1,Math.abs(ac)/12);
     for(const o of objs){const kd=o.a.kind,dd=Math.abs(ac-o.across),sgn=Math.sign(o.across)||1,beyond=(ac-o.across)*sgn;if(dd<.9&&kd!=='bio')v=.95;if(kd==='moored'&&beyond>2.4&&beyond<6.8)v*=.18;if((kd==='bottom'||kd==='debris'||kd==='unknown')&&beyond>.6&&beyond<2.2)v*=.2;}
     for(let r=0;r<2;r++)put(D,(r*W+j)*4,v);}
   b.putImageData(row,0,0);ctx.clearRect(0,0,w,h);ctx.drawImage(swBuf,0,0,W,H,0,0,w,h);
@@ -1166,7 +1183,7 @@ function slow(t){const s=ship(t);
   $$('[data-age]').forEach(el=>{const a=byId[el.dataset.age];if(a)el.textContent=ago(a);});
   battery=Math.max(20,battery-.004);$('#batt').textContent=battery.toFixed(1)+'%';$('#pip-batt').textContent=Math.round(battery)+'%';$('#batt-bar').style.width=battery.toFixed(1)+'%';
   const solar=.41+.03*Math.sin(t*.05);$('#solar').textContent='+'+solar.toFixed(2)+' kW';$('#load').textContent=(1.18+(Math.random()-.5)*.04).toFixed(2)+' kW';
-  $('#hb-age').textContent=(.1+Math.random()*.4).toFixed(1)+' s';$('#infer').textContent=(12.1+Math.random()*.6).toFixed(1);$('#gpu').textContent=(60+Math.round(Math.random()*2))+'°C';
+  $('#hb-age').textContent=(.1+Math.random()*.4).toFixed(1)+' s';$('#infer').textContent=(12.1+Math.random()*.6).toFixed(1);$('#gpu').textContent=(60+Math.round(Math.random()*2))+'°C';$('#ssd').textContent=Math.round(41+Math.min(9,t/400))+'%';
   $('#uhf').textContent=(-70-Math.round(Math.random()*3))+' dBm '+(36+Math.round(Math.random()*5))+' ms';
   $('#pps-off').textContent='+'+(15+Math.round(Math.random()*6))+' ns';$('#res').textContent=(.25+Math.random()*.1).toFixed(2)+' m';$('#insgnss').textContent=(.25+Math.random()*.1).toFixed(2)+' m';
   $('#jam-db').textContent='+'+jamDb.toFixed(0)+' dB';$('#stab').textContent=(.95+Math.random()*.02).toFixed(2);$('#rh').textContent=(18+Math.round(Math.random()))+'%';
