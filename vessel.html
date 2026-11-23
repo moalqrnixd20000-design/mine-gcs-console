@@ -104,6 +104,11 @@ h1 .n{font-size:32px}
   .card h4{font-size:15px}.card dd{font-size:12.5px;line-height:1.7}
   .drawing{break-inside:avoid}
 }
+/* language switch (lang.js) */
+.lang-btn{padding:5px 12px;font-size:13px;color:var(--fg);background:var(--hull);box-shadow:inset 0 0 0 1px var(--chine-2)}
+.lang-btn:hover{background:var(--facet)}
+.lang-btn:lang(en){font-family:"Readex Pro",sans-serif}
+html[lang="en"] .card .en{display:none}
 </style>
 </head>
 <body>
@@ -116,6 +121,7 @@ h1 .n{font-size:32px}
   </a>
   <a class="back noprint" href="index.html">لوحة المركز الأمني</a>
   <span class="tag">نموذج مفاهيمي</span>
+  <span class="lang-slot noprint"></span>
 </header>
 
 <div class="head">
@@ -462,8 +468,11 @@ h1 .n{font-size:32px}
       document.getElementById('v-render').hidden=v!=='render';
     });
   });
+  document.addEventListener('sitelang',function(){paint(sel);});
   pick('1');
 })();
 </script>
+<script src="vessel-en.js"></script>
+<script src="lang.js"></script>
 </body>
 </html>

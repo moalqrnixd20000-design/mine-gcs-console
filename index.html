@@ -333,7 +333,11 @@ h2 .sim,.dtags .sim{display:inline-block;margin-inline-start:8px;font-weight:400
   .dconf .big{font-size:40px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* language switch (lang.js) */
+.lang-btn{padding:5px 12px;font-size:13px;color:var(--fg);background:var(--hull);box-shadow:inset 0 0 0 1px var(--chine-2);border:0;cursor:pointer}
+.lang-btn:hover{background:var(--facet)}
 </style>
+<script src="console-en.js"></script>
 
 <div class="app" id="app" dir="rtl" lang="ar" data-mode="watch">
 
@@ -353,6 +357,7 @@ h2 .sim,.dtags .sim{display:inline-block;margin-inline-start:8px;font-weight:400
     <span class="n t" id="utc">--:--:--.-</span><span class="u">UTC</span>
     <span class="pps"><span class="dot" id="pps-dot"></span>PPS مقفل</span>
   </div>
+  <span class="lang-slot"></span>
   <div class="pips" role="group" aria-label="ملخص حالة النظام">
     <button class="pip" data-go="hp-comms"><i></i>الاتصال</button>
     <button class="pip caution" data-go="hp-spec"><i></i>GNSS</button>
@@ -1202,9 +1207,11 @@ function frame(now){const t=(now-T0)/1000,rm=reduce.matches;S.t=t;
 renderQueue();renderThreat();drawSVP();slow(0);clock();
 let rz=0;new ResizeObserver(()=>{cancelAnimationFrame(rz);rz=requestAnimationFrame(()=>{drawSVP();drawDossier();});}).observe(app);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{drawSVP();drawDossier();});
+document.addEventListener('sitelang',e=>{const en=e.detail.lang==='en';app.dir=en?'ltr':'rtl';app.lang=en?'en':'ar';drawSVP();drawDossier();});
 requestAnimationFrame(frame);
 })();
 </script>
 <!--artifact:end-->
+<script src="lang.js"></script>
 </body>
 </html>
