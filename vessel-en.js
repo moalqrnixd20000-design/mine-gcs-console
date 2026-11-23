@@ -17,7 +17,6 @@ window.B01_EN = {
     "A navy faceted hull; a mast with antennas, a thermal camera, radar and navigation lights; a cutaway showing the edge computer, storage and batteries; side-scan sonar on the hull, and a multibeam pod underneath with its fan of acoustic beams.",
   "الصورة المرجعية للمركبة B01 كما صممها الفريق": "Reference image of the B01 vessel, as designed by the team",
   "مكونات المركبة وشرحها": "Vessel parts and their explanation",
-  "جديد": "New",
   "مقترح": "Proposed",
 
   /* part names (list, drawing labels and cards) */
