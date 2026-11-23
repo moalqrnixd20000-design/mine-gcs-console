@@ -59,6 +59,7 @@ h1 .n{font-size:32px}
 .num{flex:none;display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:12px;font-weight:700;color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--sea-hi)}
 .parts button.on .num,.parts button[aria-pressed="true"] .num{background:var(--sea-hi);color:var(--abyss)}
 .new{font-size:11px;color:var(--sea-hi);margin-inline-start:auto}
+.card header .prop{flex:none;margin-inline-start:auto;padding:0 8px;line-height:22px;font-size:11.5px;color:var(--fg-2);box-shadow:inset 0 0 0 1px var(--chine-2)}
 .card{background:var(--hull);padding:18px 20px 20px;display:flex;flex-direction:column;gap:12px}
 .detail{position:sticky;top:12px}
 .card header{display:flex;align-items:flex-start;gap:12px}
@@ -119,7 +120,7 @@ h1 .n{font-size:32px}
 
 <div class="head">
   <h1>المركبة السطحية <span class="n">B01</span></h1>
-  <p class="sub">مركبة سطحية ذاتية منخفضة البصمة، تكشف مخاطر ما تحت الماء وتشرح قرارها وترتّبها حسب الخطورة.</p>
+  <p class="sub">B01 مركبة سطحية غير مأهولة ذاتية التشغيل، تهدف إلى مسح البيئات البحرية والكشف عن الأجسام تحت الماء والمخاطر القريبة من سطح الماء، وتحليل الأدلة المتاحة لتقييم المخاطر وتفسير القرارات وترتيب الأهداف حسب أولوية التفتيش، دعمًا للسلامة البحرية.</p>
 </div>
 
 <figure class="drawing plate">
@@ -302,8 +303,8 @@ h1 .n{font-size:32px}
 
 <text class="hullno" x="1088" y="414">B01</text>
 
-<g class="bl" data-n="1" tabindex="0" role="button" aria-label="1 البدن الشبحي متعدد الأوجه"><path class="halo" d="M1150 250 L1040 382"/><path class="ld" d="M1150 250 L1040 382"/><circle class="tp" cx="1040" cy="382" r="4"/><circle class="bc" cx="1150" cy="250" r="17"/><text x="1150" y="251">1</text></g>
-<g class="bl" data-n="2" tabindex="0" role="button" aria-label="2 المقطع المنخفض والبدن الشاق للموج"><path class="halo" d="M1335 375 L1228 450"/><path class="ld" d="M1335 375 L1228 450"/><circle class="tp" cx="1228" cy="450" r="4"/><circle class="bc" cx="1335" cy="375" r="17"/><text x="1335" y="376">2</text></g>
+<g class="bl" data-n="1" tabindex="0" role="button" aria-label="1 تصميم البدن المنخفض متعدد الأوجه"><path class="halo" d="M1150 250 L1040 382"/><path class="ld" d="M1150 250 L1040 382"/><circle class="tp" cx="1040" cy="382" r="4"/><circle class="bc" cx="1150" cy="250" r="17"/><text x="1150" y="251">1</text></g>
+<g class="bl" data-n="2" tabindex="0" role="button" aria-label="2 المقطع المنخفض والمقدمة الحادة"><path class="halo" d="M1335 375 L1228 450"/><path class="ld" d="M1335 375 L1228 450"/><circle class="tp" cx="1228" cy="450" r="4"/><circle class="bc" cx="1335" cy="375" r="17"/><text x="1335" y="376">2</text></g>
 <g class="bl" data-n="3" tabindex="0" role="button" aria-label="3 الحجرات المحكمة"><path class="halo" d="M1095 640 L996 500"/><path class="ld" d="M1095 640 L996 500"/><circle class="tp" cx="996" cy="500" r="4"/><circle class="bc" cx="1095" cy="640" r="17"/><text x="1095" y="641">3</text></g>
 <g class="bl" data-n="4" tabindex="0" role="button" aria-label="4 الملتي بيم وعمود الماء"><path class="halo" d="M560 690 L640 600"/><path class="ld" d="M560 690 L640 600"/><circle class="tp" cx="640" cy="600" r="4"/><circle class="bc" cx="560" cy="690" r="17"/><text x="560" y="691">4</text></g>
 <g class="bl" data-n="5" tabindex="0" role="button" aria-label="5 السونار الجانبي"><path class="halo" d="M400 650 L505 520"/><path class="ld" d="M400 650 L505 520"/><circle class="tp" cx="505" cy="520" r="4"/><circle class="bc" cx="400" cy="650" r="17"/><text x="400" y="651">5</text></g>
@@ -327,100 +328,100 @@ h1 .n{font-size:32px}
 
 <section class="explore noprint" aria-label="مكونات المركبة وشرحها">
   <ol class="parts" id="parts">
-    <li><button data-n="1" aria-pressed="true"><span class="num n">1</span>البدن الشبحي متعدد الأوجه</button></li>
-    <li><button data-n="2" aria-pressed="false"><span class="num n">2</span>المقطع المنخفض والبدن الشاق للموج</button></li>
+    <li><button data-n="1" aria-pressed="true"><span class="num n">1</span>تصميم البدن المنخفض متعدد الأوجه</button></li>
+    <li><button data-n="2" aria-pressed="false"><span class="num n">2</span>المقطع المنخفض والمقدمة الحادة</button></li>
     <li><button data-n="3" aria-pressed="false"><span class="num n">3</span>الحجرات المحكمة ومنافذ الكابلات</button></li>
     <li><button data-n="4" aria-pressed="false"><span class="num n">4</span>الملتي بيم وعمود الماء</button></li>
     <li><button data-n="5" aria-pressed="false"><span class="num n">5</span>السونار الجانبي<span class="new">جديد</span></button></li>
     <li><button data-n="6" aria-pressed="false"><span class="num n">6</span>هوائي GNSS بدقة RTK</button></li>
     <li><button data-n="7" aria-pressed="false"><span class="num n">7</span>وحدة القصور الذاتي ووحدة التزامن</button></li>
     <li><button data-n="8" aria-pressed="false"><span class="num n">8</span>الكاميرا الحرارية والنهارية</button></li>
-    <li><button data-n="9" aria-pressed="false"><span class="num n">9</span>الرادار الملاحي منخفض المقطع</button></li>
+    <li><button data-n="9" aria-pressed="false"><span class="num n">9</span>الرادار الملاحي في قبة منخفضة</button></li>
     <li><button data-n="10" aria-pressed="false"><span class="num n">10</span>أضواء الملاحة<span class="new">جديد</span></button></li>
     <li><button data-n="11" aria-pressed="false"><span class="num n">11</span>هوائيات الاتصال</button></li>
     <li><button data-n="12" aria-pressed="false"><span class="num n">12</span>حاسوب الحافة ومتحكم الملاحة</button></li>
     <li><button data-n="13" aria-pressed="false"><span class="num n">13</span>التخزين المحلي ومبدّل الشبكة<span class="new">جديد</span></button></li>
     <li><button data-n="14" aria-pressed="false"><span class="num n">14</span>الطاقة الهجينة</button></li>
     <li><button data-n="15" aria-pressed="false"><span class="num n">15</span>الخلايا الشمسية المدمجة</button></li>
-    <li><button data-n="16" aria-pressed="false"><span class="num n">16</span>الدفع الهجين الصامت والدفة</button></li>
+    <li><button data-n="16" aria-pressed="false"><span class="num n">16</span>الدفع الهجين الهادئ والدفة</button></li>
   </ol>
   <article class="card detail plate" id="detail" aria-live="polite"></article>
 </section>
 
 <div class="allcards" id="allcards">
-  <article class="card plate" id="t1"><header><span class="num n">1</span><div><h4>البدن الشبحي متعدد الأوجه</h4><span class="en">Faceted low-observable hull</span></div></header>
-    <dl><dt>ما هو</dt><dd>بدن من أسطح مستوية بزوايا حادة بدل المنحنيات، على طريقة الطائرات الشبحية، مع تمويه متعدد الأوجه.</dd>
-    <dt>كيف يعمل</dt><dd>الأسطح المائلة تعكس موجات الرادار بعيدًا عن مصدرها، فيصغر المقطع الراداري وتقل المسافة التي تُكتشف منها المركبة.</dd>
-    <dt>لماذا في B01</dt><dd>المسح قرب الموانئ والممرات قد يجري في بيئة غير آمنة، والمركبة التي يصعب رصدها يصعب استهدافها أو التشويش عليها.</dd>
+  <article class="card plate" id="t1"><header><span class="num n">1</span><div><h4>تصميم البدن المنخفض متعدد الأوجه</h4><span class="en">Faceted low-profile hull design</span></div><span class="prop">مقترح</span></header>
+    <dl><dt>ما هو</dt><dd>بدن من أسطح مستوية بزوايا حادة بدل المنحنيات، بتصميم منخفض متعدد الأوجه.</dd>
+    <dt>كيف يعمل</dt><dd>الأسطح المستوية تبسّط بناء البدن من ألواح مسطحة، والارتفاع المنخفض يقلل المساحة المعرضة للرياح. أي أثر على البصمة الرادارية أو الحرارية أو الصوتية يحتاج قياسًا قبل ادعائه.</dd>
+    <dt>لماذا في B01</dt><dd>هذا تصميم الفريق للمركبة، والبدن المنخفض يقلل تعرضها للرياح. ثباتها وأداؤها في البحر يحتاجان تحليلًا هندسيًا واختبارًا.</dd>
     <dt>المواد</dt><dd>ألومنيوم بدرجة بحرية أو ألياف كربون، مطلية بمواد مقاومة للأكسدة والتآكل الملحي.</dd></dl></article>
-  <article class="card plate" id="t2"><header><span class="num n">2</span><div><h4>المقطع المنخفض والبدن الشاق للموج</h4><span class="en">Ultra-low profile, wave-piercing hull</span></div></header>
+  <article class="card plate" id="t2"><header><span class="num n">2</span><div><h4>المقطع المنخفض والمقدمة الحادة</h4><span class="en">Low-profile hull with a sharp bow (design intent)</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>ارتفاع صغير فوق خط الماء، ومقدمة حادة، وبدن انسيابي طويل.</dd>
-    <dt>كيف يعمل</dt><dd>المقدمة تشق الموج بدل الصعود فوقه، والمساحة الجانبية الصغيرة تقلل دفع الرياح والتيارات، فتهدأ الحركة ويستقيم المسار.</dd>
-    <dt>لماذا في B01</dt><dd>ثبات المنصة شرط لجودة بيانات السونار، وأساس قياس تأرجح اللغم المربوط بين التمريرات.</dd></dl></article>
-  <article class="card plate" id="t3"><header><span class="num n">3</span><div><h4>الحجرات المحكمة ومنافذ الكابلات</h4><span class="en">Sealed compartments, gaskets and O-rings</span></div></header>
+    <dt>كيف يعمل</dt><dd>الهدف التصميمي أن تقل حركة المنصة في الموج، وأن تقلل المساحة الجانبية الصغيرة دفع الرياح والتيارات. هذا هدف تصميمي يحتاج تحليلًا هندسيًا واختبارًا، وليس أداءً مثبتًا.</dd>
+    <dt>لماذا في B01</dt><dd>ثبات المنصة يحسّن جودة بيانات السونار، ويساعد على مقارنة الأهداف بين التمريرات.</dd></dl></article>
+  <article class="card plate" id="t3"><header><span class="num n">3</span><div><h4>الحجرات المحكمة ومنافذ الكابلات</h4><span class="en">Sealed compartments, gaskets and O-rings</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>حجرات داخلية مغلقة تحمي الحاسوب والتخزين والبطاريات، تفصلها حواجز.</dd>
     <dt>كيف يعمل</dt><dd>حشوات وحلقات مطاطية في كل وصلة، ومنافذ كابلات محكمة بين الصاري والبدن، ومستشعر رطوبة في كل حجرة ينبّه مبكرًا إن بدأ تسرب.</dd>
     <dt>لماذا في B01</dt><dd>قطرة ماء واحدة على حاسوب الحافة قد توقف المهمة.</dd></dl></article>
-  <article class="card plate" id="t4"><header><span class="num n">4</span><div><h4>الملتي بيم وعمود الماء</h4><span class="en">Hull-mounted multibeam echosounder (MBES), water-column sensing and SVP</span></div></header>
+  <article class="card plate" id="t4"><header><span class="num n">4</span><div><h4>الملتي بيم وعمود الماء</h4><span class="en">Hull-mounted multibeam echosounder (MBES), water-column sensing and SVP</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>محوّلات ملتي بيم مثبتة أسفل البدن داخل حاضنة انسيابية، ومعها مجس سرعة الصوت (SVP).</dd>
-    <dt>كيف يعمل</dt><dd>في كل رشقة ترسل مروحة من الحزم الصوتية، فترسم القاع وتسجل كل الأصداء في عمود الماء. مجس سرعة الصوت يصحح انحناء الحزم بين طبقات الماء.</dd>
-    <dt>لماذا في B01</dt><dd>اللغم القاعي يظهر على القاع واللغم المربوط في عمود الماء، والحاضنة تلتقط الاثنين في رشقة واحدة.</dd>
-    <dt>المنطقة الميتة</dt><dd>خارج قوس المدى الأدنى يحجب صدى القاع عمود الماء، فالجزء النظيف حول المركبة نحو 14 م لكل جانب فقط. لذلك تتقارب خطوط المسح 25 م، ويُرى كل موقع من اتجاهين.</dd></dl></article>
-  <article class="card plate" id="t5"><header><span class="num n">5</span><div><h4>السونار الجانبي</h4><span class="en">Side-scan sonar (SSS)</span></div></header>
+    <dt>كيف يعمل</dt><dd>في كل رشقة ترسل مروحة من الحزم الصوتية، فترسم القاع وتسجّل الأصداء ضمن هندسة الحزم، ومنها أصداء عمود الماء. مجس سرعة الصوت يقيس سرعة الصوت بين طبقات الماء لتصحيح انحناء الحزم، وهو ليس حساس كشف.</dd>
+    <dt>لماذا في B01</dt><dd>يرسم القاع ويرصد الأجسام عليه أو قربه، وأصداء عمود الماء تساعد على رصد الأجسام المعلقة. الأداء الفعلي يعتمد على طراز السونار وتردده وتركيبه وظروف المياه والمعالجة.</dd>
+    <dt>المنطقة الميتة</dt><dd>قرب السطح وداخل المدى الأدنى منطقة لا يراها السونار، وخارج قوس المدى الأدنى قد يحجب صدى القاع عمود الماء. في المحاكاة نفترض أن الجزء النظيف نحو 14 م لكل جانب، فنقرّب خطوط المسح إلى 25 م. هذه افتراضات محاكاة، وليست مواصفات حساس.</dd></dl></article>
+  <article class="card plate" id="t5"><header><span class="num n">5</span><div><h4>السونار الجانبي</h4><span class="en">Side-scan sonar (SSS)</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>محوّلان طويلان على جانبي البدن يرسلان حزمًا صوتية مائلة إلى اليمين واليسار.</dd>
-    <dt>كيف يعمل</dt><dd>يرسم صورة عالية الدقة لقاع البحر أبعد من عرض الملتي بيم، وتظهر فيها الأجسام وظلالها الصوتية بوضوح.</dd>
-    <dt>لماذا في B01</dt><dd>الظل الصوتي من أقوى الأدلة التي تميّز اللغم عن الصخر، والسونار الجانبي يوسّع ما يُرى في كل خط مسح.</dd>
-    <dt>المنطقة الميتة</dt><dd>تحت المركبة مباشرة فجوة لا يراها، يغطيها الملتي بيم في الخط نفسه والتمريرة المتعامدة.</dd>
-    <dt>الحماية</dt><dd>IP68، لأنه يعمل تحت الماء طوال المهمة.</dd></dl></article>
-  <article class="card plate" id="t6"><header><span class="num n">6</span><div><h4>هوائي GNSS بدقة RTK</h4><span class="en">Multi-constellation GNSS with RTK correction</span></div></header>
+    <dt>كيف يعمل</dt><dd>يرسم صورة صوتية للقاع والأجسام عليه أو قربه، أعرض من مسار الملتي بيم، وتظهر فيها أشكال الأجسام وظلالها الصوتية. هو ليس كاميرا، ولا يعرّف الجسم كلغم تلقائيًا.</dd>
+    <dt>لماذا في B01</dt><dd>الشكل والظل الصوتي من الأدلة التي تساعد على تمييز الأجسام عن الصخور، ويوسّع ما يُرى في كل خط مسح. لا يُعتمد عليه لرصد الأجسام الطافية أو القريبة من السطح.</dd>
+    <dt>المنطقة الميتة</dt><dd>تحت المركبة مباشرة فجوة لا يراها. المقترح أن يراها الملتي بيم في الخط نفسه والتمريرة المتعامدة، وهذا يحتاج تحققًا من هندسة الحساسات المختارة.</dd>
+    <dt>الحماية</dt><dd>يُحدَّد من نشرة المكوّن المختار.</dd></dl></article>
+  <article class="card plate" id="t6"><header><span class="num n">6</span><div><h4>هوائي GNSS بدقة RTK</h4><span class="en">Multi-constellation GNSS with RTK correction</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>مستقبل لأقمار الملاحة من عدة أنظمة، مع تصحيح RTK.</dd>
-    <dt>كيف يعمل</dt><dd>يحدد الموقع بدقة تصل إلى سنتيمترات عند توفر التصحيح، ويعطي كل نقطة مسح إحداثياتها.</dd>
+    <dt>كيف يعمل</dt><dd>يحدد الموقع، وقد تصل دقته إلى مستوى السنتيمتر مع خدمة تصحيح وظروف تشغيل مناسبة، وهذا يحتاج تحققًا بجهاز فعلي. ويعطي كل نقطة مسح إحداثياتها.</dd>
     <dt>لماذا في B01</dt><dd>بلا موقع دقيق لا يمكن العودة إلى الهدف نفسه ولا تسليم إحداثيات موثوقة.</dd>
-    <dt>الحماية</dt><dd>IP67: محكم ضد الغبار ويتحمل الغمر المؤقت حتى متر واحد.</dd></dl></article>
-  <article class="card plate" id="t7"><header><span class="num n">7</span><div><h4>وحدة القصور الذاتي ووحدة التزامن</h4><span class="en">IMU / INS and PPS time synchronisation</span></div></header>
+    <dt>الحماية</dt><dd>يُحدَّد من نشرة المكوّن المختار.</dd></dl></article>
+  <article class="card plate" id="t7"><header><span class="num n">7</span><div><h4>وحدة القصور الذاتي ووحدة التزامن</h4><span class="en">IMU / INS and PPS time synchronisation</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>وحدة تقيس التسارع والدوران، ووحدة زمن تأخذ نبضة دقيقة كل ثانية من الأقمار.</dd>
     <dt>كيف يعمل</dt><dd>تقيس الرفع والتمايل والترنح لتعويض حركة السونار، وتحفظ الموقع والاتجاه إذا ضعفت إشارة الأقمار. وحدة التزامن تختم كل قراءة بزمن دقيق.</dd>
-    <dt>لماذا في B01</dt><dd>بها نقارن النقطة نفسها بين التمريرات ونقيس تأرجح اللغم المربوط.</dd></dl></article>
-  <article class="card plate" id="t8"><header><span class="num n">8</span><div><h4>الكاميرا الحرارية والنهارية</h4><span class="en">EO/IR thermal gimbal camera</span></div></header>
+    <dt>لماذا في B01</dt><dd>بها نقارن النقطة نفسها بين التمريرات، وتدعم تعويض الحركة وتزامن الزمن. لا تكشف الأجسام تحت الماء بنفسها.</dd></dl></article>
+  <article class="card plate" id="t8"><header><span class="num n">8</span><div><h4>الكاميرا الحرارية والنهارية</h4><span class="en">EO/IR thermal gimbal camera</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>كرة دوّارة مثبتة جيروسكوبيًا تجمع كاميرا نهارية وكاميرا حرارية.</dd>
-    <dt>كيف يعمل</dt><dd>تتبع الأهداف السطحية ليلًا ونهارًا، وتكشف الشذوذ الحراري مثل حرارة محرك قارب، والحامل يلغي اهتزاز المركبة.</dd>
-    <dt>لماذا في B01</dt><dd>تؤكد ما يرصده الرادار، وتكشف القوارب التي لا تبث هويتها قرب منطقة العمل.</dd>
-    <dt>الحماية</dt><dd>IP68: محكمة ضد الغبار وتتحمل الغمر المستمر لأعمق من متر، لأنها الأكثر تعرضًا للرذاذ والأمواج على الصاري.</dd></dl></article>
-  <article class="card plate" id="t9"><header><span class="num n">9</span><div><h4>الرادار الملاحي منخفض المقطع</h4><span class="en">Low-profile marine navigation radar with AIS</span></div></header>
+    <dt>كيف يعمل</dt><dd>ترصد الأهداف الظاهرة فوق سطح الماء نهارًا وليلًا، وقد تُظهر فروقًا حرارية مثل حرارة محرك قارب، والحامل يقلل اهتزاز الصورة. أداؤها يعتمد على الرؤية والإضاءة والطقس ومواصفات الكاميرا ومجال الرؤية، ولا تصوّر تحت الماء.</dd>
+    <dt>لماذا في B01</dt><dd>تساعد المشغل على التحقق مما يرصده الرادار، وعلى ملاحظة القوارب التي لا تبث هويتها قرب منطقة العمل.</dd>
+    <dt>الحماية</dt><dd>يُحدَّد من نشرة المكوّن المختار.</dd></dl></article>
+  <article class="card plate" id="t9"><header><span class="num n">9</span><div><h4>الرادار الملاحي في قبة منخفضة</h4><span class="en">Marine navigation radar in a low dome, with AIS</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>رادار ملاحي صغير داخل قبة منخفضة، يعمل مع مستقبل AIS.</dd>
-    <dt>كيف يعمل</dt><dd>يرصد السفن والعوائق ويغذي الخريطة الموحدة، ومقارنته ببيانات AIS تكشف الأهداف التي لا تبث هويتها.</dd>
-    <dt>لماذا في B01</dt><dd>عين المركبة لتجنب الاصطدام، والقبة المنخفضة تحافظ على المقطع الراداري الصغير.</dd>
-    <dt>الحماية</dt><dd>IP67 داخل قبة مغلقة.</dd></dl></article>
-  <article class="card plate" id="t10"><header><span class="num n">10</span><div><h4>أضواء الملاحة</h4><span class="en">Navigation lights</span></div></header>
+    <dt>كيف يعمل</dt><dd>يرصد السفن والأجسام السطحية المناسبة ويغذي الخريطة الموحدة، حسب حجم الهدف وإعداد الرادار وتشويش البحر والطقس والتركيب، وقد لا يرصد الأجسام الصغيرة أو المنخفضة أو المغمورة جزئيًا. مستقبل AIS يستقبل هوية السفن التي تبثها فقط، ولا يكشف الأجسام التي لا تبث.</dd>
+    <dt>لماذا في B01</dt><dd>عين المركبة لتجنب الاصطدام، ومقارنة الرادار ببيانات AIS تساعد على ملاحظة الأهداف التي لا تبث هويتها.</dd>
+    <dt>الحماية</dt><dd>يُحدَّد من نشرة المكوّن المختار.</dd></dl></article>
+  <article class="card plate" id="t10"><header><span class="num n">10</span><div><h4>أضواء الملاحة</h4><span class="en">Navigation lights</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>ضوء صاري أبيض، وضوءان جانبيان أخضر وأحمر، وضوء مؤخرة أبيض.</dd>
     <dt>كيف يعمل</dt><dd>تبيّن موقع المركبة واتجاهها للسفن الأخرى ليلًا وفي ضعف الرؤية، وتُشغَّل حسب قواعد منع التصادم في البحر وتعليمات المهمة.</dd>
     <dt>لماذا في B01</dt><dd>المركبة غير مأهولة وتعمل قرب الممرات، ومع الرادار تكمل الوعي بما يجري فوق الماء.</dd>
-    <dt>الحماية</dt><dd>IP67.</dd></dl></article>
-  <article class="card plate" id="t11"><header><span class="num n">11</span><div><h4>هوائيات الاتصال</h4><span class="en">Secure RF, satellite and 4G links</span></div></header>
-    <dl><dt>ما هو</dt><dd>هوائي راديو RF للبيانات، وهوائيات للأقمار الصناعية و4G.</dd>
+    <dt>الحماية</dt><dd>يُحدَّد من نشرة المكوّن المختار.</dd></dl></article>
+  <article class="card plate" id="t11"><header><span class="num n">11</span><div><h4>هوائيات الاتصال</h4><span class="en">RF (UHF), satellite and 4G links</span></div><span class="prop">مقترح</span></header>
+    <dl><dt>ما هو</dt><dd>هوائي راديو RF (UHF) للبيانات، وهوائيات للأقمار الصناعية و4G. هذه وسائل اتصال، وليست حساسات كشف.</dd>
     <dt>كيف يعمل</dt><dd>يتحول الاتصال تلقائيًا بين الراديو، و4G قرب الساحل، والقمر الصناعي في العمق. لا يُرسل إلا التنبيهات المرتبة حسب الخطورة.</dd>
     <dt>التشفير</dt><dd>سنستخدم أحدث إصدار تشفير متاح لكل البيانات بين المركبة والمركز.</dd>
-    <dt>الحماية</dt><dd>IP67.</dd></dl></article>
-  <article class="card plate" id="t12"><header><span class="num n">12</span><div><h4>حاسوب الحافة ومتحكم الملاحة</h4><span class="en">Edge AI computer (GPU) and autonomy controller</span></div></header>
+    <dt>الحماية</dt><dd>يُحدَّد من نشرة المكوّن المختار.</dd></dl></article>
+  <article class="card plate" id="t12"><header><span class="num n">12</span><div><h4>حاسوب الحافة ومتحكم الملاحة</h4><span class="en">Edge AI computer (GPU) and autonomy controller</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>حاسوب مدمج بمعالج رسومي GPU داخل حجرة محكمة، ومعه متحكم الملاحة الذاتية.</dd>
-    <dt>كيف يعمل</dt><dd>يشغّل شبكة CNN بمسارين للقاع وعمود الماء مع طبقة دمج لنمط التأرجح، ويصنّف كل هدف في أحد أربعة مستويات خطر، ويُبقي فئة «غير معروف» بدل فرض تصنيف خاطئ. متحكم الملاحة ينفذ المسح الشبكي بتمريرتين متعامدتين، ويضيف تمريرات تكيفية حول الأهداف، ويجعل الانعطاف دائمًا خارج منطقة المسح.</dd>
+    <dt>كيف يعمل</dt><dd>المقترح: نموذج تعلم آلي يحلل بيانات القاع وعمود الماء ويصنّف كل هدف في أحد أربعة مستويات خطر، ويُبقي فئة «غير معروف» بدل فرض تصنيف خاطئ. النموذج لم يُدرَّب بعد، والعرض الحالي في لوحة المركز يعمل بقواعد وبيانات محاكاة. متحكم الملاحة ينفذ المسح الشبكي بتمريرتين متعامدتين، ويضيف تمريرات تكيفية حول الأهداف، ويجعل الانعطاف خارج منطقة المسح.</dd>
     <dt>لماذا في B01</dt><dd>القرار يُتخذ على المركبة لحظيًا دون انتظار الاتصال.</dd></dl></article>
-  <article class="card plate" id="t13"><header><span class="num n">13</span><div><h4>التخزين المحلي ومبدّل الشبكة</h4><span class="en">Onboard SSD storage and network switch</span></div></header>
+  <article class="card plate" id="t13"><header><span class="num n">13</span><div><h4>التخزين المحلي ومبدّل الشبكة</h4><span class="en">Onboard SSD storage and network switch</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>أقراص SSD لحفظ البيانات الخام، ومبدّل شبكة يربط الحساسات بحاسوب الحافة.</dd>
     <dt>كيف يعمل</dt><dd>كل بيانات السونار والكاميرا تُحفظ كاملة على المركبة، ولا يُرسل إلى المركز إلا تنبيهات مشفّرة مرتبة حسب الخطورة.</dd>
     <dt>لماذا في B01</dt><dd>يقل حجم ما يمر عبر الاتصال، وتبقى البيانات الأصلية محفوظة للتحقق لاحقًا.</dd></dl></article>
-  <article class="card plate" id="t14"><header><span class="num n">14</span><div><h4>الطاقة الهجينة</h4><span class="en">Lithium batteries with a standby generator</span></div></header>
+  <article class="card plate" id="t14"><header><span class="num n">14</span><div><h4>الطاقة الهجينة</h4><span class="en">Lithium batteries with a standby generator</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>بطاريات ليثيوم مصدرًا رئيسيًا، ومولد احتياطي صغير.</dd>
-    <dt>كيف يعمل</dt><dd>البطاريات تشغّل الحساسات والدفع بهدوء، والمولد يشحنها عند الحاجة، والخلايا الشمسية تمدد زمن المهمة.</dd>
-    <dt>لماذا في B01</dt><dd>مهام المسح المتكرر طويلة، والتشغيل على البطاريات يقلل الضجيج والبصمة الحرارية.</dd></dl></article>
-  <article class="card plate" id="t15"><header><span class="num n">15</span><div><h4>الخلايا الشمسية المدمجة</h4><span class="en">Solar cells integrated into the upper facets</span></div></header>
+    <dt>كيف يعمل</dt><dd>البطاريات تشغّل الحساسات والدفع، والمولد يشحنها عند الحاجة، والخلايا الشمسية قد تمدد زمن المهمة. السعات وزمن التشغيل تُحدَّد لاحقًا.</dd>
+    <dt>لماذا في B01</dt><dd>مهام المسح المتكرر طويلة، والتشغيل على البطاريات أثناء المسح يتجنب ضجيج المولد.</dd></dl></article>
+  <article class="card plate" id="t15"><header><span class="num n">15</span><div><h4>الخلايا الشمسية المدمجة</h4><span class="en">Solar cells integrated into the upper facets</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>ألواح شمسية مسطحة تشكّل جزءًا من أسطح البدن العلوية.</dd>
-    <dt>كيف يعمل</dt><dd>تشحن البطاريات أثناء المهمة دون أن تبرز عن البدن.</dd>
-    <dt>لماذا في B01</dt><dd>طاقة إضافية بلا ضجيج، مع الحفاظ على الشكل الشبحي.</dd></dl></article>
-  <article class="card plate" id="t16"><header><span class="num n">16</span><div><h4>الدفع الهجين الصامت والدفة</h4><span class="en">Hybrid silent-survey propulsion and rudder</span></div></header>
+    <dt>كيف يعمل</dt><dd>تشحن البطاريات أثناء المهمة دون أن تبرز عن البدن، وكمية الطاقة تُحدَّد لاحقًا.</dd>
+    <dt>لماذا في B01</dt><dd>طاقة إضافية بلا ضجيج، مع الحفاظ على الشكل المنخفض.</dd></dl></article>
+  <article class="card plate" id="t16"><header><span class="num n">16</span><div><h4>الدفع الهجين الهادئ والدفة</h4><span class="en">Hybrid propulsion with a quieter survey mode, and rudder</span></div><span class="prop">مقترح</span></header>
     <dl><dt>ما هو</dt><dd>محرك كهربائي ومروحة ودفة في المؤخرة، ومعها المولد للشحن.</dd>
-    <dt>كيف يعمل</dt><dd>أثناء المسح يعمل الدفع الكهربائي وحده بصمت، وفي الانتقال بين المناطق يشحن المولد البطاريات.</dd>
-    <dt>لماذا في B01</dt><dd>ضجيج المحرك يشوش على السونار ويكشف المركبة صوتيًا، والمسح الصامت يحمي جودة البيانات والتخفي معًا.</dd></dl></article>
+    <dt>كيف يعمل</dt><dd>أثناء المسح يعمل الدفع الكهربائي وحده، وفي الانتقال بين المناطق يشحن المولد البطاريات. السرعة وزمن التشغيل تُحدَّد لاحقًا.</dd>
+    <dt>لماذا في B01</dt><dd>ضجيج المحرك قد يشوش على السونار، والدفع الكهربائي الأهدأ يهدف إلى تقليل هذا الضجيج، وأثره يحتاج قياسًا.</dd></dl></article>
 </div>
 
 </div>
